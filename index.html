@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Draftboard</title>
+<meta name="description" content="Run Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas. Every node is a real terminal; draw a line and two agents can talk. Free macOS app.">
+<meta name="theme-color" content="#F4F4F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111114" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Draftboard: conduct your orchestra of coding agents">
+<meta property="og:description" content="Every node is a real terminal. Draw a line and two agents can message each other. A free macOS app for Claude Code, Codex, Gemini CLI and OpenCode.">
+<meta property="og:image" content="https://federix-ai.github.io/draftboard-app/assets/icon.png">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #F4F4F6; --paper: #FAFAFB; --surface: #FFFFFF; --surface2: #F6F8FA;
+    --grid: rgba(20,10,60,0.055); --grid-strong: rgba(20,10,60,0.09);
+    --line: rgba(20,10,60,0.10); --line2: rgba(20,10,60,0.18);
+    --ink: #1C1B22; --text: #1C1B22; --text2: #5D5B66; --text3: #6E6C78; --on-ink: #FFFFFF;
+    --accent: #C96B00; --accent-fill: #FF9500; --on-accent: #1D1D1F; --accent-soft: rgba(255,149,0,0.12);
+    --working: #007AFF; --ok: #248A3D; --spark: #7C3AED;
+    --need-head: #FFF3E2; --need-line: rgba(201,107,0,0.30);
+    --link: rgba(40,30,90,0.40);
+    --shadow: 0 24px 60px -24px rgba(40,30,90,0.30), 0 2px 8px -2px rgba(40,30,90,0.10);
+    --head: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #111114; --paper: #141418; --surface: #17171C; --surface2: #121318;
+      --grid: rgba(255,255,255,0.045); --grid-strong: rgba(255,255,255,0.07);
+      --line: rgba(255,255,255,0.10); --line2: rgba(255,255,255,0.18);
+      --ink: #F5F5F7; --text: #F5F5F7; --text2: #A1A1A9; --text3: #8E8E97; --on-ink: #111114;
+      --accent: #FFB547; --accent-fill: #FF9F0A; --on-accent: #1D1D1F; --accent-soft: rgba(255,159,10,0.13);
+      --working: #0A84FF; --ok: #30D158; --spark: #C4B5FD;
+      --need-head: #2A1D0E; --need-line: rgba(255,159,10,0.28);
+      --link: rgba(255,255,255,0.38);
+      --shadow: 0 30px 70px -20px rgba(0,0,0,0.75), 0 2px 8px -2px rgba(0,0,0,0.4);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  img { max-width: 100%; display: block; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent-fill); outline-offset: 3px; border-radius: 6px; }
+  .wrap { width: min(1120px, 100% - 32px); margin-inline: auto; }
+  .skip { position: absolute; left: 12px; top: -60px; background: var(--ink); color: var(--on-ink); padding: 8px 14px; border-radius: 8px; z-index: 100; font-weight: 600; text-decoration: none; }
+  .skip:focus { top: 12px; }
+  h1, h2, h3 { font-family: var(--head); margin: 0; letter-spacing: -0.025em; line-height: 1.08; color: var(--ink); }
+  code, kbd { font: 13px var(--mono); background: var(--accent-soft); color: var(--text); padding: 2px 6px; border-radius: 6px; }
+  kbd { border: 1px solid var(--line2); background: var(--surface); }
+  svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .paper { background-color: var(--paper);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+                      linear-gradient(var(--grid-strong) 1px, transparent 1px), linear-gradient(90deg, var(--grid-strong) 1px, transparent 1px);
+    background-size: 16px 16px, 16px 16px, 80px 80px, 80px 80px; }
+
+  /* nav */
+  nav.top { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  nav.top .wrap { display: flex; align-items: center; gap: 28px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 700 18px var(--head); color: var(--ink); text-decoration: none; }
+  .brand img { width: 30px; height: 30px; }
+  .links { display: flex; gap: 22px; margin-left: auto; }
+  .links a { color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 2px; }
+  .links a:hover { color: var(--text); }
+
+  /* buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 0 22px; border-radius: 12px; font: 600 15px var(--sans); text-decoration: none; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease; }
+  .btn.primary { background: var(--ink); color: var(--on-ink); box-shadow: 0 10px 24px -12px rgba(28,27,34,0.6); }
+  .btn.primary:hover { transform: translateY(-2px); box-shadow: 0 0 0 5px var(--accent-soft), 0 14px 28px -12px rgba(28,27,34,0.6); }
+  .btn.ghost { color: var(--text); border: 1px solid var(--line2); background: var(--surface); }
+  .btn.ghost:hover { border-color: var(--accent-fill); }
+  .btn small { font: 500 12px var(--mono); opacity: .7; }
+  nav.top .btn { min-height: 38px; padding: 0 16px; font-size: 14px; border-radius: 10px; }
+
+  /* hero */
+  .hero { position: relative; padding: 64px 0 80px; border-bottom: 1px solid var(--line); }
+  .hero .wrap { display: grid; grid-template-columns: 1fr 1.08fr; gap: 48px; align-items: center; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font: 500 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text2); background: var(--surface); border: 1px solid var(--line); padding: 5px 10px; border-radius: 999px; }
+  .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+  .hero h1 { font-size: clamp(42px, 6vw, 68px); margin: 20px 0 18px; }
+  .hero h1 em { font-style: normal; background: linear-gradient(transparent 62%, var(--accent-soft) 62%); box-shadow: inset 0 -3px 0 var(--accent-fill); }
+  .lede { font-size: 19px; color: var(--text2); max-width: 34ch; margin: 0 0 28px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 18px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--text2); }
+  .meta li { display: flex; align-items: center; gap: 6px; }
+  .meta svg.i { width: 16px; height: 16px; color: var(--ok); }
+  .works { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 30px; font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+  .works span.agent { font: 500 13px var(--sans); letter-spacing: 0; text-transform: none; color: var(--text2); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 3px 9px; }
+
+  /* board mock */
+  .board { position: relative; aspect-ratio: 1.18; border-radius: 18px; border: 1px solid var(--line); box-shadow: var(--shadow); overflow: hidden; }
+  .board svg.links { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .board svg.links path { fill: none; stroke: var(--link); stroke-width: 1.6; stroke-linecap: round; }
+  .board svg.links path.flow { stroke: var(--accent-fill); stroke-dasharray: 3 9; animation: flow 1.2s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -24; } }
+  .node { position: absolute; width: 43%; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 28px -14px rgba(40,30,90,0.35); overflow: hidden; font-size: 12px; }
+  .node header { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .node header b { font: 600 12.5px var(--sans); color: var(--text); }
+  .node header .role, .node header b { white-space: nowrap; }
+  .node header .role { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .node header .st { flex: none; }
+  .node header .role { color: var(--text3); font-size: 11.5px; }
+  .node header .st { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); white-space: nowrap; }
+  .node header .st i { width: 7px; height: 7px; border-radius: 50%; background: var(--working); }
+  .node.need header { background: var(--need-head); border-bottom-color: var(--need-line); }
+  .node.need { border-color: var(--need-line); }
+  .node.need header .st i { background: var(--accent-fill); }
+  .node.need header .st { color: var(--accent); font-weight: 600; }
+  .node.idle header .st i { background: var(--ok); }
+  .node pre { margin: 0; padding: 9px 11px 11px; font: 10.5px/1.6 var(--mono); color: var(--text2); white-space: pre-wrap; background: var(--surface2); }
+  .node pre .p { color: var(--accent); }
+  .node pre .k { color: var(--text); }
+  .board .chip { position: absolute; left: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 7px; font: 500 11.5px var(--mono); color: var(--text2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; }
+  .board .chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+
+  /* sections */
+  section { padding: 92px 0; }
+  .kicker { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 12px; }
+  .sec-head { max-width: 640px; margin-bottom: 44px; }
+  .sec-head h2 { font-size: clamp(30px, 4vw, 42px); }
+  .sec-head p { color: var(--text2); font-size: 17px; margin: 14px 0 0; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .card .ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); margin-bottom: 14px; }
+  .card h3 { font-size: 18px; margin-bottom: 6px; }
+  .card p { margin: 0; color: var(--text2); font-size: 15px; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: s; }
+  .step { position: relative; padding: 22px 22px 22px 22px; border-radius: 16px; border: 1px dashed var(--line2); background: var(--surface); }
+  .step::before { counter-increment: s; content: counter(s, decimal-leading-zero); display: block; font: 700 13px var(--mono); color: var(--accent); margin-bottom: 10px; }
+  .step h3 { font-size: 18px; margin-bottom: 6px; }
+  .step p { margin: 0; color: var(--text2); font-size: 15px; }
+  .terminal { margin-top: 26px; border-radius: 14px; background: #16161B; color: #E6E6EA; padding: 18px 20px; font: 13px/1.75 var(--mono); overflow-x: auto; border: 1px solid var(--line); }
+  .terminal .c { color: #8E8E97; }
+  .terminal .p { color: #FF9F0A; }
+
+  .teams { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .team { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  .team h3 { font-size: 16px; display: flex; justify-content: space-between; gap: 8px; }
+  .team h3 span { font: 500 12px var(--sans); color: var(--text3); letter-spacing: 0; }
+  .team p { margin: 6px 0 10px; color: var(--text2); font-size: 14px; }
+  .roles { display: flex; flex-wrap: wrap; gap: 5px; }
+  .roles span { font: 500 11.5px var(--mono); color: var(--text2); background: var(--surface2); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; }
+  .team.custom { border-style: dashed; display: flex; flex-direction: column; justify-content: center; }
+
+  .install { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: start; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
+  .panel h3 { font-size: 20px; margin-bottom: 14px; }
+  ol.how { margin: 0; padding: 0; list-style: none; counter-reset: h; display: grid; gap: 12px; }
+  ol.how li { counter-increment: h; display: grid; grid-template-columns: 28px 1fr; gap: 10px; color: var(--text2); }
+  ol.how li::before { content: counter(h); width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font: 700 12px var(--mono); background: var(--ink); color: var(--on-ink); }
+  ol.how strong, ul.req strong { color: var(--text); }
+  .notice { margin: 18px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--accent-soft); color: var(--text); font-size: 14px; }
+  ul.req { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; color: var(--text2); }
+  ul.req li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
+  ul.req svg.i { width: 18px; height: 18px; margin-top: 3px; color: var(--ok); }
+
+  .final { text-align: center; padding: 88px 0 96px; border-top: 1px solid var(--line); }
+  .final img { width: 96px; height: 96px; margin: 0 auto 20px; }
+  .final h2 { font-size: clamp(32px, 4.5vw, 48px); }
+  .final p { color: var(--text2); margin: 12px auto 26px; max-width: 46ch; }
+  .final .cta { justify-content: center; }
+  footer { border-top: 1px solid var(--line); padding: 26px 0 40px; color: var(--text3); font-size: 13px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; }
+  footer a { color: var(--text2); }
+
+  @media (max-width: 920px) {
+    .hero .wrap, .install { grid-template-columns: 1fr; }
+    .grid, .steps, .teams { grid-template-columns: 1fr 1fr; }
+    .links { display: none; }
+    nav.top .btn { margin-left: auto; }
+  }
+  @media (max-width: 620px) {
+    .grid, .steps, .teams { grid-template-columns: 1fr; }
+    .hero { padding: 40px 0 56px; }
+    section { padding: 64px 0; }
+    .lede { font-size: 17px; }
+    .node { font-size: 11px; }
+    .node pre { font-size: 9.5px; }
+    .node header .role { display: none; }
+    .board .chip { display: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="top" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="assets/icon.png" alt="">Draftboard</a>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#teams">Teams</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/federix-ai/draftboard-app/releases">Releases</a>
+    </div>
+    <a class="btn primary" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg">Download</a>
+  </div>
+</nav>
+
+<main id="main">
+<header class="hero paper">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow"><span class="dot"></span>Free · macOS app</span>
+      <h1>Conduct your <em>orchestra</em> of coding agents.</h1>
+      <p class="lede">Run Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas. Every node is a real terminal. Draw a line between two agents and they can message each other.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
+          Download for macOS <small data-version>v0.3.0</small>
+        </a>
+        <a class="btn ghost" href="#install">How to install</a>
+      </div>
+      <ul class="meta">
+        <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>macOS 14+</li>
+        <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Apple Silicon</li>
+        <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>English and Italian</li>
+        <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Your CLIs, your accounts</li>
+      </ul>
+      <div class="works">Works with <span class="agent">Claude Code</span><span class="agent">Codex</span><span class="agent">Gemini CLI</span><span class="agent">OpenCode</span></div>
+    </div>
+
+    <div class="board paper" role="img" aria-label="A Draftboard canvas: a leader, a coder and a reviewer, linked by lines. The reviewer needs your approval.">
+      <svg class="links" aria-hidden="true"></svg>
+      <div class="node" id="n-leader" style="left:4%; top:6%">
+        <header><b>leader</b><span class="role">Claude Code</span><span class="st"><i></i>Working</span></header>
+        <pre><span class="p">›</span> <span class="k">orch send coder</span>
+  "Split the parser, add tests"
+<span class="p">›</span> <span class="k">orch tasks</span>  2 open · 1 done</pre>
+      </div>
+      <div class="node idle" id="n-coder" style="left:4%; top:58%">
+        <header><b>coder</b><span class="role">Codex</span><span class="st"><i></i>Waiting</span></header>
+        <pre>✓ 14 tests passed
+<span class="p">›</span> <span class="k">orch send leader</span> "Done"</pre>
+      </div>
+      <div class="node need" id="n-reviewer" style="left:53%; top:34%">
+        <header><b>reviewer</b><span class="role">Claude Code</span><span class="st"><i></i>Needs you</span></header>
+        <pre>Allow <span class="k">git diff</span>?
+  1 Yes  2 Always  3 No</pre>
+      </div>
+      <span class="chip"><i></i>P0 · main</span>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">What it does</p>
+      <h2>One window for every agent you run.</h2>
+      <p>Draftboard doesn't replace your agents: it runs the CLIs you already use, signed in with your own accounts, and lays them out where you can see who is working and who is waiting for you.</p>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 10 3 2-3 2M12 15h5"/></svg></div>
+        <h3>Real terminals on a canvas</h3>
+        <p>Each node is a full terminal. Zoom, pan, arrange. A sidebar shows who needs you, who is working and who is idle; <kbd>⌘J</kbd> jumps to the next one waiting.</p>
+      </article>
+      <article class="card">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7.5c5 1 3 8 8 9"/></svg></div>
+        <h3>Linked agents talk</h3>
+        <p>Drag a line between two nodes. Inside the terminal, agents use <code>orch send</code> to message a colleague; messages wait in a queue until the receiver is free.</p>
+      </article>
+      <article class="card">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3"/><circle cx="5" cy="17" r="2.5"/><circle cx="19" cy="17" r="2.5"/><path d="M10 9.5 6.5 15M14 9.5l3.5 5.5"/></svg></div>
+        <h3>Teams in one click</h3>
+        <p>Launch a ready-made team, already linked, and give the leader the task. Or build your own and save it.</p>
+      </article>
+      <article class="card">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 7v10M18 11c0 4-6 3-12 6"/></svg></div>
+        <h3>A worktree per agent</h3>
+        <p>In a git repo every agent gets its own <code>orch/&lt;name&gt;</code> branch, so nobody steps on anyone. The Git panel shows the graph, diffs, commit, push and branch switching.</p>
+      </article>
+      <article class="card">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg></div>
+        <h3>Floors for experiments</h3>
+        <p>Copy a whole workspace and its repos instantly with APFS clones. Try an idea on a floor, then bring the branches back, or throw it away.</p>
+      </article>
+      <article class="card">
+        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M9 9l2 2 4-4"/></svg></div>
+        <h3>Point at the bug</h3>
+        <p>Web and iOS Simulator nodes next to the agents. Capture the screen, circle what's wrong, add a note, and send it to the agent linked to it.</p>
+      </article>
+    </div>
+
+    <div class="steps" style="margin-top:56px" aria-label="How it works">
+      <div class="step"><h3>Open a folder</h3><p>Pick a project or clone one from Git. Draftboard finds the repository and its branch.</p></div>
+      <div class="step"><h3>Launch a team</h3><p>Press <kbd>⇧⌘T</kbd>, pick a team and write the task. The leader splits it and hands it out.</p></div>
+      <div class="step"><h3>Watch, approve, steer</h3><p>Follow the work on the canvas and step in only when an agent needs you.</p></div>
+    </div>
+    <pre class="terminal" aria-label="Commands agents use inside Draftboard"><span class="c"># inside any terminal on the board</span>
+<span class="p">$</span> orch list                      <span class="c"># linked colleagues and their status</span>
+<span class="p">$</span> orch send reviewer "Ready for review on orch/coder"
+<span class="p">$</span> orch tasks                     <span class="c"># the project's phases and open tasks</span>
+<span class="p">$</span> orch task done 3fa9c1</pre>
+  </div>
+</section>
+
+<section id="teams" class="paper" style="border-block:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">Teams</p>
+      <h2>Six teams ready to go. Or your own.</h2>
+      <p>The first member is the leader: it gets the task and stays in the project folder. Everyone else works on their own branch.</p>
+    </div>
+    <div class="teams">
+      <div class="team"><h3>Feature squad <span>3 agents</span></h3><p>The leader splits the work, the coder does it, the reviewer checks it.</p><div class="roles"><span>leader</span><span>coder</span><span>reviewer</span></div></div>
+      <div class="team"><h3>Pair <span>2 agents</span></h3><p>The lightest: one writes, the other reviews.</p><div class="roles"><span>coder</span><span>reviewer</span></div></div>
+      <div class="team"><h3>Bug hunt <span>3 agents</span></h3><p>The tester reproduces and writes the test, the coder fixes, the leader closes.</p><div class="roles"><span>leader</span><span>tester</span><span>coder</span></div></div>
+      <div class="team"><h3>Parallel build <span>5 agents</span></h3><p>Three coders on separate tasks, each in its own worktree, one reviewer for all.</p><div class="roles"><span>leader</span><span>coder-1</span><span>coder-2</span><span>coder-3</span><span>reviewer</span></div></div>
+      <div class="team"><h3>Exploration <span>3 agents</span></h3><p>The researcher compares the options, the coder builds a prototype.</p><div class="roles"><span>leader</span><span>researcher</span><span>coder</span></div></div>
+      <div class="team"><h3>Full squad <span>5 agents</span></h3><p>From feature to release: code, review, tests and docs.</p><div class="roles"><span>leader</span><span>coder</span><span>reviewer</span><span>tester</span><span>writer</span></div></div>
+    </div>
+    <div class="team custom" style="margin-top:12px"><h3>+ Your own team</h3><p>Start from scratch or duplicate a preset. Pick the role and agent for each member, choose who talks to whom, and save it for next time.</p></div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">Install</p>
+      <h2>Two minutes, once.</h2>
+    </div>
+    <div class="install">
+      <div class="panel">
+        <h3>Get it running</h3>
+        <ol class="how">
+          <li><span><a href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg"><strong>Download Draftboard.dmg</strong></a>, open it and drag Draftboard into Applications.</span></li>
+          <li><span>Open Draftboard. macOS says it can't verify the developer: click <strong>Done</strong>.</span></li>
+          <li><span>Go to <strong>System Settings › Privacy &amp; Security</strong> and, near the bottom, click <strong>Open Anyway</strong> next to Draftboard.</span></li>
+        </ol>
+        <p class="notice">This version is not notarized by Apple yet, so macOS asks you to allow it once.</p>
+      </div>
+      <div class="panel">
+        <h3>Requirements</h3>
+        <ul class="req">
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><strong>macOS 14</strong> or later on Apple Silicon.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>At least one agent CLI installed and signed in in your terminal: <code>claude</code>, <code>codex</code>, <code>gemini</code> or <code>opencode</code>.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><code>git</code> (Command Line Tools) for worktrees and the Git panel.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>No account and nothing to configure: agents run with your existing logins.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="final paper">
+  <div class="wrap">
+    <img src="assets/icon.png" alt="">
+    <h2>Stop juggling terminal tabs.</h2>
+    <p>Put your agents on one board, link them up and let them work together.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg">Download for macOS <small data-version>v0.3.0</small></a>
+      <a class="btn ghost" href="https://github.com/federix-ai/draftboard-app/releases">All releases</a>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Draftboard · made by federix-ai</span>
+    <span><a href="https://github.com/federix-ai/draftboard-app">GitHub</a> · <a href="https://github.com/federix-ai/draftboard-app/releases">Releases</a> · <a href="https://github.com/federix-ai/draftboard-app/issues">Report a problem</a></span>
+  </div>
+</footer>
+
+<script>
+  // Board links, drawn from the nodes' real edges so they stay attached at every width.
+  (() => {
+    const board = document.querySelector(".board"), svg = board.querySelector("svg.links");
+    const box = id => { const b = board.getBoundingClientRect(), r = document.getElementById(id).getBoundingClientRect();
+      return { l: r.left - b.left, r: r.right - b.left, t: r.top - b.top, b: r.bottom - b.top, cx: r.left - b.left + r.width / 2, cy: r.top - b.top + r.height / 2 }; };
+    const side = (a, c, flow) => { const dx = Math.max(24, (c.l - a.r) / 2);
+      return `<path${flow ? ' class="flow"' : ""} d="M${a.r} ${a.cy} C ${a.r + dx} ${a.cy}, ${c.l - dx} ${c.cy}, ${c.l} ${c.cy}"/>`; };
+    const down = (a, c, flow) => { const dy = (c.t - a.b) / 2;
+      return `<path${flow ? ' class="flow"' : ""} d="M${a.cx} ${a.b} C ${a.cx} ${a.b + dy}, ${c.cx} ${c.t - dy}, ${c.cx} ${c.t}"/>`; };
+    const draw = () => {
+      const L = box("n-leader"), C = box("n-coder"), R = box("n-reviewer");
+      svg.setAttribute("viewBox", `0 0 ${board.clientWidth} ${board.clientHeight}`);
+      svg.innerHTML = down(L, C, true) + side(L, R) + side(C, R);
+    };
+    new ResizeObserver(draw).observe(board);
+    document.fonts && document.fonts.ready.then(draw);
+  })();
+
+  // The button labels follow the latest release; the hard-coded version stays if the API is unreachable.
+  fetch("https://api.github.com/repos/federix-ai/draftboard-app/releases/latest")
+    .then(r => r.ok ? r.json() : null)
+    .then(r => { if (r && r.tag_name) document.querySelectorAll("[data-version]").forEach(el => el.textContent = r.tag_name); })
+    .catch(() => {});
+</script>
+</body>
+</html>
