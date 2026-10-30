@@ -28,7 +28,7 @@ function applyLang(l, fromUser) {
   lang = l;
   document.documentElement.lang = l;
   $$("[data-i18n]").forEach(el => { const v = l === "it" ? IT[el.dataset.i18n] : EN[el.dataset.i18n]; if (v != null) el.innerHTML = v; });
-  try { localStorage.setItem("draftboard.lang", l); } catch (e) {}
+  try { localStorage.setItem("bashestra.lang", l); } catch (e) {}
   setLangUI();
   langHooks.forEach(fn => fn());
   if (fromUser && !reduce) {
@@ -525,7 +525,7 @@ const player = (() => {
   }));
   return { go, get tl() { return tl; } };
 })();
-window.__draftboard = { player };
+window.__bashestra = { player };
 
 /* ================================================================= TEAMS */
 (() => {

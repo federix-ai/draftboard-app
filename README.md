@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/icon.png" width="128" alt="Draftboard icon">
+  <img src="assets/icon.png" width="128" alt="Bashestra icon">
 </p>
 
-<h1 align="center">Draftboard</h1>
+<h1 align="center">Bashestra</h1>
 
 <p align="center">
   <b>Conduct your orchestra of coding agents.</b><br>
@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg"><b>⬇ Download for macOS</b></a>
+  <a href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg"><b>⬇ Download for macOS</b></a>
   &nbsp;·&nbsp;
   <a href="https://federix-ai.github.io/draftboard-app/">Project page</a>
   &nbsp;·&nbsp;
@@ -38,9 +38,9 @@
 
 ## Install
 
-1. [Download **Draftboard.dmg**](https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg), open it and drag Draftboard into Applications.
-2. Open Draftboard. macOS says it can't verify the developer: click **Done**.
-3. Go to **System Settings › Privacy & Security** and click **Open Anyway** next to Draftboard.
+1. [Download **Bashestra.dmg**](https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg), open it and drag Bashestra into Applications.
+2. Open Bashestra. macOS says it can't verify the developer: click **Done**.
+3. Go to **System Settings › Privacy & Security** and click **Open Anyway** next to Bashestra.
 
 > The app is not notarized by Apple yet, so macOS asks you to allow it once.
 
@@ -52,7 +52,7 @@
 | **Agents** | At least one CLI installed and signed in in your terminal: `claude`, `codex`, `gemini` or `opencode`. |
 | **Git** | Command Line Tools, for worktrees and the Git panel. |
 
-Draftboard runs your CLIs with your own logins: no Draftboard account needed.
+Bashestra runs your CLIs with your own logins: no Bashestra account needed.
 
 ## Feedback
 

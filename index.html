@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Draftboard</title>
+<title>Bashestra</title>
 <meta name="description" content="Run Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas. Every node is a real terminal; draw a line and two agents can talk. Free macOS app.">
 <meta name="theme-color" content="#F4F4F6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#111114" media="(prefers-color-scheme: dark)">
-<meta property="og:title" content="Draftboard: conduct your orchestra of coding agents">
+<meta property="og:title" content="Bashestra: conduct your orchestra of coding agents">
 <meta property="og:description" content="Every node is a real terminal. Draw a line and two agents can message each other. A free macOS app for Claude Code, Codex, Gemini CLI and OpenCode.">
 <meta property="og:image" content="https://federix-ai.github.io/draftboard-app/assets/icon.png">
 <meta property="og:type" content="website">
@@ -19,7 +19,7 @@
 <script>
   // Hide animated elements only when JS runs; if the module never boots, show everything after a moment.
   document.documentElement.classList.add("js");
-  try { const l = localStorage.getItem("draftboard.lang"); if (l === "it") document.documentElement.lang = "it"; } catch (e) {}
+  try { const l = (localStorage.getItem("bashestra.lang") || localStorage.getItem("draftboard.lang")); if (l === "it") document.documentElement.lang = "it"; } catch (e) {}
   setTimeout(() => { if (!window.__siteReady) document.documentElement.classList.remove("js"); }, 2500);
 </script>
 <script type="module" src="assets/js/main.js"></script>
@@ -30,7 +30,7 @@
 
 <nav class="top" aria-label="Main">
   <div class="wrap">
-    <a class="brand" href="#"><img src="assets/icon.png" alt="">Draftboard</a>
+    <a class="brand" href="#"><img src="assets/icon.png" alt="">Bashestra</a>
     <div class="links">
       <a href="#demo" data-i18n="nav.demo">Demo</a>
       <a href="#features" data-i18n="nav.features">Features</a>
@@ -43,7 +43,7 @@
       <button type="button" data-lang="it" aria-pressed="false">IT</button>
       <i class="lang-pill" aria-hidden="true"></i>
     </div>
-    <a class="btn primary" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg" data-i18n="nav.download">Download</a>
+    <a class="btn primary" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-i18n="nav.download">Download</a>
   </div>
 </nav>
 
@@ -57,9 +57,9 @@
       <h1 class="hero-title" data-i18n="hero.title">Conduct your <em>orchestra</em> of coding agents.</h1>
       <p class="lede reveal" data-i18n="hero.lede">Run Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas. Every node is a real terminal. Draw a line between two agents and they can message each other.</p>
       <div class="cta reveal">
-        <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg">
+        <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg">
           <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
-          <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.3.1</small>
+          <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.0</small>
         </a>
         <a class="btn ghost big" href="#demo">
           <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
@@ -75,7 +75,7 @@
     </div>
 
     <div class="board-wrap reveal">
-      <div class="board paper" id="hero-board" role="img" aria-label="A Draftboard canvas: a leader, a coder and a reviewer pass work along the lines between them; the reviewer asks for your approval.">
+      <div class="board paper" id="hero-board" role="img" aria-label="A Bashestra canvas: a leader, a coder and a reviewer pass work along the lines between them; the reviewer asks for your approval.">
         <svg class="wires" aria-hidden="true"></svg>
         <div class="node" id="h-leader" style="left:4%; top:7%">
           <header><span class="ag cc">CC</span><b>leader</b><span class="st"><i></i><em data-st>Working</em></span></header>
@@ -139,7 +139,7 @@
     <div class="sec-head reveal">
       <p class="kicker" data-i18n="feat.kicker">What it does</p>
       <h2 data-i18n="feat.title">One window for every agent you run.</h2>
-      <p data-i18n="feat.sub">Draftboard doesn't replace your agents: it runs the CLIs you already use, signed in with your own accounts, and lays them out where you can see who is working and who is waiting for you.</p>
+      <p data-i18n="feat.sub">Bashestra doesn't replace your agents: it runs the CLIs you already use, signed in with your own accounts, and lays them out where you can see who is working and who is waiting for you.</p>
     </div>
     <div class="grid">
       <article class="card" data-chapter="0">
@@ -210,14 +210,14 @@
         <h2 data-i18n="how.title">Three steps, then you just steer.</h2>
       </div>
       <ol class="steps">
-        <li class="step reveal"><span class="num">01</span><div><h3 data-i18n="s1.t">Open a folder</h3><p data-i18n="s1.d">Pick a project or clone one from Git. Draftboard finds the repository and its branch.</p></div></li>
+        <li class="step reveal"><span class="num">01</span><div><h3 data-i18n="s1.t">Open a folder</h3><p data-i18n="s1.d">Pick a project or clone one from Git. Bashestra finds the repository and its branch.</p></div></li>
         <li class="step reveal"><span class="num">02</span><div><h3 data-i18n="s2.t">Launch a team</h3><p data-i18n="s2.d">Press <kbd>⇧⌘T</kbd>, pick a team and write the task. The leader splits it and hands it out.</p></div></li>
         <li class="step reveal"><span class="num">03</span><div><h3 data-i18n="s3.t">Watch, approve, steer</h3><p data-i18n="s3.d">Follow the work on the canvas and step in only when an agent needs you.</p></div></li>
       </ol>
     </div>
     <div class="term-card reveal">
       <div class="term-head"><span class="tl"><i></i><i></i><i></i></span><span>zsh — reviewer</span></div>
-      <pre class="terminal" id="orch-term" aria-label="Commands agents use inside Draftboard: orch list, orch send, orch tasks, orch task done"></pre>
+      <pre class="terminal" id="orch-term" aria-label="Commands agents use inside Bashestra: orch list, orch send, orch tasks, orch task done"></pre>
     </div>
   </div>
 </section>
@@ -245,9 +245,9 @@
         <div class="how-wrap">
         <i class="how-line" aria-hidden="true"><i></i></i>
         <ol class="how">
-          <li><span class="n">1</span><span data-i18n="inst.1"><a href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg"><strong>Download Draftboard.dmg</strong></a>, open it and drag Draftboard into Applications.</span></li>
-          <li><span class="n">2</span><span data-i18n="inst.2">Open Draftboard. macOS says it can't verify the developer: click <strong>Done</strong>.</span></li>
-          <li><span class="n">3</span><span data-i18n="inst.3">Go to <strong>System Settings › Privacy &amp; Security</strong> and, near the bottom, click <strong>Open Anyway</strong> next to Draftboard.</span></li>
+          <li><span class="n">1</span><span data-i18n="inst.1"><a href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg"><strong>Download Bashestra.dmg</strong></a>, open it and drag Bashestra into Applications.</span></li>
+          <li><span class="n">2</span><span data-i18n="inst.2">Open Bashestra. macOS says it can't verify the developer: click <strong>Done</strong>.</span></li>
+          <li><span class="n">3</span><span data-i18n="inst.3">Go to <strong>System Settings › Privacy &amp; Security</strong> and, near the bottom, click <strong>Open Anyway</strong> next to Bashestra.</span></li>
         </ol>
         </div>
         <p class="notice" data-i18n="inst.note">This version is not notarized by Apple yet, so macOS asks you to allow it once.</p>
@@ -273,7 +273,7 @@
     <h2 data-i18n="final.title">Stop juggling terminal tabs.</h2>
     <p data-i18n="final.sub">Put your agents on one board, link them up and let them work together.</p>
     <div class="cta">
-      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Draftboard.dmg"><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.3.1</small></a>
+      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg"><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.0</small></a>
       <a class="btn ghost big" href="https://github.com/federix-ai/draftboard-app/releases" data-i18n="final.all">All releases</a>
     </div>
   </div>
@@ -282,7 +282,7 @@
 
 <footer>
   <div class="wrap">
-    <span data-i18n="foot.made">Draftboard · made by federix-ai</span>
+    <span data-i18n="foot.made">Bashestra · made by federix-ai</span>
     <span><a href="https://github.com/federix-ai/draftboard-app">GitHub</a> · <a href="https://github.com/federix-ai/draftboard-app/releases" data-i18n="nav.releases">Releases</a> · <a href="https://github.com/federix-ai/draftboard-app/issues" data-i18n="foot.issue">Report a problem</a></span>
   </div>
 </footer>
