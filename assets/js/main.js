@@ -10,6 +10,34 @@ const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&
 const AG = { cc: ["CC", "Claude Code"], cx: ["CX", "Codex"], gm: ["GM", "Gemini CLI"], oc: ["OC", "OpenCode"] };
 const PROMPT = '<span class="p">›</span> ';
 
+/* ------------------------------------------------- the app's pointers (CursorKit "Ventaglio") */
+// On a 32 grid, tip at (7, 4): the palest arrow turned 26°, the lighter one 13°, the violet one on top.
+const ARROW = "M7 4v20.5l5-4.6 3.4 7.6 3.6-1.6-3.4-7.4h6.8z";
+const FAN = `<svg class="fan-arrow" viewBox="0 0 32 32"><path class="f2" d="${ARROW}" style="transform:rotate(26deg)"/><path class="f1" d="${ARROW}" style="transform:rotate(13deg)"/><path class="f0" d="${ARROW}"/></svg>`;
+(() => {
+  // Every shape is filled and stroked in white (3 pt), then filled in colour, under a 0,1,1.5 shadow.
+  const r = (x, y, w, h, k, turn) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${k}"${turn ? ` transform="rotate(${turn})"` : ""}/>`;
+  const shape = (body, color) => `<g fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round">${body}</g><g fill="${color}">${body}</g>`;
+  const url = (inner, x, y, fallback) => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><filter id="s" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1" stdDeviation="0.75" flood-opacity="0.35"/></filter><g filter="url(#s)">${inner}</g></svg>`)}") ${x} ${y}, ${fallback}`;
+  const arrow = turn => `<path d="${ARROW}"${turn ? ` transform="rotate(${turn} 7 4)"` : ""}/>`;
+  const C = {
+    arrow: url(shape(arrow(26), "#DAD2FD") + shape(arrow(13), "#B5A6FA") + shape(arrow(), "#6E4FF5"), 7, 4, "default"),
+    open: url(shape(r(11.4, 5, 3.4, 12, 1.7) + r(14.9, 3.5, 3.4, 13, 1.7) + r(18.4, 4.6, 3.4, 12, 1.7) + r(21.9, 7.4, 3, 10, 1.5) + r(11.4, 13, 13.5, 13.5, 4.5) + r(6.6, 11.5, 3.4, 10, 1.7, "-40 8.3 16.5"), "#6E4FF5"), 16, 16, "grab"),
+    fist: url(shape(r(9.6, 10.5, 3.6, 8, 1.8) + r(13.2, 9.2, 3.6, 8, 1.8) + r(16.8, 9.2, 3.6, 8, 1.8) + r(20.4, 10.5, 3.4, 8, 1.7) + r(9.6, 13.5, 14.2, 13, 4.5), "#6E4FF5")
+      + `<path d="M13.2 13v3.2M16.8 12v3.2M20.4 13v3.2" stroke="#fff" stroke-opacity=".55" stroke-linecap="round"/>`, 16, 16, "grabbing"),
+  };
+  const root = document.documentElement.style;
+  root.setProperty("--cur-arrow", C.arrow); root.setProperty("--cur-open", C.open); root.setProperty("--cur-fist", C.fist);
+  window.__cursors = C;
+})();
+const CUR = window.__cursors;
+// The animated pointer arrives folded and opens its fan as it lands.
+const fanIn = (tl, el, pos) => {
+  const [f2, f1] = $$(".f2, .f1", el);
+  const run = (a, b) => tl ? tl.add(a, b, pos) : animate(a, b);
+  run([f2, f1], { rotate: (_, i) => [0, i ? 13 : 26], duration: 520, delay: stagger(40), ease: "outBack(2)" });
+};
+
 let lang = document.documentElement.lang === "it" ? "it" : "en";
 const t = k => UI[lang][k];
 const label = st => t(st === "need" ? "need" : st === "done" ? "done" : st);
@@ -83,8 +111,11 @@ const hero = (() => {
   document.fonts && document.fonts.ready.then(draw);
 
   // drag the nodes around, wires follow
+  // the grabbed node is the selected one: the 2 pt violet ring of the canvas
   let zTop = 3;
-  Object.values(N).forEach(n => createDraggable(n, { container: board, containerPadding: 6, onGrab: () => { n.style.zIndex = ++zTop; }, onUpdate: draw, onDrag: draw, onSettle: draw, releaseStiffness: 120 }));
+  Object.values(N).forEach(n => createDraggable(n, { container: board, containerPadding: 6, cursor: { onHover: CUR.open, onGrab: CUR.fist },
+    onGrab: () => { n.style.zIndex = ++zTop; Object.values(N).forEach(m => m.classList.toggle("sel", m === n)); }, onUpdate: draw, onDrag: draw, onSettle: draw, releaseStiffness: 120 }));
+  board.addEventListener("pointerdown", e => { if (!e.target.closest(".node")) Object.values(N).forEach(m => m.classList.remove("sel")); });
 
   let visible = true, wake = null;
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && wake) { wake(); wake = null; } }).observe(board);
@@ -145,11 +176,13 @@ const hero = (() => {
       const yes = $(".opt.yes", N.R); if (!yes) continue;
       const tb = box(yes), bw = board.clientWidth, bh = board.clientHeight;
       utils.set(cursor, { x: bw * 0.92, y: bh * 0.95, opacity: 0, scale: 1 });
-      await animate(cursor, { opacity: 1, x: tb.cx - 4, y: tb.cy - 3, duration: 900, ease: "inOut(3)" });
+      utils.set($$(".f2, .f1", cursor), { rotate: 0 });
+      await animate(cursor, { opacity: 1, x: tb.cx, y: tb.cy, duration: 900, ease: "inOut(3)" });
+      fanIn(null, cursor);
       await animate(cursor, { scale: [1, 0.82, 1], duration: 260, ease: "out(2)" });
       const rp = document.createElement("i"); rp.className = "ripple"; rp.style.left = tb.cx + "px"; rp.style.top = tb.cy + "px"; board.appendChild(rp);
       animate(rp, { scale: [0.3, 1.6], opacity: [1, 0], duration: 600, ease: "out(3)", onComplete: () => rp.remove() });
-      yes.style.background = "var(--accent-fill)";
+      Object.assign(yes.style, { background: "var(--accent-fill)", color: "var(--on-accent)", borderColor: "transparent" });
       await step(250);
       animate(cursor, { opacity: 0, duration: 400, delay: 200 });
       setState(N.R, "working");
@@ -186,7 +219,7 @@ const player = (() => {
     `<div class="sn ${st}" id="${id}" data-state="${st}" style="left:${x}px;top:${y}px"><header><span class="ag ${ag}">${AG[ag][0]}</span><b>${name}</b><span class="rl">${AG[ag][1]}</span><span class="q">1</span><span class="st"><i></i><em>${label(st)}</em></span></header><pre></pre>${extra}</div>`;
   const chrome = (body, title = "my-app") =>
     `<div class="win"><div class="wt"><span class="tl"><i></i><i></i><i></i></span><span class="ttl">${title}<span class="pchip">P0 · main</span></span><span class="rt"></span></div><div class="wb">${body}</div>
-     <div class="keys"></div><div class="toast"><i></i><span></span></div><div class="scur"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 19 5 3Z"/></svg></div><i class="sripple"></i></div>`;
+     <div class="keys"></div><div class="toast"><i></i><span></span></div><div class="scur">${FAN}</div><i class="sripple"></i></div>`;
   const sidebar = rows => `<aside class="side"><h6 class="needh">${t("needHead")} <span class="cnt"></span></h6><div class="needs"></div><h6>${t("sessions")}</h6><div class="rows">${
     rows.length ? rows.map(r => `<div class="srow" data-id="${r[0]}"><i class="d ${r[2] === "working" ? "w" : r[2] === "need" ? "n" : ""}"></i>${r[1]}<small>${AG[r[3]][0]}</small></div>`).join("") : `<div class="empty">${t("noSessions")}</div>`}</div></aside>`;
   const wires = list => `<svg class="sw" viewBox="0 0 790 562">${list.map(([id, d]) => `<path id="${id}" pathLength="1" d="${d}"/>`).join("")}</svg>`;
@@ -239,8 +272,10 @@ const player = (() => {
   const click = (tl, x, y, pos, from) => {
     const c = $(".scur", stage), r = $(".sripple", stage);
     tl.set(c, { x: from ? from[0] : 900, y: from ? from[1] : 560, opacity: 0, scale: 1 }, pos)
-      .add(c, { opacity: 1, x: x - 5, y: y - 3, duration: 800, ease: "inOut(3)" }, pos)
-      .add(c, { scale: [1, 0.8, 1], duration: 260 }, pos + 800)
+      .set($$(".f2, .f1", c), { rotate: 0 }, pos)
+      .add(c, { opacity: 1, x, y, duration: 800, ease: "inOut(3)" }, pos);
+    fanIn(tl, c, pos + 560);
+    tl.add(c, { scale: [1, 0.8, 1], duration: 260 }, pos + 800)
       .set(r, { left: x + "px", top: y + "px" }, pos + 900)
       .add(r, { scale: [0.3, 1.8], opacity: [1, 0], duration: 600, ease: "out(3)" }, pos + 900)
       .add(c, { opacity: [1, 0], duration: 300 }, pos + 1500);
@@ -679,19 +714,62 @@ function touches() {
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-45% 0px -50% 0px" });
   links.forEach(a => { const s = $(a.getAttribute("href")); if (s) io.observe(s); });
 
-  // final: icon float + drifting constellation of nodes
-  if (!reduce) animate(".final-icon", { y: [-8, 8], rotate: [-3, 3], duration: 3200, alternate: true, loop: true, ease: "inOut(2)" });
-  const svg = $(".constellation"); if (!svg) return;
-  const W = 1200, H = 520; svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
-  const pts = [[90, 90], [230, 300], [120, 440], [360, 140], [300, 470], [880, 110], [1010, 300], [1120, 120], [940, 450], [1100, 470], [820, 290], [400, 330]];
-  const edges = [[0, 3], [0, 1], [1, 2], [1, 11], [3, 11], [4, 11], [5, 7], [5, 10], [6, 7], [6, 10], [6, 9], [8, 10], [8, 9]];
-  svg.innerHTML = edges.map(() => "<line/>").join("") + pts.map((p, i) => `<circle r="${i % 4 === 0 ? 7 : 5}" class="${i % 5 === 0 ? "o" : ""}"/>`).join("");
-  const ls = $$("line", svg), cs = $$("circle", svg), P = pts.map(([x, y]) => ({ x, y }));
-  const render = () => { cs.forEach((c, i) => { c.setAttribute("cx", P[i].x); c.setAttribute("cy", P[i].y); });
-    ls.forEach((l, i) => { const [a, b] = edges[i]; l.setAttribute("x1", P[a].x); l.setAttribute("y1", P[a].y); l.setAttribute("x2", P[b].x); l.setAttribute("y2", P[b].y); }); };
-  render();
-  if (reduce) return;
-  P.forEach((p, i) => animate(p, { x: p.x + utils.random(-40, 40), y: p.y + utils.random(-30, 30), duration: utils.random(4000, 7000), delay: i * 120, alternate: true, loop: true, ease: "inOut(2)", onUpdate: i === 0 ? render : undefined }));
+  ensemble();
+}
+
+/* ========================================================== ENSEMBLE (final) */
+// The app icon, seated like the launch splash (SplashWindow.swift): the dot grid sweeps in, the seating
+// plan is traced, the eight terminals sit down one by one and light up, then your prompt and the
+// violet cursor ("it's your turn"). Geometry from AppIcon.swift, on the icon's 1024 grid.
+function ensemble() {
+  const svg = $(".ensemble"), dots = $(".final .dots"); if (!svg) return;
+  const PODIUM = [512, 710];
+  const SEATS = [[200, 530, -60], [332, 398, -30], [512, 350, 0], [692, 398, 30], [824, 530, 60], [364, 562, -45], [512, 500, 0], [660, 562, 45]];
+  const arc = r => Array.from({ length: 49 }, (_, i) => { const a = (-165 + 150 * i / 48) * Math.PI / 180;
+    return `${i ? "L" : "M"}${(PODIUM[0] + r * Math.cos(a)).toFixed(1)} ${(PODIUM[1] + r * Math.sin(a)).toFixed(1)}`; }).join(" ");
+  const ROWS = [360, 210];
+  svg.innerHTML = `<defs>${ROWS.map((r, i) => `<mask id="ens-plan${i}" maskUnits="userSpaceOnUse"><path d="${arc(r)}" pathLength="1" fill="none" stroke="#fff" stroke-width="14" stroke-dasharray="1 1"/></mask>`).join("")}</defs>
+    <g class="plans">${ROWS.map((r, i) => `<path class="plan" d="${arc(r)}" mask="url(#ens-plan${i})"/>`).join("")}</g>
+    ${SEATS.map(([x, y, a]) => `<g class="seat"><g transform="translate(${x} ${y}) rotate(${a})"><rect x="-56" y="-42" width="112" height="84" rx="22"/><path d="M-30 -14 L-14 0 L-30 14 M-2 14 L22 14"/></g></g>`).join("")}
+    <path class="prompt" pathLength="1" d="M448 680 L496 724 L448 768"/>
+    <rect class="caret" x="520" y="692" width="36" height="66" rx="8"/>`;
+  const seats = $$(".seat", svg), glyphs = $$(".seat path", svg), plans = $(".plans", svg), masks = $$("mask path", svg);
+  const prompt = $(".prompt", svg), caret = $(".caret", svg);
+  if (reduce) { utils.set(plans, { opacity: 0 }); return; }
+
+  utils.set(masks, { strokeDashoffset: 1 });
+  utils.set(seats, { opacity: 0, translateY: -26, scale: 0.72 });
+  utils.set(glyphs, { opacity: 0 });
+  utils.set(prompt, { strokeDasharray: "1 1", strokeDashoffset: 1 });
+  utils.set(caret, { opacity: 0 });
+  if (dots) dots.style.setProperty("--sweep", "-25%");
+
+  // Splash times (seconds from launch) × 1000 × K: a touch slower than the app, which is waiting to open.
+  const K = 1300, at = s => s * K;
+  const seat = () => {
+    const tl = createTimeline({ autoplay: false });
+    if (dots) tl.add(dots, { "--sweep": ["-25%", "100%"], duration: at(0.6), ease: "out(2)" }, at(0.02));
+    tl.add(masks, { strokeDashoffset: [1, 0], duration: at(0.45), ease: "inOut(3)" }, at(0.10))
+      .add(seats, { opacity: [0, 1], translateY: [-26, 0], scale: [0.72, 1], duration: at(0.24), delay: stagger(at(0.075)), ease: "out(3)" }, at(0.40))
+      .add(glyphs, { opacity: [0, 1], duration: at(0.10), delay: stagger(at(0.03)), ease: "out(3)" }, at(1.08))
+      .add(plans, { opacity: [1, 0], duration: at(0.40), ease: "linear" }, at(1.30))
+      .add(prompt, { strokeDashoffset: [1, 0], duration: at(0.18), ease: "inOut(3)" }, at(1.30))
+      .set(caret, { opacity: 1 }, at(1.50))
+      .call(() => caret.classList.add("blink"), at(1.50));
+    return tl;
+  };
+  const intro = seat();
+  new IntersectionObserver(([e], ob) => { if (!e.isIntersecting) return; ob.disconnect(); intro.play(); }, { threshold: 0.45 }).observe(svg);
+
+  // Conduct it: point at the orchestra and it plays a wave from the middle out, with the fan of the pointer.
+  let playing = null;
+  const wave = () => {
+    if (!intro.completed || playing) return;
+    playing = animate(seats, { translateY: [0, -18, 0], duration: 620, delay: stagger(55, { from: "center" }), ease: "inOut(2)", onComplete: () => (playing = null) });
+    animate(caret, { scaleY: [1, 1.18, 1], transformOrigin: "50% 100%", duration: 420, delay: 280, ease: "out(3)" });
+  };
+  svg.addEventListener("pointerenter", wave);
+  svg.addEventListener("click", wave);
 }
 
 /* ================================================================== BOOT */
