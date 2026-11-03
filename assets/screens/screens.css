@@ -1,0 +1,104 @@
+@keyframes sc-shine { 
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes orcDash { 
+  100% { stroke-dashoffset: -28; }
+}
+@keyframes orcMove { 
+  0% { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
+}
+@keyframes orcTbPulse { 
+  0% { box-shadow: rgba(255, 159, 10, 0.75) 0px 0px 0px 0px; }
+  100% { box-shadow: rgba(255, 159, 10, 0) 0px 0px 0px 6px; }
+}
+@keyframes orcSb2Pulse { 
+  0% { box-shadow: rgba(255, 159, 10, 0.7) 0px 0px 0px 0px; }
+  100% { box-shadow: rgba(255, 159, 10, 0) 0px 0px 0px 6px; }
+}
+@keyframes orcSb2Spin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes orcDotPulse { 
+  0% { box-shadow: rgba(255, 159, 10, 0.6) 0px 0px 0px 0px; }
+  100% { box-shadow: rgba(255, 159, 10, 0) 0px 0px 0px 6px; }
+}
+@keyframes orcShimmer { 
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(420%); }
+}
+@keyframes orcSpin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes orcBlink { 
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes orcSbPulse { 
+  0% { box-shadow: rgba(255, 159, 10, 0.7) 0px 0px 0px 0px; }
+  100% { box-shadow: rgba(255, 159, 10, 0) 0px 0px 0px 6px; }
+}
+@keyframes orcSbSpin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes orcSimSpin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes orcCfPulse { 
+  0% { box-shadow: rgba(255, 159, 10, 0.7) 0px 0px 0px 0px; }
+  100% { box-shadow: rgba(255, 159, 10, 0) 0px 0px 0px 6px; }
+}
+@keyframes orcCfIn { 
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes orcCfGlow { 
+  0% { box-shadow: rgba(255, 45, 85, 0.45) 0px 0px 0px 0px; }
+  100% { box-shadow: rgba(255, 45, 85, 0) 0px 0px 0px 8px; }
+}
+@keyframes orcFsPulse { 
+  0% { box-shadow: rgba(255, 159, 10, 0.6) 0px 0px 0px 0px; }
+  100% { box-shadow: rgba(255, 159, 10, 0) 0px 0px 0px 7px; }
+}
+@keyframes orcFsToast { 
+  0% { opacity: 0; transform: translateY(10px) scale(0.96); }
+  12% { opacity: 1; transform: none; }
+  88% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(4px); }
+}
+@keyframes orcFsIn { 
+  0% { opacity: 0; transform: translateX(16px); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes orcFsSpin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes orcRpIn { 
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes orcRpOut { 
+  100% { transform: scale(0.85); opacity: 0; }
+}
+@keyframes orcRpFill { 
+  0% { stroke-dashoffset: 125.66; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes orcRpBloom { 
+  0% { transform: scale(0.22); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes orcRpItem { 
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes orcRpFade { 
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes orcRpPick { 
+  0% { transform: scale(1); }
+  40% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
