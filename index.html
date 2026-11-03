@@ -3,101 +3,92 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bashestra</title>
+<title>Bashestra · conduct your orchestra of coding agents</title>
 <meta name="description" content="Run Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas. Every node is a real terminal; draw a line and two agents can talk. Free macOS app.">
-<meta name="theme-color" content="#F4F4F6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111114" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0B0B0E">
+<meta name="color-scheme" content="dark">
 <meta property="og:title" content="Bashestra: conduct your orchestra of coding agents">
 <meta property="og:description" content="Every node is a real terminal. Draw a line and two agents can message each other. A free macOS app for Claude Code, Codex, Gemini CLI and OpenCode.">
 <meta property="og:image" content="https://federix-ai.github.io/draftboard-app/assets/icon.png">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=0.7.7">
+<link rel="stylesheet" href="assets/screens/screens.css?v=0.7.5">
 <script>
   // Hide animated elements only when JS runs; if the module never boots, show everything after a moment.
   document.documentElement.classList.add("js");
-  try { const l = (localStorage.getItem("bashestra.lang") || localStorage.getItem("draftboard.lang")); if (l === "it") document.documentElement.lang = "it"; } catch (e) {}
+  try { const l = localStorage.getItem("draftboard.lang"); if (l === "it") document.documentElement.lang = "it"; } catch (e) {}
   setTimeout(() => { if (!window.__siteReady) document.documentElement.classList.remove("js"); }, 2500);
 </script>
-<script type="module" src="assets/js/main.js"></script>
+<script type="module" src="assets/js/main.js?v=0.7.7"></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
 <div class="scrollbar" aria-hidden="true"><i></i></div>
 
 <nav class="top" aria-label="Main">
-  <div class="wrap">
-    <a class="brand" href="#"><img src="assets/icon.png" alt="">Bashestra</a>
+  <div class="bar">
+    <a class="brand" href="#" aria-label="Bashestra"><img src="assets/icon.png" alt=""><span class="wm" aria-hidden="true"><b>bash</b>estra</span></a>
     <div class="links">
-      <a href="#demo" data-i18n="nav.demo">Demo</a>
-      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#tour" data-i18n="nav.tour">Tour</a>
+      <a href="#more" data-i18n="nav.features">Features</a>
       <a href="#teams" data-i18n="nav.teams">Teams</a>
       <a href="#install" data-i18n="nav.install">Install</a>
-      <a href="https://github.com/federix-ai/draftboard-app/releases" data-i18n="nav.releases">Releases</a>
     </div>
     <div class="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en" aria-pressed="true">EN</button>
       <button type="button" data-lang="it" aria-pressed="false">IT</button>
       <i class="lang-pill" aria-hidden="true"></i>
     </div>
-    <a class="btn primary" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-i18n="nav.download">Download</a>
+    <a class="btn primary sm" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-i18n="nav.download">Download</a>
   </div>
 </nav>
 
 <main id="main">
-<!-- HERO -->
-<header class="hero paper">
-  <div class="glow" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="hero-copy">
-      <span class="eyebrow reveal"><span class="dot"></span><span data-i18n="hero.eyebrow">Free · macOS app</span></span>
-      <h1 class="hero-title" data-i18n="hero.title">Conduct your <em>orchestra</em> of coding agents.</h1>
-      <p class="lede reveal" data-i18n="hero.lede">Run Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas. Every node is a real terminal. Draw a line between two agents and they can message each other.</p>
-      <div class="cta reveal">
-        <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg">
-          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
-          <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.0</small>
-        </a>
-        <a class="btn ghost big" href="#demo">
-          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
-          <span data-i18n="cta.watch">Watch it work</span>
-        </a>
-      </div>
-      <ul class="meta reveal">
-        <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>macOS 14+</li>
-        <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Apple Silicon</li>
-        <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="hero.langs">English and Italian</span></li>
-        <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="hero.accounts">Your CLIs, your accounts</span></li>
-      </ul>
+<!-- HERO: the icon's orchestra takes its seats, then becomes the live canvas -->
+<header class="hero">
+  <div class="spot" aria-hidden="true"></div>
+  <div class="wrap hero-copy">
+    <a class="news reveal" href="https://github.com/federix-ai/draftboard-app/releases/latest"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.5.4 · violet accent, new inspector, our own pointer</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+    <h1 class="hero-title" data-i18n="hero.title">Conduct your <em>orchestra</em> of coding agents.</h1>
+    <p class="lede reveal" data-i18n="hero.lede">Claude Code, Codex, Gemini CLI and OpenCode, side by side on one canvas. Every node is a real terminal. Draw a line and two agents talk. You step in only when they need you.</p>
+    <div class="cta reveal">
+      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
+        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.4</small>
+      </a>
+      <a class="btn ghost big" href="#tour">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+        <span data-i18n="cta.watch">See what it does</span>
+      </a>
     </div>
+    <p class="fine reveal" data-i18n="hero.fine">Free · macOS 14+ on Apple Silicon · your CLIs, your accounts</p>
+  </div>
 
-    <div class="board-wrap reveal">
-      <div class="board paper" id="hero-board" role="img" aria-label="A Bashestra canvas: a leader, a coder and a reviewer pass work along the lines between them; the reviewer asks for your approval.">
-        <svg class="wires" aria-hidden="true"></svg>
-        <div class="node" id="h-leader" style="left:4%; top:7%">
-          <header><span class="ag cc">CC</span><b>leader</b><span class="st"><i></i><em data-st>Working</em></span></header>
-          <pre data-term></pre>
+  <div class="showcase" id="showcase">
+    <div class="tilt">
+      <div class="app-frame">
+        <div class="app-stage" id="hero-stage" role="img" aria-label="The Bashestra window: the sidebar with who needs you, a canvas with a leader, a coder, a tester, a note and a web portal linked together, the composer and the inspector. A message is typed to the coder and the pointer approves the tester's request.">
+          <div class="hw">
+            <svg class="hicon" viewBox="0 0 1728 1080" aria-hidden="true"></svg>
+            <div class="htoast"><i></i><span></span></div>
+            <div class="cursor" aria-hidden="true"></div>
+          </div>
         </div>
-        <div class="node" id="h-coder" style="left:6%; top:60%">
-          <header><span class="ag cx">CX</span><b>coder</b><span class="st"><i></i><em data-st>Waiting</em></span></header>
-          <pre data-term></pre>
-        </div>
-        <div class="node" id="h-reviewer" style="left:53%; top:33%">
-          <header><span class="ag cc">CC</span><b>reviewer</b><span class="st"><i></i><em data-st>Waiting</em></span></header>
-          <pre data-term></pre>
-        </div>
-        <div class="cursor" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 19 5 3Z"/></svg></div>
-        <span class="chip"><i></i>P0 · main</span>
-        <span class="hint" data-i18n="hero.drag">Drag the nodes</span>
       </div>
     </div>
+    <button class="hplay" type="button" aria-label="Pause the animation" data-playing="true">
+      <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+      <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+    </button>
   </div>
 </header>
 
-<!-- AGENT MARQUEE -->
+<!-- AGENTS -->
 <div class="marquee" aria-label="Works with Claude Code, Codex, Gemini CLI and OpenCode">
   <div class="marquee-label" data-i18n="works">Works with</div>
   <div class="marquee-track" aria-hidden="true">
@@ -108,75 +99,99 @@
   </div>
 </div>
 
-<!-- DEMO PLAYER -->
-<section id="demo" class="demo">
+<!-- STATEMENT -->
+<section class="statement">
+  <div class="wrap">
+    <p class="big-words" data-i18n="statement">Stop juggling terminal tabs. Put every agent on one board, link the ones that should talk, and let them work in parallel, each on its own branch. You only hear from them when they need you.</p>
+  </div>
+</section>
+
+<!-- TOUR: the stage stays, the chapters scroll -->
+<section id="tour" class="tour">
   <div class="wrap">
     <div class="sec-head center reveal">
-      <p class="kicker" data-i18n="demo.kicker">See it in action</p>
-      <h2 data-i18n="demo.title">Six things you'll do on day one.</h2>
-      <p data-i18n="demo.sub">A live replay of the app, chapter by chapter. Pick one or let it play.</p>
+      <p class="kicker" data-i18n="tour.kicker">The tour</p>
+      <h2 data-i18n="tour.title">Six things you'll do on day one.</h2>
+      <p data-i18n="tour.sub">The real screens of the app. Scroll and it plays, chapter by chapter.</p>
     </div>
-
-    <div class="player reveal" id="player">
-      <div class="stage-wrap">
-        <div class="stage" id="stage" aria-live="off"></div>
+    <div class="tour-grid" id="player">
+      <div class="tour-stick">
+        <div class="stage-wrap">
+          <div class="stage" id="stage" aria-live="off"></div>
+          <button class="play" type="button" aria-label="Pause" data-playing="true">
+            <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+          </button>
+        </div>
       </div>
-      <div class="player-bar">
-        <button class="play" type="button" aria-label="Pause" data-playing="true">
-          <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
-          <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
-        </button>
-        <div class="caption" aria-live="polite"><b></b><span></span></div>
-      </div>
-      <ol class="chapters" role="tablist" aria-label="Demo chapters"></ol>
+      <ol class="chapters" aria-label="Demo chapters">
+        <li data-i="0"><span class="n">01</span><h3 data-i18n="f1.t">Launch a team</h3><p data-i18n="f1.d">Press <kbd>⇧⌘T</kbd>, pick a team and write the task. The agents appear on the canvas already linked, each in its own worktree; the leader splits the work.</p><span class="bar"><i></i></span></li>
+        <li data-i="1"><span class="n">02</span><h3 data-i18n="f2.t">Linked agents talk</h3><p data-i18n="f2.d">Draw a line between two nodes, or hold on a node and pick from the wheel: write, link, loop, hand off. Inside the terminal agents use <code>orch send</code>; if a colleague is busy, the message waits in its queue.</p><span class="bar"><i></i></span></li>
+        <li data-i="2"><span class="n">03</span><h3 data-i18n="f3.t">Step in only when needed</h3><p data-i18n="f3.d">A permission request turns the node orange and you get a notification. <kbd>⌘J</kbd> takes you to whoever is waiting; one click and it carries on.</p><span class="bar"><i></i></span></li>
+        <li data-i="3"><span class="n">04</span><h3 data-i18n="f4.t">A worktree per agent</h3><p data-i18n="f4.d">In a git repo every agent works on its own <code>orch/&lt;name&gt;</code> branch, so nobody steps on anyone. The Git panel shows the graph, diffs, commit and push.</p><span class="bar"><i></i></span></li>
+        <li data-i="4"><span class="n">05</span><h3 data-i18n="f5.t">Floors for experiments</h3><p data-i18n="f5.d">Clone the whole workspace and its repos instantly with APFS. Try an idea on a floor, then bring the branches back, or throw it away.</p><span class="bar"><i></i></span></li>
+        <li data-i="5"><span class="n">06</span><h3 data-i18n="f6.t">Point at the bug</h3><p data-i18n="f6.d">Web and iOS Simulator nodes sit next to the agents. Capture the screen, circle what's wrong, add a note and send it to the linked agent.</p><span class="bar"><i></i></span></li>
+      </ol>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section id="features" class="paper features">
+<!-- BENTO -->
+<section id="more" class="more">
   <div class="wrap">
     <div class="sec-head reveal">
-      <p class="kicker" data-i18n="feat.kicker">What it does</p>
-      <h2 data-i18n="feat.title">One window for every agent you run.</h2>
-      <p data-i18n="feat.sub">Bashestra doesn't replace your agents: it runs the CLIs you already use, signed in with your own accounts, and lays them out where you can see who is working and who is waiting for you.</p>
+      <p class="kicker" data-i18n="more.kicker">And then some</p>
+      <h2 data-i18n="more.title">Everything a conductor needs.</h2>
+      <p data-i18n="more.sub">Bashestra doesn't replace your agents: it runs the CLIs you already use, with your own accounts, and gives them a score to play from.</p>
     </div>
-    <div class="grid">
-      <article class="card" data-chapter="0">
-        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 10 3 2-3 2M12 15h5"/></svg></div>
-        <h3 data-i18n="f1.t">Real terminals on a canvas</h3>
-        <p data-i18n="f1.d">Each node is a full terminal. Zoom, pan, arrange. A sidebar shows who needs you, who is working and who is idle; <kbd>⌘J</kbd> jumps to the next one waiting.</p>
-        <button class="watch" type="button" data-i18n="watch">Watch ›</button>
+    <div class="bento">
+      <article class="tile w2" data-viz="maestro">
+        <div class="viz" aria-hidden="true"></div>
+        <h3 data-i18n="b1.t">The Maestro runs the canvas</h3>
+        <p data-i18n="b1.d">Make any session the Maestro: it reads the whole board, creates sessions and teams, links them and hands out tasks. Anything that starts a process waits for your Allow.</p>
       </article>
-      <article class="card" data-chapter="1">
-        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7.5c5 1 3 8 8 9"/></svg></div>
-        <h3 data-i18n="f2.t">Linked agents talk</h3>
-        <p data-i18n="f2.d">Drag a line between two nodes. Inside the terminal, agents use <code>orch send</code> to message a colleague; messages wait in a queue until the receiver is free.</p>
-        <button class="watch" type="button" data-i18n="watch">Watch ›</button>
+      <article class="tile" data-viz="roles">
+        <div class="viz" aria-hidden="true"></div>
+        <h3 data-i18n="b2.t">A model and effort per role</h3>
+        <p data-i18n="b2.d">Opus to lead and review, Sonnet to write and test. Each role brings its skills and rules; change them per session from the inspector.</p>
       </article>
-      <article class="card" data-chapter="2">
-        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6ZM10 19a2 2 0 0 0 4 0"/></svg></div>
-        <h3 data-i18n="f3.t">Step in only when needed</h3>
-        <p data-i18n="f3.d">When an agent asks for a permission its node turns orange and you get a notification. <kbd>⌘J</kbd> takes you there; one click and it carries on.</p>
-        <button class="watch" type="button" data-i18n="watch">Watch ›</button>
+      <article class="tile" data-viz="review">
+        <div class="viz" aria-hidden="true"></div>
+        <h3 data-i18n="b3.t">Nothing ships unreviewed</h3>
+        <p data-i18n="b3.d">The Reviewer checks the whole diff at the end of every phase. Until the verdict arrives nobody gets new tasks; after three rejections, you decide.</p>
       </article>
-      <article class="card" data-chapter="3">
-        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 7v10M18 11c0 4-6 3-12 6"/></svg></div>
-        <h3 data-i18n="f4.t">A worktree per agent</h3>
-        <p data-i18n="f4.d">In a git repo every agent gets its own <code>orch/&lt;name&gt;</code> branch, so nobody steps on anyone. The Git panel shows the graph, diffs, commit, push and branch switching.</p>
-        <button class="watch" type="button" data-i18n="watch">Watch ›</button>
+      <article class="tile w2" data-viz="folders">
+        <div class="viz" aria-hidden="true"></div>
+        <h3 data-i18n="b4.t">One project, many folders</h3>
+        <p data-i18n="b4.d">An iOS app and its Android twin on the same board, each with its own zone and colour. Finish a feature in one and the Porting team carries it to the other, as a branch.</p>
       </article>
-      <article class="card" data-chapter="4">
-        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg></div>
-        <h3 data-i18n="f5.t">Floors for experiments</h3>
-        <p data-i18n="f5.d">Copy a whole workspace and its repos instantly with APFS clones. Try an idea on a floor, then bring the branches back, or throw it away.</p>
-        <button class="watch" type="button" data-i18n="watch">Watch ›</button>
+      <article class="tile w2" data-viz="cli">
+        <div class="viz term-viz">
+          <div class="term-head"><span class="tl"><i></i><i></i><i></i></span><span>zsh — reviewer</span></div>
+          <pre class="terminal" id="orch-term" aria-label="Commands agents use inside Bashestra: orch list, orch send, orch tasks, orch task done"></pre>
+        </div>
+        <h3 data-i18n="b5.t">Agents get a shared toolbox</h3>
+        <p data-i18n="b5.d"><code>orch</code> lets agents list colleagues, message them, share notes and close tasks, from any terminal on the board, or as MCP tools.</p>
       </article>
-      <article class="card" data-chapter="5">
-        <div class="ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M9 9l2 2 4-4"/></svg></div>
-        <h3 data-i18n="f6.t">Point at the bug</h3>
-        <p data-i18n="f6.d">Web and iOS Simulator nodes next to the agents. Capture the screen, circle what's wrong, add a note, and send it to the agent linked to it.</p>
-        <button class="watch" type="button" data-i18n="watch">Watch ›</button>
+      <article class="tile" data-viz="usage">
+        <div class="viz" aria-hidden="true"></div>
+        <h3 data-i18n="b6.t">Know what you're spending</h3>
+        <p data-i18n="b6.d">Plan limits for every agent, with the 5-hour and weekly reset, and tokens per session and project.</p>
+      </article>
+      <article class="tile" data-viz="stop">
+        <div class="viz" aria-hidden="true"></div>
+        <h3 data-i18n="b7.t">One key stops everyone</h3>
+        <p data-i18n="b7.d"><kbd>⌃⌘.</kbd> sends Esc to every agent and pauses deliveries. Messages wait until you resume.</p>
+      </article>
+      <article class="tile" data-viz="sound">
+        <div class="viz" aria-hidden="true"></div>
+        <h3 data-i18n="b8.t">You'll hear when it's your turn</h3>
+        <p data-i18n="b8.d">Short sounds when a session needs you, finishes or gets a message, and a notification even when the app is in the background.</p>
+      </article>
+      <article class="tile" data-viz="local">
+        <div class="viz" aria-hidden="true"></div>
+        <h3 data-i18n="b9.t">Local, and yours</h3>
+        <p data-i18n="b9.d">No account and no server. Agents run with the logins you already have; nothing leaves your Mac.</p>
       </article>
     </div>
   </div>
@@ -187,48 +202,17 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="kicker" data-i18n="teams.kicker">Teams</p>
-      <h2 data-i18n="teams.title">Six teams ready to go. Or your own.</h2>
-      <p data-i18n="teams.sub">The first member is the leader: it gets the task and stays in the project folder. Everyone else works on their own branch.</p>
+      <h2 data-i18n="teams.title">Seven teams ready to go. Or your own.</h2>
+      <p data-i18n="teams.sub">Press <kbd>⇧⌘T</kbd>. The first member is the leader: it gets the task and stays in the project folder. Everyone else works on their own branch.</p>
     </div>
     <div class="teams-ui reveal">
       <div class="team-list" role="tablist" aria-label="Team presets"></div>
-      <div class="team-view paper">
+      <div class="team-view">
         <svg class="team-wires" aria-hidden="true"></svg>
         <div class="team-nodes"></div>
         <div class="team-foot"><kbd>⇧⌘T</kbd><span class="team-desc"></span></div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section id="how" class="paper how-sec">
-  <div class="wrap how-grid">
-    <div>
-      <div class="sec-head reveal">
-        <p class="kicker" data-i18n="how.kicker">How it works</p>
-        <h2 data-i18n="how.title">Three steps, then you just steer.</h2>
-      </div>
-      <ol class="steps">
-        <li class="step reveal"><span class="num">01</span><div><h3 data-i18n="s1.t">Open a folder</h3><p data-i18n="s1.d">Pick a project or clone one from Git. Bashestra finds the repository and its branch.</p></div></li>
-        <li class="step reveal"><span class="num">02</span><div><h3 data-i18n="s2.t">Launch a team</h3><p data-i18n="s2.d">Press <kbd>⇧⌘T</kbd>, pick a team and write the task. The leader splits it and hands it out.</p></div></li>
-        <li class="step reveal"><span class="num">03</span><div><h3 data-i18n="s3.t">Watch, approve, steer</h3><p data-i18n="s3.d">Follow the work on the canvas and step in only when an agent needs you.</p></div></li>
-      </ol>
-    </div>
-    <div class="term-card reveal">
-      <div class="term-head"><span class="tl"><i></i><i></i><i></i></span><span>zsh — reviewer</span></div>
-      <pre class="terminal" id="orch-term" aria-label="Commands agents use inside Bashestra: orch list, orch send, orch tasks, orch task done"></pre>
-    </div>
-  </div>
-</section>
-
-<!-- STATS -->
-<section class="stats">
-  <div class="wrap stats-grid">
-    <div class="stat reveal"><b data-count="4">4</b><span data-i18n="st1">agent CLIs supported</span></div>
-    <div class="stat reveal"><b data-count="6">6</b><span data-i18n="st2">ready-made teams</span></div>
-    <div class="stat reveal"><b data-count="0">0</b><span data-i18n="st3">accounts to create</span></div>
-    <div class="stat reveal"><b>100%</b><span data-i18n="st4">local: nothing leaves your Mac</span></div>
   </div>
 </section>
 
@@ -250,7 +234,7 @@
           <li><span class="n">3</span><span data-i18n="inst.3">Go to <strong>System Settings › Privacy &amp; Security</strong> and, near the bottom, click <strong>Open Anyway</strong> next to Bashestra.</span></li>
         </ol>
         </div>
-        <p class="notice" data-i18n="inst.note">This version is not notarized by Apple yet, so macOS asks you to allow it once.</p>
+        <p class="notice" data-i18n="inst.note">This version is not notarized by Apple yet, so macOS asks you to allow it once. After that, it updates itself.</p>
       </div>
       <div class="panel reveal">
         <h3 data-i18n="req.t">Requirements</h3>
@@ -258,7 +242,7 @@
           <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.1"><strong>macOS 14</strong> or later on Apple Silicon.</span></li>
           <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.2">At least one agent CLI installed and signed in in your terminal: <code>claude</code>, <code>codex</code>, <code>gemini</code> or <code>opencode</code>.</span></li>
           <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.3"><code>git</code> (Command Line Tools) for worktrees and the Git panel.</span></li>
-          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.4">No account and nothing to configure: agents run with your existing logins.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.4">English and Italian, chosen from your system.</span></li>
         </ul>
       </div>
     </div>
@@ -267,13 +251,13 @@
 
 <!-- FINAL CTA -->
 <div class="final">
-  <svg class="constellation" aria-hidden="true"></svg>
+  <div class="dots" aria-hidden="true"></div>
   <div class="wrap">
-    <img class="final-icon" src="assets/icon.png" alt="">
-    <h2 data-i18n="final.title">Stop juggling terminal tabs.</h2>
+    <svg class="ensemble" viewBox="110 280 804 530" role="img" aria-label="The Bashestra icon: eight terminals take their seats around the podium, where your prompt and the violet cursor wait."></svg>
+    <h2 data-i18n="final.title">The orchestra is seated. Your turn.</h2>
     <p data-i18n="final.sub">Put your agents on one board, link them up and let them work together.</p>
     <div class="cta">
-      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg"><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.0</small></a>
+      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.4</small></a>
       <a class="btn ghost big" href="https://github.com/federix-ai/draftboard-app/releases" data-i18n="final.all">All releases</a>
     </div>
   </div>
