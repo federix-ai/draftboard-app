@@ -1,5 +1,5 @@
 import { animate, createTimeline, stagger, utils, onScroll, splitText, createDraggable } from "./anime.esm.min.js?v=4.5.0";
-import { IT, UI } from "./i18n.js?v=0.7.5";
+import { IT, UI } from "./i18n.js?v=0.7.8";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];

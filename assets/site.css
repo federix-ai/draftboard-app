@@ -343,6 +343,40 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: 
 footer a { color: var(--text2); }
 
 /* responsive */
+/* hero: the other platform, one line under the buttons */
+.alt-dl { margin: 14px 0 0; color: var(--text2); font-size: 14px; }
+.alt-dl a { color: var(--accent); font-weight: 600; }
+
+/* what's new in this version */
+.new-sec { border-top: 1px solid var(--line); }
+.nw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.nw { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 22px; background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01)); border: 1px solid var(--line); transition: border-color .2s ease; }
+.nw:hover { border-color: var(--line2); }
+.nw h3 { font-size: 20px; }
+.nw p { margin: 0; color: var(--text2); font-size: 15px; max-width: 60ch; }
+.nw-ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); margin-bottom: 4px; }
+.nw-ic svg.i { width: 22px; height: 22px; }
+.nw .nw-place { margin-top: auto; padding-top: 8px; font: 500 12px var(--mono); color: var(--text3); letter-spacing: .01em; }
+.nw-linux { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; gap: 28px; padding: 30px; border-color: var(--accent-ring); background: radial-gradient(600px circle at 0% 0%, rgba(110,79,245,.16), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); }
+.nw-linux .nw-body { display: flex; flex-direction: column; gap: 10px; }
+.nw-linux h3 { font-size: 24px; }
+.nw-actions { display: flex; flex-wrap: wrap; gap: 10px; flex: none; }
+.nw-more { margin: 22px 0 0; font-size: 15px; }
+.nw-more a { font-weight: 600; }
+
+/* install: macOS and Linux side by side, requirements under both */
+.install .req-panel { grid-column: 1 / -1; }
+.install .req-panel ul.req { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
+.dl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 22px; }
+.dl { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--line2); background: rgba(255,255,255,.03); color: var(--text); text-decoration: none; transition: border-color .2s ease, background .2s ease, transform .2s ease; }
+.dl:hover { border-color: var(--accent-ring); background: rgba(110,79,245,.10); transform: translateY(-1px); }
+.dl b { font: 600 15px var(--sans); }
+.dl span { font: 500 12px var(--mono); color: var(--text2); padding: 2px 8px; border-radius: 999px; background: var(--raised); }
+ul.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 16px; color: var(--text2); }
+ul.steps strong { color: var(--text); }
+pre.cmd { margin: 8px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--term-bg); border: 1px solid var(--line); overflow-x: auto; }
+pre.cmd code { background: none; padding: 0; font-size: 13px; color: var(--term-text); white-space: pre; }
+
 @media (max-width: 1080px) {
   .tour-grid { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 36px; }
 }
@@ -350,6 +384,9 @@ footer a { color: var(--text2); }
   .links { display: none; }
   .lang { margin-left: auto; }
   .install, .teams-ui { grid-template-columns: 1fr; }
+  .nw-grid { grid-template-columns: 1fr 1fr; }
+  .nw-linux { flex-direction: column; align-items: flex-start; }
+  .nw-grid .nw:last-child { grid-column: 1 / -1; }
   .bento { grid-template-columns: 1fr 1fr; }
   .tile.w2 { grid-column: span 2; }
   .team-list { flex-direction: row; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
@@ -367,6 +404,11 @@ footer a { color: var(--text2); }
   main > section { padding: 84px 0; }
   .statement { padding: 100px 0 80px; }
   .bento { grid-template-columns: 1fr; }
+  .nw-grid { grid-template-columns: 1fr; }
+  .nw-grid .nw:last-child { grid-column: auto; }
+  .nw-actions, .nw-actions .btn { width: 100%; }
+  .install .req-panel ul.req { grid-template-columns: 1fr; }
+  .panel { padding: 22px; }
   .tile.w2 { grid-column: auto; }
   .viz { height: 190px; }
   nav.top .bar { gap: 10px; padding-left: 12px; }

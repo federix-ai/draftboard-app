@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bashestra · conduct your orchestra of coding agents</title>
-<meta name="description" content="Run Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas. Every node is a real terminal; draw a line and two agents can talk. Free macOS app.">
+<meta name="description" content="Run Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas. Every node is a real terminal; draw a line and two agents can talk. Free for macOS and Linux.">
 <meta name="theme-color" content="#0B0B0E">
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="Bashestra: conduct your orchestra of coding agents">
-<meta property="og:description" content="Every node is a real terminal. Draw a line and two agents can message each other. A free macOS app for Claude Code, Codex, Gemini CLI and OpenCode.">
+<meta property="og:description" content="Every node is a real terminal. Draw a line and two agents can message each other. Free for macOS and Linux, with Claude Code, Codex, Gemini CLI and OpenCode.">
 <meta property="og:image" content="https://federix-ai.github.io/draftboard-app/assets/icon.png">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=0.7.7">
+<link rel="stylesheet" href="assets/site.css?v=0.7.8">
 <link rel="stylesheet" href="assets/screens/screens.css?v=0.7.5">
 <script>
   // Hide animated elements only when JS runs; if the module never boots, show everything after a moment.
@@ -24,7 +24,7 @@
   try { const l = localStorage.getItem("draftboard.lang"); if (l === "it") document.documentElement.lang = "it"; } catch (e) {}
   setTimeout(() => { if (!window.__siteReady) document.documentElement.classList.remove("js"); }, 2500);
 </script>
-<script type="module" src="assets/js/main.js?v=0.7.7"></script>
+<script type="module" src="assets/js/main.js?v=0.7.8"></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
@@ -34,6 +34,7 @@
   <div class="bar">
     <a class="brand" href="#" aria-label="Bashestra"><img src="assets/icon.png" alt=""><span class="wm" aria-hidden="true"><b>bash</b>estra</span></a>
     <div class="links">
+      <a href="#new" data-i18n="nav.new">What's new</a>
       <a href="#tour" data-i18n="nav.tour">Tour</a>
       <a href="#more" data-i18n="nav.features">Features</a>
       <a href="#teams" data-i18n="nav.teams">Teams</a>
@@ -44,7 +45,7 @@
       <button type="button" data-lang="it" aria-pressed="false">IT</button>
       <i class="lang-pill" aria-hidden="true"></i>
     </div>
-    <a class="btn primary sm" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-i18n="nav.download">Download</a>
+    <a class="btn primary sm" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary" data-i18n="nav.download">Download</a>
   </div>
 </nav>
 
@@ -53,20 +54,21 @@
 <header class="hero">
   <div class="spot" aria-hidden="true"></div>
   <div class="wrap hero-copy">
-    <a class="news reveal" href="https://github.com/federix-ai/draftboard-app/releases/latest"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.5.4 · violet accent, new inspector, our own pointer</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+    <a class="news reveal" href="#new"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.5.6 · now on Linux, end-of-work report, redesigned links</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
     <h1 class="hero-title" data-i18n="hero.title">Conduct your <em>orchestra</em> of coding agents.</h1>
     <p class="lede reveal" data-i18n="hero.lede">Claude Code, Codex, Gemini CLI and OpenCode, side by side on one canvas. Every node is a real terminal. Draw a line and two agents talk. You step in only when they need you.</p>
     <div class="cta reveal">
-      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg">
+      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
-        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.4</small>
+        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.6</small>
       </a>
       <a class="btn ghost big" href="#tour">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
         <span data-i18n="cta.watch">See what it does</span>
       </a>
     </div>
-    <p class="fine reveal" data-i18n="hero.fine">Free · macOS 14+ on Apple Silicon · your CLIs, your accounts</p>
+    <p class="alt-dl reveal" data-alt-dl><span data-i18n="hero.alt">Also on Linux, x64 and ARM:</span> <a href="#linux" data-i18n="hero.altlink">AppImage or .deb</a></p>
+    <p class="fine reveal" data-i18n="hero.fine">Free · macOS 14+ on Apple Silicon · Linux x64 and ARM · your CLIs, your accounts</p>
   </div>
 
   <div class="showcase" id="showcase">
@@ -106,6 +108,49 @@
   </div>
 </section>
 
+<!-- WHAT'S NEW in 0.5.6 -->
+<section id="new" class="new-sec">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="kicker" data-i18n="new.kicker">New in 0.5.6</p>
+      <h2 data-i18n="new.title">Now on Linux. And a report when the work is done.</h2>
+      <p data-i18n="new.sub">The same canvas, the same teams and the same <code>orch</code>, now on Linux too. Plus three changes that make a long run easier to follow.</p>
+    </div>
+    <div class="nw-grid">
+      <article class="nw nw-linux reveal">
+        <div class="nw-body">
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H4zM8 20h8M12 16v4M7.5 9l2 1.75-2 1.75M11.5 12.5H15"/></svg></span>
+          <h3 data-i18n="new.linux.t">Bashestra on Linux</h3>
+          <p data-i18n="new.linux.d">The desktop port runs on Ubuntu, Debian and other distributions, on x64 and ARM: agents, links, teams, review, floors and web portals. Take the AppImage, which updates itself, or the .deb for apt.</p>
+        </div>
+        <div class="nw-actions">
+          <a class="btn primary" data-asset="appimage-x64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/Bashestra-0.5.6.AppImage"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="new.linux.get">AppImage for x64</span></a>
+          <a class="btn ghost" href="#linux" data-i18n="new.linux.all">ARM and .deb</a>
+        </div>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4 4V20.5H7zM14 3.5v4h4M10 12h5M10 15.5h5"/></svg></span>
+        <h3 data-i18n="new.report.t">The end-of-work report</h3>
+        <p data-i18n="new.report.d">When the plan finishes, or stops after three rejected reviews, the leader writes a report for you: how it went, what you need to see or decide, what was done, the checks and the files touched.</p>
+        <p class="nw-place" data-i18n="new.report.p">Top bar › Reports</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h5.5v11H16M16 17.5h3M3 6.5h2"/></svg></span>
+        <h3 data-i18n="new.links.t">Links, redrawn</h3>
+        <p data-i18n="new.links.d">Elbow lines that route around the nodes, shaped by what they carry and coloured by team. Hover a line to see how many messages went through and the last one, with Open and Unlink.</p>
+        <p class="nw-place" data-i18n="new.links.p">Canvas</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5 12 13l8-5.5M4 6.5h16v11H4zM9 20.5h6"/></svg></span>
+        <h3 data-i18n="new.queue.t">The message queue, in your hands</h3>
+        <p data-i18n="new.queue.d">See what a busy session is waiting for: remove, clear, reorder, move to another session or hand it all to a new one. Moved tasks go with it, and the queue survives a restart.</p>
+        <p class="nw-place" data-i18n="new.queue.p">Node badge and Inspector › Queued</p>
+      </article>
+    </div>
+    <p class="nw-more reveal"><a href="https://github.com/federix-ai/draftboard-app/releases/tag/v0.5.6" data-i18n="new.notes">All the release notes for 0.5.6</a></p>
+  </div>
+</section>
+
 <!-- TOUR: the stage stays, the chapters scroll -->
 <section id="tour" class="tour">
   <div class="wrap">
@@ -126,7 +171,7 @@
       </div>
       <ol class="chapters" aria-label="Demo chapters">
         <li data-i="0"><span class="n">01</span><h3 data-i18n="f1.t">Launch a team</h3><p data-i18n="f1.d">Press <kbd>⇧⌘T</kbd>, pick a team and write the task. The agents appear on the canvas already linked, each in its own worktree; the leader splits the work.</p><span class="bar"><i></i></span></li>
-        <li data-i="1"><span class="n">02</span><h3 data-i18n="f2.t">Linked agents talk</h3><p data-i18n="f2.d">Draw a line between two nodes, or hold on a node and pick from the wheel: write, link, loop, hand off. Inside the terminal agents use <code>orch send</code>; if a colleague is busy, the message waits in its queue.</p><span class="bar"><i></i></span></li>
+        <li data-i="1"><span class="n">02</span><h3 data-i18n="f2.t">Linked agents talk</h3><p data-i18n="f2.d">Draw a line between two nodes, or hold on a node and pick from the wheel: write, link, loop, hand off. Inside the terminal agents use <code>orch send</code>; if a colleague is busy, the message waits in its queue, and you can reorder or move it.</p><span class="bar"><i></i></span></li>
         <li data-i="2"><span class="n">03</span><h3 data-i18n="f3.t">Step in only when needed</h3><p data-i18n="f3.d">A permission request turns the node orange and you get a notification. <kbd>⌘J</kbd> takes you to whoever is waiting; one click and it carries on.</p><span class="bar"><i></i></span></li>
         <li data-i="3"><span class="n">04</span><h3 data-i18n="f4.t">A worktree per agent</h3><p data-i18n="f4.d">In a git repo every agent works on its own <code>orch/&lt;name&gt;</code> branch, so nobody steps on anyone. The Git panel shows the graph, diffs, commit and push.</p><span class="bar"><i></i></span></li>
         <li data-i="4"><span class="n">05</span><h3 data-i18n="f5.t">Floors for experiments</h3><p data-i18n="f5.d">Clone the whole workspace and its repos instantly with APFS. Try an idea on a floor, then bring the branches back, or throw it away.</p><span class="bar"><i></i></span></li>
@@ -158,7 +203,7 @@
       <article class="tile" data-viz="review">
         <div class="viz" aria-hidden="true"></div>
         <h3 data-i18n="b3.t">Nothing ships unreviewed</h3>
-        <p data-i18n="b3.d">The Reviewer checks the whole diff at the end of every phase. Until the verdict arrives nobody gets new tasks; after three rejections, you decide.</p>
+        <p data-i18n="b3.d">The Reviewer checks the whole diff at the end of every phase. Until the verdict arrives nobody gets new tasks; after three rejections, you decide. When the plan ends, the leader writes you a report.</p>
       </article>
       <article class="tile w2" data-viz="folders">
         <div class="viz" aria-hidden="true"></div>
@@ -191,7 +236,7 @@
       <article class="tile" data-viz="local">
         <div class="viz" aria-hidden="true"></div>
         <h3 data-i18n="b9.t">Local, and yours</h3>
-        <p data-i18n="b9.d">No account and no server. Agents run with the logins you already have; nothing leaves your Mac.</p>
+        <p data-i18n="b9.d">No account and no server. Agents run with the logins you already have; nothing leaves your computer.</p>
       </article>
     </div>
   </div>
@@ -225,7 +270,7 @@
     </div>
     <div class="install">
       <div class="panel reveal">
-        <h3 data-i18n="inst.get">Get it running</h3>
+        <h3 data-i18n="inst.get">On macOS</h3>
         <div class="how-wrap">
         <i class="how-line" aria-hidden="true"><i></i></i>
         <ol class="how">
@@ -236,12 +281,27 @@
         </div>
         <p class="notice" data-i18n="inst.note">This version is not notarized by Apple yet, so macOS asks you to allow it once. After that, it updates itself.</p>
       </div>
-      <div class="panel reveal">
+      <div class="panel reveal" id="linux">
+        <h3 data-i18n="lin.t">On Linux</h3>
+        <div class="dl-grid" role="group" aria-label="Linux downloads">
+          <a class="dl" data-asset="appimage-x64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/Bashestra-0.5.6.AppImage"><b>AppImage</b><span>x64</span></a>
+          <a class="dl" data-asset="appimage-arm64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/Bashestra-0.5.6-arm64.AppImage"><b>AppImage</b><span>ARM</span></a>
+          <a class="dl" data-asset="deb-x64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/bashestra-desktop_0.5.6_amd64.deb"><b>.deb</b><span>x64</span></a>
+          <a class="dl" data-asset="deb-arm64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/bashestra-desktop_0.5.6_arm64.deb"><b>.deb</b><span>ARM</span></a>
+        </div>
+        <ul class="steps">
+          <li><span data-i18n="lin.1"><strong>AppImage</strong>: make it executable and start it. It updates itself.</span><pre class="cmd"><code>chmod +x Bashestra-*.AppImage
+./Bashestra-*.AppImage</code></pre></li>
+          <li><span data-i18n="lin.2"><strong>.deb</strong> (Debian, Ubuntu): apt brings in what it needs.</span><pre class="cmd"><code>sudo apt install ./bashestra-desktop_*.deb</code></pre></li>
+        </ul>
+        <p class="notice" data-i18n="lin.note">On Ubuntu 22.04 and later the AppImage needs FUSE 2: <code>sudo apt install libfuse2t64</code> (<code>libfuse2</code> on 22.04). The iOS Simulator node exists only on the Mac.</p>
+      </div>
+      <div class="panel reveal req-panel">
         <h3 data-i18n="req.t">Requirements</h3>
         <ul class="req">
-          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.1"><strong>macOS 14</strong> or later on Apple Silicon.</span></li>
-          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.2">At least one agent CLI installed and signed in in your terminal: <code>claude</code>, <code>codex</code>, <code>gemini</code> or <code>opencode</code>.</span></li>
-          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.3"><code>git</code> (Command Line Tools) for worktrees and the Git panel.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.1"><strong>macOS 14</strong> or later on Apple Silicon, or <strong>Linux</strong> with a desktop, on x64 or ARM.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.2">At least one agent CLI installed, signed in and on your <code>PATH</code>: <code>claude</code>, <code>codex</code>, <code>gemini</code> or <code>opencode</code>.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.3"><code>git</code> for worktrees and the Git panel (on the Mac it comes with the Command Line Tools).</span></li>
           <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.4">English and Italian, chosen from your system.</span></li>
         </ul>
       </div>
@@ -257,7 +317,7 @@
     <h2 data-i18n="final.title">The orchestra is seated. Your turn.</h2>
     <p data-i18n="final.sub">Put your agents on one board, link them up and let them work together.</p>
     <div class="cta">
-      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.4</small></a>
+      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.5.6</small></a>
       <a class="btn ghost big" href="https://github.com/federix-ai/draftboard-app/releases" data-i18n="final.all">All releases</a>
     </div>
   </div>
@@ -272,10 +332,40 @@
 </footer>
 
 <script>
-  // Button labels follow the latest release; the hard-coded version stays if the API is unreachable.
+  // On Linux the main buttons offer the AppImage (ARM when the browser says so) and the hint points back to the Mac.
+  // This runs before main.js reads the English copy, so the language switch keeps the Linux labels.
+  (function () {
+    const ua = navigator.userAgent;
+    if (!/Linux/.test(ua) || /Android/.test(ua)) return;
+    const arm = /aarch64|arm64|armv8/i.test(ua) || (navigator.userAgentData && navigator.userAgentData.platform === "Linux" && /arm/i.test(navigator.platform));
+    const key = arm ? "appimage-arm64" : "appimage-x64";
+    const href = document.querySelector('[data-asset="' + key + '"]').getAttribute("href");
+    document.querySelectorAll('[data-dl="primary"]').forEach(a => {
+      a.setAttribute("href", href); a.dataset.asset = key;
+      const label = a.matches("[data-i18n]") ? a : a.querySelector("[data-i18n]");
+      if (label === a) { label.dataset.i18n = "nav.downloadLinux"; }
+      else if (label) { label.dataset.i18n = "cta.linux"; label.textContent = "Download for Linux"; }
+    });
+    const alt = document.querySelector("[data-alt-dl]");
+    if (alt) alt.innerHTML = '<span data-i18n="hero.altmac">Also for macOS on Apple Silicon:</span> <a href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-i18n="hero.altmaclink">Bashestra.dmg</a> · <a href="#linux" data-i18n="hero.altother">other Linux packages</a>';
+  })();
+  // Labels and Linux links follow the latest release; the hard-coded ones stay if the API is unreachable.
   fetch("https://api.github.com/repos/federix-ai/draftboard-app/releases/latest")
     .then(r => r.ok ? r.json() : null)
-    .then(r => { if (r && r.tag_name) document.querySelectorAll("[data-version]").forEach(el => el.textContent = r.tag_name); })
+    .then(r => {
+      if (!r || !r.tag_name) return;
+      document.querySelectorAll("[data-version]").forEach(el => el.textContent = r.tag_name);
+      const want = {
+        "appimage-x64": /^Bashestra-[\d.]+\.AppImage$/,
+        "appimage-arm64": /^Bashestra-[\d.]+-arm64\.AppImage$/,
+        "deb-x64": /_amd64\.deb$/,
+        "deb-arm64": /_arm64\.deb$/
+      };
+      document.querySelectorAll("[data-asset]").forEach(el => {
+        const a = (r.assets || []).find(x => want[el.dataset.asset] && want[el.dataset.asset].test(x.name));
+        if (a) el.setAttribute("href", a.browser_download_url);
+      });
+    })
     .catch(() => {});
 </script>
 </body>
