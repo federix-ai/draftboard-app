@@ -1,5 +1,5 @@
 import { animate, createTimeline, stagger, utils, onScroll, splitText, createDraggable } from "./anime.esm.min.js?v=4.5.0";
-import { IT, UI } from "./i18n.js?v=0.7.8";
+import { IT, UI } from "./i18n.js?v=0.7.9";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -85,7 +85,7 @@ function setState(node, st) {
 /* ================================================================ SCREENS */
 // Real screens of the app, rendered from its UI design canvas ("Orchestrator — UI macOS") and saved as
 // static markup in assets/screens/. They are fetched when needed and scaled into their frames.
-const SCREENS_V = "0.7.5";
+const SCREENS_V = "0.7.9";
 const screenCache = {};
 const loadScreen = name => (screenCache[name] ??= fetch(`assets/screens/${name}.html?v=${SCREENS_V}`).then(r => (r.ok ? r.text() : "")));
 const SIZES = {
@@ -94,6 +94,8 @@ const SIZES = {
   "floor-live": [1200, 720], "floor-open": [1200, 720], "floor-hover": [1200, 720], "floor-enter": [1200, 720], "floor-arrived": [1200, 720],
   "cap-live": [480, 360], "cap-hover": [480, 360], "cap-flash": [480, 360], "cap-annotate": [480, 360], "cap-comment": [480, 360], "cap-fixed": [480, 360],
   "radial-open": [480, 320], "radial-pick": [480, 320],
+  "col-rest": [780, 740], "col-node": [780, 740], "col-line": [780, 740], "col-labels": [780, 740],
+  "coda-main": [1728, 1080], "report-main": [1440, 1080], "report-esiti": [1440, 420],
 };
 // A screen in its own box, at its native size; the caller scales or moves the box.
 async function screenEl(name) {
@@ -461,6 +463,260 @@ const player = (() => {
   return { go, get tl() { return tl; } };
 })();
 window.__draftboard = { player };
+
+/* ===================================================== WHAT'S NEW (0.5.6) */
+// Each feature of 0.5.6 has a stage beside its text that films the real screens, like the tour: the camera
+// moves, the pointer clicks. A stage loops while in view and pauses when it leaves; with reduced motion it
+// holds one still frame of its scene.
+const news = (() => {
+  const VW = 960, VH = 640;
+  const look = (box, pad = 1) => { const k = Math.min(VW / box[2], VH / box[3]) * pad; return { scale: k, x: VW / 2 - (box[0] + box[2] / 2) * k, y: VH / 2 - (box[1] + box[3] / 2) * k }; };
+  // a point of a screen, seen through the camera at L
+  const via = (L, x, y) => [L.x + x * L.scale, L.y + y * L.scale];
+  // where an element sits in its screen's own coordinates, whatever the camera is doing
+  const local = (el, scr) => rectIn(el, scr, scr.getBoundingClientRect().width / scr.offsetWidth || 1);
+  const make = (parent, cls) => { const el = document.createElement("div"); el.className = cls; parent.appendChild(el); return el; };
+  const camera = st => { const c = make(st, "cam"); utils.set(c, { x: 0, y: 0, scale: 1 }); return c; };
+  const pointer = st => { const c = make(st, "cursor"); c.innerHTML = FAN; return c; };
+  // the pointer comes in from `from`, opens its fan and lands on (x, y)
+  const enter = (tl, c, x, y, pos, from = [VW + 40, VH + 30]) => {
+    tl.set(c, { x: from[0], y: from[1], opacity: 0, scale: 1 }, pos).set($$(".f2, .f1", c), { rotate: 0 }, pos)
+      .add(c, { opacity: 1, x, y, duration: 900, ease: "inOut(3)" }, pos);
+    fanIn(tl, c, pos + 650);
+    return pos + 900;
+  };
+  const glide = (tl, c, x, y, pos, dur = 700) => { tl.add(c, { x, y, duration: dur, ease: "inOut(3)" }, pos); return pos + dur; };
+  const press = (tl, c, x, y, pos, fn) => {
+    tl.add(c, { scale: [1, 0.8, 1], duration: 240, ease: "out(2)" }, pos).call(() => { if (!reduce) ripple(c.parentElement, x, y); fn && fn(); }, pos + 100);
+    return pos + 100;
+  };
+  // on a light screen the toast is dark
+  const toast = (tl, st, text, pos, hold = 2000, dark = false) => {
+    const el = make(st, dark ? "htoast dark" : "htoast"); el.innerHTML = `<i></i><span>${esc(text)}</span>`;
+    tl.add(el, { opacity: [0, 1], y: [-10, 0], duration: 380, ease: "out(3)" }, pos).add(el, { opacity: 0, duration: 300 }, pos + hold);
+  };
+  // a key held down for `dur` ms, shown big at the bottom
+  const holdKey = (tl, st, key, pos, dur) => {
+    const k = make(st, "keys"); k.innerHTML = `<kbd>${key}</kbd>`; const kb = $("kbd", k);
+    tl.add(k, { opacity: [0, 1], y: [18, 0], duration: 320, ease: "out(3)" }, pos)
+      .add(kb, { scale: [1, 0.88], y: [0, 3], duration: 160, ease: "out(2)" }, pos + 320)
+      .add(kb, { scale: 1, y: 0, duration: 160, ease: "out(2)" }, pos + dur)
+      .add(k, { opacity: 0, y: 8, duration: 280 }, pos + dur + 200);
+  };
+  // a message, an 8 px dot, riding a link drawn in the screen's coordinates
+  const pulse = (tl, svg, d, pos, dur = 1200) => {
+    const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("fill", "none"); svg.appendChild(p);
+    const c = document.createElementNS(NS, "circle"); c.setAttribute("r", 4); c.setAttribute("class", "pkt"); c.style.opacity = 0; svg.appendChild(c);
+    const len = p.getTotalLength(), o = { k: 0 };
+    tl.add(o, { k: [0, 1], duration: dur, ease: "inOut(2)", onUpdate: () => {
+      const pt = p.getPointAtLength(o.k * len); c.setAttribute("cx", pt.x); c.setAttribute("cy", pt.y); c.style.opacity = o.k > 0.01 && o.k < 0.99 ? 1 : 0;
+    } }, pos);
+  };
+
+  // Each scene builds itself on the stage and its timeline, and returns the time of its still frame.
+  const SCENES = {
+    // The report: the chip appears on the team, a click, the leader's report slides in and is read;
+    // then the three outcomes it can open with.
+    report: {
+      needs: ["report-main", "report-esiti"],
+      async build(st, tl) {
+        const cam = camera(st), [win, es] = await Promise.all(this.needs.map(screenEl)); cam.appendChild(win);
+        const chip = byText(win, "a", "Resoconto pronto"), head = byText(win, "p", "Resoconto del leader");
+        if (!chip || !head) return 0;
+        let panel = head; while (panel.parentElement && local(panel, win).h < 1000) panel = panel.parentElement;
+        const secs = panel.children[1] ? [...panel.children[1].children] : [];
+        let wtoast = byText(win, "span", "Feature squad ha finito"); while (wtoast && local(wtoast, win).w < 400) wtoast = wtoast.parentElement;
+        const C = local(chip, win);
+        // ReportEsiti's other two outcomes, laid over the report's own banner
+        const banner = secs[0], BR = banner && local(banner, win), bs = banner && getComputedStyle(banner);
+        const cardOf = text => { let e = byText(es, "div", text); while (e && !e.querySelector("svg")) e = e.parentElement; return e; };
+        const outs = BR ? ["Finito, niente", "Fermo alla fase"].map(cardOf).filter(Boolean).map(e => {
+          const k = e.cloneNode(true), tint = e.style.backgroundColor || "transparent";
+          // its tint is see-through: lay it on the panel's white so the banner under it does not show
+          Object.assign(k.style, { position: "absolute", left: BR.x + "px", top: BR.y + "px", width: bs.width, minHeight: bs.height, margin: 0, zIndex: 2,
+            background: `linear-gradient(${tint}, ${tint}), #FFFFFF` });
+          win.firstElementChild.appendChild(k); return k;
+        }) : [];
+        const T = look([200, 100, 700, 467]), P = look([480, 40, 960, 640]);
+        utils.set(cam, T); utils.set(panel, { x: 560 }); utils.set(chip, { opacity: 0, scale: 0.6 });
+        if (wtoast) utils.set(wtoast, { opacity: 0 });
+        utils.set(secs, { opacity: 0, y: 14 }); utils.set(outs, { opacity: 0 });
+        toast(tl, st, UI[lang].news.reportToast, 300, 2200, true);
+        tl.add(chip, { opacity: [0, 1], scale: [0.6, 1], duration: 520, ease: "outBack(2)" }, 600)
+          .add(chip, { scale: [1, 1.08, 1], duration: 500, ease: "inOut(2)" }, 1400);
+        const c = pointer(st), [x, y] = via(T, C.cx, C.cy);
+        let p = press(tl, c, x, y, enter(tl, c, x, y, 1700) + 80);
+        tl.add(panel, { x: [560, 0], duration: 750, ease: "out(4)" }, p)
+          .add(cam, { ...P, duration: 1100, ease: "inOut(3)" }, p + 100)
+          .add(c, { opacity: 0, duration: 300 }, p + 300)
+          .add(secs, { opacity: [0, 1], y: [14, 0], duration: 480, delay: stagger(110), ease: "out(3)" }, p + 600);
+        const still = p + 1900;
+        // read on: the report scrolls to what was done, the checks and the files, then back up
+        p += 2600;
+        tl.add(secs, { y: -330, duration: 1800, ease: "inOut(2)" }, p).add(secs, { y: 0, duration: 1200, ease: "inOut(3)" }, p + 2800);
+        // the other outcomes: all done, and stopped
+        p += 4200;
+        outs.forEach((k, i) => tl.add(k, { opacity: [0, 1], scale: [0.97, 1], duration: 320, ease: "out(3)" }, p + i * 1700).add(k, { opacity: 0, duration: 260 }, p + i * 1700 + 1600));
+        p += outs.length * 1700 + 400;
+        tl.add(panel, { x: 560, duration: 600, ease: "in(3)" }, p).add(cam, { ...T, duration: 1200, ease: "inOut(3)" }, p + 100)
+          .call(() => {}, p + 1500);
+        return still;
+      },
+    },
+    // Links: hover a node and its links turn violet; hover a line and its popover tells the traffic while a
+    // message rides it; hold Alt and every line shows its label.
+    links: {
+      needs: ["col-rest", "col-node", "col-line", "col-labels"],
+      async build(st, tl) {
+        const cam = camera(st), [rest, node, line, labels] = await Promise.all(this.needs.map(screenEl));
+        cam.append(rest, node, line, labels);
+        const wire = document.createElementNS(NS, "svg"); wire.setAttribute("class", "wire");
+        wire.setAttribute("width", 780); wire.setAttribute("height", 740); wire.setAttribute("viewBox", "0 0 780 740"); cam.appendChild(wire);
+        const pop = [...line.querySelectorAll("div")].filter(d => d.textContent.trim().startsWith("tester ⇄ coder")).sort((a, b) => b.offsetWidth - a.offsetWidth)[0];
+        // the links of the board (ColScena): tester › coder, leader › coder, leader › reviewer, sync-lead › sync-coder, leader › note
+        const E = { e11: "M220,340 L240,340 Q250,340 250,330 L250,254 Q250,244 260,244 L376,244 Q386,244 386,234 L386,188", e1: "M220,115 L300,115",
+          e10: "M220,133 L250,133 Q260,133 260,143 L260,354 Q260,364 270,364 L300,364", e8: "M665,428 L665,540", e4: "M125,60 L125,44 Q125,34 135,34 L655,34 Q665,34 665,44 L665,60" };
+        const ALL = look([0, 0, 780, 740]), F = look([40, 20, 640, 480]);
+        utils.set([node, line, labels], { opacity: 0 }); utils.set(cam, ALL);
+        if (pop) { pop.style.transformOrigin = "0 0"; utils.set(pop, { opacity: 0 }); }
+        const c = pointer(st);
+        tl.add(cam, { ...F, duration: 1400, ease: "inOut(3)" }, 300);
+        // the coder: its links light up
+        let [x, y] = via(F, 430, 112);
+        let p = enter(tl, c, x, y, 1100);
+        tl.add(node, { opacity: [0, 1], duration: 260 }, p - 120);
+        // the elbow from the tester: its popover, and a message on its way
+        [x, y] = via(F, 318, 244);
+        p = glide(tl, c, x, y, p + 1500, 800);
+        tl.add(node, { opacity: 0, duration: 220 }, p - 150).add(line, { opacity: [0, 1], duration: 220 }, p - 150);
+        if (pop) tl.add(pop, { opacity: [0, 1], scale: [0.94, 1], y: [6, 0], duration: 320, ease: "out(3)" }, p + 100);
+        pulse(tl, wire, E.e11, p + 200); pulse(tl, wire, E.e11, p + 1700);
+        const still = p + 800;
+        p += 3300;
+        if (pop) tl.add(pop, { opacity: 0, duration: 200 }, p);
+        tl.add(line, { opacity: 0, duration: 260 }, p + 100).add(c, { opacity: 0, duration: 300 }, p)
+          .add(cam, { ...ALL, duration: 1200, ease: "inOut(3)" }, p + 100);
+        // hold Alt: every line says what it carries
+        p += 1400;
+        holdKey(tl, st, "Alt", p, 2700);
+        tl.add(labels, { opacity: [0, 1], duration: 260 }, p + 380).add(labels, { opacity: 0, duration: 260 }, p + 2700);
+        [E.e1, E.e10, E.e8, E.e4].forEach((d, i) => pulse(tl, wire, d, p + 500 + i * 320, 1100));
+        tl.call(() => {}, p + 3500);
+        return still;
+      },
+    },
+    // The queue: the Inspector lists what the busy coder has waiting; on the canvas its badge calls, a click
+    // opens the queue, a message is dragged down one place, both are handed to a new session.
+    queue: {
+      needs: ["coda-main"],
+      async build(st, tl) {
+        const cam = camera(st), win = await screenEl("coda-main"); cam.appendChild(win);
+        const canvas = block(win, 288, 52), pop = canvas && block(canvas, 351, 136), coder = canvas && block(canvas, 352, 88), insp = block(win, 1368, 52);
+        if (!pop || !coder) return 0;
+        const badge = [...coder.querySelectorAll("span")].find(s => s.textContent.trim() === "3" && /255, 159, 10/.test(s.style.background));
+        const rows = [...pop.querySelectorAll("div")].filter(d => d.firstElementChild && d.firstElementChild.tagName === "BUTTON" && /min fa/.test(d.textContent)).slice(0, 2);
+        // a row's tools show on hover: move to another session, remove, and the grip to drag it
+        const grip = rows[0] && [...rows[0].querySelectorAll("span")].find(s => /grab/.test(s.style.cursor));
+        const tools = rows[0] ? [...$$("button", rows[0]).slice(1), grip].filter(Boolean) : [];
+        const pass = byText(pop, "button", "Passa 2");
+        const queued = insp ? ["Dopo il retry", "Il test offline", "Il backend"].map(s => byText(insp, "span", s)).filter(Boolean).map(e => e.parentElement) : [];
+        const B = badge ? local(badge, win) : { x: 951, y: 150, w: 32, h: 18, cx: 967, cy: 159 }, PO = local(pop, win);
+        const R = rows.map(r => local(r, win)), G = grip && local(grip, win), PS = pass && local(pass, win);
+        const ring = make(cam, "q-ring"); utils.set(ring, { x: B.x - 4, y: B.y - 4, width: B.w + 8, height: B.h + 8 });
+        const A = look([520, 90, 640, 427]), PB = look([560, 140, 540, 520]), IN = look([1128, 70, 600, 400]);
+        utils.set(cam, IN); pop.style.transformOrigin = `${B.cx - PO.x}px ${B.cy - PO.y}px`; utils.set(pop, { opacity: 0, scale: 0.4 });
+        utils.set(tools, { opacity: 0 }); utils.set(queued, { opacity: 0.25 }); if (rows[0]) { rows[0].style.position = "relative"; rows[0].style.zIndex = 1; }
+        // Inspector › In coda, then the canvas
+        tl.add(queued, { opacity: [0.25, 1], x: [10, 0], duration: 420, delay: stagger(140), ease: "out(3)" }, 400)
+          .add(cam, { ...A, duration: 1300, ease: "inOut(3)" }, 2000);
+        // the orange envelope calls
+        [3300, 4000].forEach(t => {
+          if (badge) tl.add(badge, { scale: [1, 1.3, 1], duration: 520, ease: "inOut(2)" }, t);
+          tl.add(ring, { opacity: [0.9, 0], scale: [1, 1.8], duration: 800, ease: "out(2)" }, t);
+        });
+        const c = pointer(st);
+        let [x, y] = via(A, B.cx, B.cy);
+        let p = press(tl, c, x, y, enter(tl, c, x, y, 4200) + 80);
+        tl.add(pop, { opacity: [0, 1], scale: [0.4, 1], duration: 460, ease: "outBack(1.3)" }, p)
+          .add(cam, { ...PB, duration: 1000, ease: "inOut(3)" }, p + 150);
+        // a message is dragged by its grip down one place, the other comes up
+        if (G && R.length === 2) {
+          const dy = R[1].y + R[1].h - R[0].y - R[0].h;
+          [x, y] = via(PB, G.cx, G.cy);
+          p = glide(tl, c, x, y, p + 1200, 800);
+          tl.add(tools, { opacity: [0, 1], duration: 200, delay: stagger(50) }, p - 450)
+            .add(c, { scale: 0.85, duration: 140, ease: "out(2)" }, p + 200)
+            .add(rows[0], { scale: [1, 1.02], duration: 200, ease: "out(2)" }, p + 250)
+            .add(c, { y: y + dy * PB.scale, duration: 700, ease: "inOut(3)" }, p + 400)
+            .add(rows[0], { y: [0, dy], duration: 700, ease: "inOut(3)" }, p + 400)
+            .add(rows[1], { y: [0, R[0].y - R[1].y], duration: 600, ease: "inOut(3)" }, p + 450)
+            .add([c, rows[0]], { scale: 1, duration: 180, ease: "out(2)" }, p + 1150)
+            .add(tools, { opacity: 0, duration: 200 }, p + 1700);
+          p += 1150;
+        }
+        const still = p + 700;
+        // both go to a new session
+        if (PS) {
+          [x, y] = via(PB, PS.cx, PS.cy);
+          p = glide(tl, c, x, y, p + 900, 800);
+          tl.add(pass, { boxShadow: ["0 0 0 0 rgba(139,115,255,0)", "0 0 0 6px rgba(139,115,255,0.4)"], duration: 400, ease: "out(2)" }, p - 200);
+          p = press(tl, c, x, y, p + 300);
+          toast(tl, st, UI[lang].news.queueToast, p + 100, 2200);
+          tl.add(pass, { boxShadow: "0 0 0 0 rgba(139,115,255,0)", duration: 300 }, p + 700);
+        }
+        tl.add(c, { opacity: 0, duration: 300 }, p + 500)
+          .add(pop, { opacity: 0, scale: 0.96, duration: 260, ease: "in(2)" }, p + 1600)
+          .add(cam, { ...IN, duration: 1500, ease: "inOut(3)" }, p + 2000)
+          .call(() => {}, p + 3500);
+        return still;
+      },
+    },
+  };
+
+  const stages = {};
+  $$(".nw-stage[data-scene]").forEach(wrap => {
+    const name = wrap.dataset.scene, scene = SCENES[name], st = $(".fstage", wrap), shot = $(".nw-shot", wrap), btn = $(".play", wrap);
+    if (!scene || !st) return;
+    let K = 1, tl = null, visible = false, paused = reduce, built = false, gen = 0, again = 0;
+    const fit = () => { K = wrap.clientWidth / VW; st.style.transform = `scale(${K})`; };
+    new ResizeObserver(fit).observe(wrap); fit();
+    const setBtn = on => { btn.dataset.playing = String(on); btn.setAttribute("aria-label", UI[lang].news[on ? "pause" : "play"]); };
+    async function build() {
+      const my = ++gen;
+      built = true;
+      if (tl) { tl.pause(); tl = null; }
+      clearTimeout(again);
+      // it loops by hand: a seek back to 0 puts every element where the scene starts, a loop wrap does not
+      const next = createTimeline({ autoplay: false, onComplete: self => { again = setTimeout(() => {
+        if (tl !== self || !self.completed) return; self.seek(0); if (visible && !paused) self.play(); }, 1400); } });
+      await Promise.all(scene.needs.map(loadScreen));       // once cached, the build below runs without yielding to events
+      if (my !== gen) return;
+      st.innerHTML = "";
+      const still = await scene.build(st, next);
+      if (my !== gen) { next.pause(); return; }
+      tl = next;
+      if (reduce) { tl.seek(still); return; }
+      animate(st, { opacity: [0, 1], duration: 350 });
+      if (visible && !paused) tl.play();
+    }
+    btn.addEventListener("click", () => { paused = !paused; setBtn(!paused); if (!tl) return; if (paused) tl.pause(); else if (visible) tl.play(); });
+    // fetch the screens a little before the stage arrives; build and play it once it is in view
+    new IntersectionObserver(([e], ob) => { if (e.isIntersecting) { ob.disconnect(); scene.needs.forEach(loadScreen); } }, { rootMargin: "600px 0px" }).observe(wrap);
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && !built) { build(); return; }
+      if (!tl) return;
+      if (visible && !paused) tl.play(); else tl.pause();
+    }, { threshold: 0.3 }).observe(wrap);
+    langHooks.push(() => { shot.setAttribute("aria-label", UI[lang].news[name]); setBtn(!paused); if (built) build(); });
+    shot.setAttribute("aria-label", UI[lang].news[name]);
+    setBtn(!paused);
+    if (reduce) btn.hidden = true;
+    stages[name] = { get tl() { return tl; } };
+  });
+  return { stages };
+})();
+window.__draftboard.news = news;
 /* ================================================================= TEAMS */
 // Each role's icon and colour, as the app gives them (DS.role: SF Symbols drawn here on a 16 grid).
 const ROLES = [

@@ -179,6 +179,14 @@ export const UI = {
       idle: "Waiting for tasks…",
       testerOk: "Allowed · the tester carries on", wheel: "Hold on a node: write, link, loop, hand off", launched: "3 sessions launched · one worktree each",
     },
+    news: {
+      play: "Play the animation", pause: "Pause the animation",
+      reportToast: "Feature squad finished · the leader wrote the report",
+      queueToast: "2 messages handed to a new session",
+      report: "The Bashestra canvas with a finished team. A “Report ready” chip appears on the team, the pointer clicks it and the leader's report slides in from the right: how it went, what you need to see or decide, what was done, the checks and the files touched. Then the three possible outcomes: all done, done with things waiting for you, stopped.",
+      links: "A canvas of linked agents. The pointer hovers the coder and its links turn violet, then hovers an elbow line: a popover shows how many messages went each way and the last one, with Open the conversation and Unlink, while a message travels along the line. Holding Alt shows the label of every line.",
+      queue: "The Inspector lists what a busy coder has queued. On the canvas, the coder's orange badge pulses, the pointer clicks it and the queue opens: two messages to deliver and one news item. A message is dragged down one place, then both are handed to a new session.",
+    },
     viz: {
       maestro: "Maestro", reads: "reads the canvas", spawn: "New team", allow: "Allow",
       roles: [["Leader", "Opus", 0.82], ["Coder", "Sonnet", 0.5], ["Reviewer", "Opus", 0.82], ["Designer", "Opus", 0.66], ["Tester", "Sonnet", 0.5]],
@@ -263,6 +271,14 @@ export const UI = {
       toast: "Fase 1 approvata · 8 agenti, nessuno in attesa",
       idle: "In attesa di compiti…",
       testerOk: "Consentito · il tester riparte", wheel: "Tieni premuto su un nodo: scrivi, collega, loop, consegne", launched: "3 sessioni lanciate · un worktree ciascuna",
+    },
+    news: {
+      play: "Avvia l'animazione", pause: "Metti in pausa l'animazione",
+      reportToast: "Feature squad ha finito · il leader ha scritto il resoconto",
+      queueToast: "2 messaggi passati a una nuova sessione",
+      report: "La lavagna di Bashestra con una squadra che ha finito. Sulla squadra compare il chip «Resoconto pronto», il puntatore lo clicca e il resoconto del leader entra da destra: com'è andata, cosa devi vedere o decidere, cosa è stato fatto, i controlli e i file toccati. Poi i tre esiti possibili: tutto fatto, finito ma con cose che aspettano te, fermo.",
+      links: "Una lavagna di agenti collegati. Il puntatore passa sul coder e i suoi collegamenti diventano viola, poi su una linea a gomiti: un popover mostra quanti messaggi sono passati in ogni verso e l'ultimo, con Apri la conversazione e Scollega, mentre un messaggio corre lungo la linea. Tenendo premuto Alt compaiono le etichette di tutte le linee.",
+      queue: "L'Inspector elenca cosa aspetta un coder occupato. Sulla lavagna il badge arancione del coder pulsa, il puntatore lo clicca e si apre la coda: due messaggi da consegnare e una news. Un messaggio viene trascinato giù di un posto, poi entrambi passano a una nuova sessione.",
     },
     viz: {
       maestro: "Maestro", reads: "legge la lavagna", spawn: "Nuova squadra", allow: "Consenti",

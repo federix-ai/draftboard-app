@@ -16,15 +16,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=0.7.8">
-<link rel="stylesheet" href="assets/screens/screens.css?v=0.7.5">
+<link rel="stylesheet" href="assets/site.css?v=0.7.9">
+<link rel="stylesheet" href="assets/screens/screens.css?v=0.7.9">
 <script>
   // Hide animated elements only when JS runs; if the module never boots, show everything after a moment.
   document.documentElement.classList.add("js");
   try { const l = localStorage.getItem("draftboard.lang"); if (l === "it") document.documentElement.lang = "it"; } catch (e) {}
   setTimeout(() => { if (!window.__siteReady) document.documentElement.classList.remove("js"); }, 2500);
 </script>
-<script type="module" src="assets/js/main.js?v=0.7.8"></script>
+<script type="module" src="assets/js/main.js?v=0.7.9"></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
@@ -128,23 +128,52 @@
           <a class="btn ghost" href="#linux" data-i18n="new.linux.all">ARM and .deb</a>
         </div>
       </article>
-      <article class="nw reveal">
-        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4 4V20.5H7zM14 3.5v4h4M10 12h5M10 15.5h5"/></svg></span>
-        <h3 data-i18n="new.report.t">The end-of-work report</h3>
-        <p data-i18n="new.report.d">When the plan finishes, or stops after three rejected reviews, the leader writes a report for you: how it went, what you need to see or decide, what was done, the checks and the files touched.</p>
-        <p class="nw-place" data-i18n="new.report.p">Top bar › Reports</p>
+    </div>
+    <div class="nw-rows">
+      <article class="nw-row reveal">
+        <div class="nw-text">
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4 4V20.5H7zM14 3.5v4h4M10 12h5M10 15.5h5"/></svg></span>
+          <h3 data-i18n="new.report.t">The end-of-work report</h3>
+          <p data-i18n="new.report.d">When the plan finishes, or stops after three rejected reviews, the leader writes a report for you: how it went, what you need to see or decide, what was done, the checks and the files touched.</p>
+          <p class="nw-place" data-i18n="new.report.p">Top bar › Reports</p>
+        </div>
+        <div class="nw-stage" data-scene="report">
+          <div class="nw-shot" role="img" aria-label="The Bashestra canvas with a finished team. A “Report ready” chip appears on the team, the pointer clicks it and the leader's report slides in from the right: how it went, what you need to see or decide, what was done, the checks and the files touched. Then the three possible outcomes: all done, done with things waiting for you, stopped."><div class="fstage" aria-hidden="true"></div></div>
+          <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
+            <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+          </button>
+        </div>
       </article>
-      <article class="nw reveal">
-        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h5.5v11H16M16 17.5h3M3 6.5h2"/></svg></span>
-        <h3 data-i18n="new.links.t">Links, redrawn</h3>
-        <p data-i18n="new.links.d">Elbow lines that route around the nodes, shaped by what they carry and coloured by team. Hover a line to see how many messages went through and the last one, with Open and Unlink.</p>
-        <p class="nw-place" data-i18n="new.links.p">Canvas</p>
+      <article class="nw-row flip reveal">
+        <div class="nw-text">
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h5.5v11H16M16 17.5h3M3 6.5h2"/></svg></span>
+          <h3 data-i18n="new.links.t">Links, redrawn</h3>
+          <p data-i18n="new.links.d">Elbow lines that route around the nodes, shaped by what they carry and coloured by team. Hover a line to see how many messages went through and the last one, with Open and Unlink.</p>
+          <p class="nw-place" data-i18n="new.links.p">Canvas</p>
+        </div>
+        <div class="nw-stage" data-scene="links">
+          <div class="nw-shot" role="img" aria-label="A canvas of linked agents. The pointer hovers the coder and its links turn violet, then hovers an elbow line: a popover shows how many messages went each way and the last one, with Open the conversation and Unlink, while a message travels along the line. Holding Alt shows the label of every line."><div class="fstage" aria-hidden="true"></div></div>
+          <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
+            <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+          </button>
+        </div>
       </article>
-      <article class="nw reveal">
-        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5 12 13l8-5.5M4 6.5h16v11H4zM9 20.5h6"/></svg></span>
-        <h3 data-i18n="new.queue.t">The message queue, in your hands</h3>
-        <p data-i18n="new.queue.d">See what a busy session is waiting for: remove, clear, reorder, move to another session or hand it all to a new one. Moved tasks go with it, and the queue survives a restart.</p>
-        <p class="nw-place" data-i18n="new.queue.p">Node badge and Inspector › Queued</p>
+      <article class="nw-row reveal">
+        <div class="nw-text">
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5 12 13l8-5.5M4 6.5h16v11H4zM9 20.5h6"/></svg></span>
+          <h3 data-i18n="new.queue.t">The message queue, in your hands</h3>
+          <p data-i18n="new.queue.d">See what a busy session is waiting for: remove, clear, reorder, move to another session or hand it all to a new one. Moved tasks go with it, and the queue survives a restart.</p>
+          <p class="nw-place" data-i18n="new.queue.p">Node badge and Inspector › Queued</p>
+        </div>
+        <div class="nw-stage" data-scene="queue">
+          <div class="nw-shot" role="img" aria-label="The Inspector lists what a busy coder has queued. On the canvas, the coder's orange badge pulses, the pointer clicks it and the queue opens: two messages to deliver and one news item. A message is dragged down one place, then both are handed to a new session."><div class="fstage" aria-hidden="true"></div></div>
+          <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
+            <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+          </button>
+        </div>
       </article>
     </div>
     <p class="nw-more reveal"><a href="https://github.com/federix-ai/draftboard-app/releases/tag/v0.5.6" data-i18n="new.notes">All the release notes for 0.5.6</a></p>
