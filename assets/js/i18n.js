@@ -103,6 +103,27 @@ export const IT = {
   "foot.issue": "Segnala un problema",
 };
 
+// The scenes find parts of a screen by the text they show (the screens are written in Italian). In English the
+// screens are the translated copies (assets/screens/<name>.en.html), so each lookup text has its English start here.
+// Each value must be how the English screen's string begins.
+export const LOOKUP = {
+  "Perfetto.": "Perfect.",
+  "Consenti": "Allow",
+  "Invia": "Send",
+  "tester ti aspetta": "tester is waiting for you",
+  "Lancia 3": "Launch 3",
+  "Resoconto pronto": "Report ready",
+  "Resoconto del leader": "Leader's report",
+  "Feature squad ha finito": "Feature squad is done",
+  "Finito, niente": "Done, nothing",
+  "Fermo alla fase": "Stopped at phase",
+  "min fa": "min ago",
+  "Passa 2": "Pass 2",
+  "Dopo il retry": "After the retry",
+  "Il test offline": "The offline",
+  "Il backend": "The backend",
+};
+
 // Strings used inside the animated demos (both languages).
 export const UI = {
   en: {

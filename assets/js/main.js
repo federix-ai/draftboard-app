@@ -1,5 +1,5 @@
 import { animate, createTimeline, stagger, utils, onScroll, splitText, createDraggable } from "./anime.esm.min.js?v=4.5.0";
-import { IT, UI } from "./i18n.js?v=0.7.9";
+import { IT, UI, LOOKUP } from "./i18n.js?v=0.8.0";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -82,12 +82,26 @@ function setState(node, st) {
 }
 
 
+// Links as the app draws them since 0.5.6: an elbow with rounded corners, horizontal out of one node and into the other.
+function elbow(ax, ay, bx, by, r = 10) {
+  const dx = bx - ax, dy = by - ay;
+  if (Math.abs(dy) < 1 || Math.abs(dx) < 1) return `M${ax} ${ay} L${bx} ${by}`;
+  const mx = ax + dx / 2, sx = Math.sign(dx), sy = Math.sign(dy), k = Math.min(r, Math.abs(dy) / 2, Math.abs(dx) / 2);
+  return `M${ax} ${ay} L${mx - k * sx} ${ay} Q${mx} ${ay} ${mx} ${ay + k * sy} L${mx} ${by - k * sy} Q${mx} ${by} ${mx + k * sx} ${by} L${bx} ${by}`;
+}
+const endDots = (ax, ay, bx, by) => `<circle class="end" cx="${ax}" cy="${ay}" r="3.5"/><circle class="end" cx="${bx}" cy="${by}" r="3.5"/>`;
+
 /* ================================================================ SCREENS */
 // Real screens of the app, rendered from its UI design canvas ("Orchestrator — UI macOS") and saved as
 // static markup in assets/screens/. They are fetched when needed and scaled into their frames.
-const SCREENS_V = "0.7.9";
+// The screens are in Italian; <name>.en.html is the English copy (made by the screen translator), used when the page is in English.
+const SCREENS_V = "0.8.1";
 const screenCache = {};
-const loadScreen = name => (screenCache[name] ??= fetch(`assets/screens/${name}.html?v=${SCREENS_V}`).then(r => (r.ok ? r.text() : "")));
+const fetchScreen = file => fetch(`assets/screens/${file}.html?v=${SCREENS_V}`).then(r => (r.ok ? r.text() : null));
+const loadScreen = name => {
+  const l = lang;
+  return (screenCache[name + "|" + l] ??= (l === "en" ? fetchScreen(name + ".en").then(s => s ?? fetchScreen(name)) : fetchScreen(name)).then(s => s ?? ""));
+};
 const SIZES = {
   main: [1728, 1080], "main-git": [1728, 1080], overview: [1600, 1000], plan: [1728, 1080], output: [1728, 1080],
   launch: [760, 900], usage: [360, 1028], fasi: [360, 1028], model: [300, 520], cartelle: [1440, 900],
@@ -107,6 +121,8 @@ async function screenEl(name) {
 }
 // The absolutely placed block of a screen at (left, top), e.g. a node on the canvas.
 const block = (scr, left, top) => [...scr.querySelectorAll("div")].find(d => d.style.left === left + "px" && d.style.top === top + "px");
+// a text the scenes look for on a screen, given as the Italian screen shows it, in the language of the screens loaded
+const says = it => (lang === "en" ? LOOKUP[it] ?? it : it);
 // the innermost element whose text starts with `text`
 const byText = (scr, sel, text) => [...scr.querySelectorAll(sel)].filter(e => e.textContent.trim().startsWith(text)).pop();
 const rectIn = (el, frame, k) => { const a = frame.getBoundingClientRect(), b = el.getBoundingClientRect();
@@ -173,22 +189,25 @@ const hero = (() => {
   const prompt = $(".prompt", icon), caret = $(".podium-caret", icon);
 
   let W = null, blocks = {}, composer = null, canvasRest = [], chars = [], marks = [], allow = null, needs = null, invia = null;
-  const ready = screenEl("main").then(scr => {
+  // the window, in the page's language: mounted again when the language changes
+  const mount = () => screenEl("main").then(scr => {
+    if (W) W.remove();
     W = scr; frame.prepend(scr);
     const canvas = block(scr, 288, 52);
     blocks = { sidebar: block(scr, 0, 0), toolbar: block(scr, 288, 0), inspector: block(scr, 1368, 52),
       leader: block(canvas, 24, 88), coder: block(canvas, 352, 88), note: block(canvas, 800, 88), tester: block(canvas, 24, 420), portal: block(canvas, 452, 420) };
     composer = block(canvas, 260, 836);
     canvasRest = [...canvas.children].slice(1).filter(el => !Object.values(blocks).includes(el) && el !== composer);
-    const msg = byText(composer, "div", "Perfetto.");
+    const msg = byText(composer, "div", says("Perfetto."));
     chars = msg ? charSpans(msg) : [];
     // the @mentions are chips: each one appears with its first letter
     marks = msg ? [...msg.querySelectorAll("span")].filter(sp => sp.style.background && !chars.includes(sp)).map(sp => [sp, chars.indexOf(sp.querySelector("span"))]) : [];
-    allow = byText(blocks.tester, "button, span", "Consenti");
-    needs = byText(blocks.toolbar, "button", "tester ti aspetta");
-    invia = byText(composer, "button", "Invia");
+    allow = byText(blocks.tester, "button, span", says("Consenti"));
+    needs = byText(blocks.toolbar, "button", says("tester ti aspetta"));
+    invia = byText(composer, "button", says("Invia"));
     return scr;
   });
+  let ready = mount();
 
   /* ---- the intro ---- */
   const prime = () => {
@@ -200,7 +219,7 @@ const hero = (() => {
     utils.set([...Object.values(blocks), composer, ...canvasRest], { opacity: 0 });
   };
   const intro = () => {
-    const tl = createTimeline({ autoplay: false, onComplete: () => startLoop() });
+    const g = gen, tl = createTimeline({ autoplay: false, onComplete: () => { if (g === gen) startLoop(); } });
     tl.add(masks, { strokeDashoffset: [1, 0], duration: 450, ease: "inOut(3)" }, 100)
       .add(seats, { opacity: [0, 1], translateY: [-26, 0], scale: [0.72, 1], duration: 260, delay: stagger(75), ease: "out(3)" }, 380)
       .add(glyphs, { opacity: [0, 1], duration: 100, delay: stagger(30) }, 1000)
@@ -224,7 +243,7 @@ const hero = (() => {
 
   /* ---- the window lives ---- */
   const loop = () => {
-    const tl = createTimeline({ autoplay: false, onComplete: () => setTimeout(startLoop, 600) });
+    const g = gen, tl = createTimeline({ autoplay: false, onComplete: () => setTimeout(() => { if (g === gen) startLoop(); }, 600) });
     utils.set(chars, { opacity: 0 }); utils.set(marks.map(m => m[0]), { opacity: 0 });
     tl.add(chars, { opacity: [0, 1], duration: 1, delay: stagger(22) }, 500);
     marks.forEach(([el, i]) => tl.add(el, { opacity: [0, 1], duration: 60 }, 500 + Math.max(0, i) * 22));
@@ -250,14 +269,29 @@ const hero = (() => {
   };
 
   /* ---- playback ---- */
-  let cur = null, paused = false, visible = false, began = false;
+  let cur = null, paused = false, visible = false, began = false, gen = 0;
   const run = tl => { cur = tl; if (!paused && visible) tl.play(); };
   function startLoop() { run(loop()); }
-  const setBtn = on => { btn.dataset.playing = String(on); btn.setAttribute("aria-label", on ? "Pause the animation" : "Play the animation"); };
+  const setBtn = on => { btn.dataset.playing = String(on); btn.setAttribute("aria-label", UI[lang].news[on ? "pause" : "play"]); };
+  // a new language: the window is mounted again in it; once the intro has begun, it goes straight to its loop
+  langHooks.push(() => {
+    const g = ++gen;
+    if (cur) cur.pause();
+    cur = null;
+    utils.set(toastEl, { opacity: 0 });
+    setBtn(!paused);
+    ready = mount().then(scr => {
+      if (g !== gen) return scr;
+      fit();
+      if (began) { utils.set([plans, prompt, caret, ...seats], { opacity: 0 }); startLoop(); }
+      else if (!reduce) prime();
+      return scr;
+    });
+  });
   btn.addEventListener("click", () => { paused = !paused; setBtn(!paused); if (!cur) return; if (paused) cur.pause(); else if (visible) cur.play(); });
   new IntersectionObserver(([e]) => {
     visible = e.isIntersecting;
-    if (!began && visible && !reduce) { began = true; ready.then(() => { prime(); fit(); setTimeout(() => run(intro()), 450); }); return; }
+    if (!began && visible && !reduce) { began = true; const g = gen; ready.then(() => { if (g !== gen) return; prime(); fit(); setTimeout(() => { if (g === gen) run(intro()); }, 450); }); return; }
     if (!cur) return;
     if (visible && !paused) cur.play(); else cur.pause();
   }, { threshold: 0.12 }).observe(root);
@@ -296,7 +330,7 @@ const player = (() => {
       dim.className = "dim"; cam.append(win, dim); stage.appendChild(sheet);
       sheet.classList.add("sheet-win"); utils.set(sheet, { x: (VW - 760) / 2, y: 52 });
       const canvas = block(win, 288, 52), nodes = [24, 352, 800, 24, 452].map((l, i) => block(canvas, l, i < 3 ? 88 : 420)).filter(Boolean);
-      const go = byText(sheet, "button", "Lancia 3");
+      const go = byText(sheet, "button", says("Lancia 3"));
       const c = pointer();
       const gr = go ? rectIn(go, stage, S) : null;
       utils.set(nodes, { opacity: 0, scale: 0.8 }); utils.set(dim, { opacity: 0 });
@@ -351,7 +385,7 @@ const player = (() => {
     // 3 · needs you: the tester asks, the toolbar says so, one click
     async tl => {
       const cam = camera(), win = await screenEl("main"); cam.appendChild(win);
-      const canvas = block(win, 288, 52), tester = block(canvas, 24, 420), needs = byText(win, "button", "tester ti aspetta"), allow = byText(tester, "button, span", "Consenti");
+      const canvas = block(win, 288, 52), tester = block(canvas, 24, 420), needs = byText(win, "button", says("tester ti aspetta")), allow = byText(tester, "button, span", says("Consenti"));
       const ring = document.createElement("i"); ring.className = "spot-ring"; cam.appendChild(ring);
       utils.set(ring, { x: 312 - 10, y: 472 - 10, width: 420, height: 280, opacity: 0 });
       tl.add(cam, { ...look([1300, 0, 428, 120], 0.55), duration: 1400, ease: "inOut(3)" }, 300);
@@ -393,14 +427,25 @@ const player = (() => {
       .add($$("kbd", k), { scale: [1, 0.86, 1], duration: 300, delay: stagger(90), ease: "inOut(2)" }, pos + 350)
       .add(k, { opacity: [1, 0], y: [0, 10], duration: 300 }, pos + 1100);
   }
-  // white packets riding the links of a screen
+  // messages riding the links of a screen, as in 0.5.6: a short trail in the link's colour along its elbow route,
+  // a bright head, a ripple where it lands (screens exported before the new links: the old solid lines)
   function packets(tl, scr, from, to) {
-    const ps = [...scr.querySelectorAll("svg path")].filter(p => { const st = p.getAttribute("stroke") || ""; return st && st !== "none" && !p.getAttribute("stroke-dasharray") && p.getTotalLength() > 60; });
-    ps.forEach((path, i) => {
-      const svg = path.ownerSVGElement, c = document.createElementNS(NS, "circle"); c.setAttribute("r", 4.5); c.setAttribute("class", "pkt"); svg.appendChild(c);
-      const len = path.getTotalLength(), o = { p: 0 };
+    let ps = [...scr.querySelectorAll('svg path[data-kind="messages"]')];
+    if (!ps.length) ps = [...scr.querySelectorAll("svg path")].filter(p => { const st = p.getAttribute("stroke") || ""; return st && st !== "none" && !p.getAttribute("stroke-dasharray"); });
+    ps.filter(p => p.getTotalLength() > 60).forEach((path, i) => {
+      const svg = path.ownerSVGElement, col = path.getAttribute("stroke"), len = path.getTotalLength(), o = { p: 0 }, w = { k: 1 };
+      const el = (tag, attrs) => { const e = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); e.style.opacity = 0; svg.appendChild(e); return e; };
+      const trail = el("path", { fill: "none", stroke: col, "stroke-width": 5, "stroke-linecap": "round", "stroke-linejoin": "round" });
+      const c = el("circle", { r: 2.6, class: "pkt" }), end = path.getPointAtLength(len);
+      const ring = el("circle", { cx: end.x, cy: end.y, r: 3.5, fill: "none", stroke: col, "stroke-width": 2 });
+      const at = d => path.getPointAtLength(Math.max(0, Math.min(len, d)));
       for (let t = from + i * 380; t < to - 900; t += 1700 + i * 90)
-        tl.add(o, { p: [0, 1], duration: 900, ease: "inOut(2)", onUpdate: () => { const pt = path.getPointAtLength(o.p * len); c.setAttribute("cx", pt.x); c.setAttribute("cy", pt.y); c.style.opacity = o.p > 0.02 && o.p < 0.98 ? 1 : 0; } }, t);
+        tl.add(o, { p: [0, 1], duration: 900, ease: "inOut(2)", onUpdate: () => {
+          const h = o.p * len, q = at(h), on = o.p > 0.02 && o.p < 0.98 ? 1 : 0;
+          trail.setAttribute("d", [0, 0.25, 0.5, 0.75, 1].map((k, j) => { const p = at(h - 22 * (1 - k)); return (j ? "L" : "M") + p.x + " " + p.y; }).join(" "));
+          c.setAttribute("cx", q.x); c.setAttribute("cy", q.y); c.style.opacity = trail.style.opacity = on;
+        } }, t)
+          .add(w, { k: [0, 1], duration: 340, ease: "out(2)", onUpdate: () => { ring.setAttribute("r", 3.5 + 5.5 * w.k); ring.style.opacity = w.k > 0 && w.k < 1 ? 0.6 * (1 - w.k) : 0; } }, t + 880);
     });
   }
   // the phases of a feature, one screen after the other
@@ -412,7 +457,7 @@ const player = (() => {
       .call(() => {}, 600 + (names.length - 1) * hold + 1600);
   }
 
-  const setPlaying = on => { playBtn.dataset.playing = String(on); playBtn.setAttribute("aria-label", on ? "Pause" : "Play"); };
+  const setPlaying = on => { playBtn.dataset.playing = String(on); playBtn.setAttribute("aria-label", UI[lang].news[on ? "pause" : "play"]); };
   const NEEDS = [["main", "launch"], ["overview", "radial-open", "radial-pick"], ["main"], ["main-git"],
     ["floor-live", "floor-open", "floor-hover", "floor-enter", "floor-arrived"], ["cap-live", "cap-hover", "cap-flash", "cap-annotate", "cap-comment", "cap-fixed"]];
   async function go(i, play) {
@@ -521,16 +566,16 @@ const news = (() => {
       needs: ["report-main", "report-esiti"],
       async build(st, tl) {
         const cam = camera(st), [win, es] = await Promise.all(this.needs.map(screenEl)); cam.appendChild(win);
-        const chip = byText(win, "a", "Resoconto pronto"), head = byText(win, "p", "Resoconto del leader");
+        const chip = byText(win, "a", says("Resoconto pronto")), head = byText(win, "p", says("Resoconto del leader"));
         if (!chip || !head) return 0;
         let panel = head; while (panel.parentElement && local(panel, win).h < 1000) panel = panel.parentElement;
         const secs = panel.children[1] ? [...panel.children[1].children] : [];
-        let wtoast = byText(win, "span", "Feature squad ha finito"); while (wtoast && local(wtoast, win).w < 400) wtoast = wtoast.parentElement;
+        let wtoast = byText(win, "span", says("Feature squad ha finito")); while (wtoast && local(wtoast, win).w < 400) wtoast = wtoast.parentElement;
         const C = local(chip, win);
         // ReportEsiti's other two outcomes, laid over the report's own banner
         const banner = secs[0], BR = banner && local(banner, win), bs = banner && getComputedStyle(banner);
         const cardOf = text => { let e = byText(es, "div", text); while (e && !e.querySelector("svg")) e = e.parentElement; return e; };
-        const outs = BR ? ["Finito, niente", "Fermo alla fase"].map(cardOf).filter(Boolean).map(e => {
+        const outs = BR ? ["Finito, niente", "Fermo alla fase"].map(s => cardOf(says(s))).filter(Boolean).map(e => {
           const k = e.cloneNode(true), tint = e.style.backgroundColor || "transparent";
           // its tint is see-through: lay it on the panel's white so the banner under it does not show
           Object.assign(k.style, { position: "absolute", left: BR.x + "px", top: BR.y + "px", width: bs.width, minHeight: bs.height, margin: 0, zIndex: 2,
@@ -614,12 +659,12 @@ const news = (() => {
         const canvas = block(win, 288, 52), pop = canvas && block(canvas, 351, 136), coder = canvas && block(canvas, 352, 88), insp = block(win, 1368, 52);
         if (!pop || !coder) return 0;
         const badge = [...coder.querySelectorAll("span")].find(s => s.textContent.trim() === "3" && /255, 159, 10/.test(s.style.background));
-        const rows = [...pop.querySelectorAll("div")].filter(d => d.firstElementChild && d.firstElementChild.tagName === "BUTTON" && /min fa/.test(d.textContent)).slice(0, 2);
+        const rows = [...pop.querySelectorAll("div")].filter(d => d.firstElementChild && d.firstElementChild.tagName === "BUTTON" && d.textContent.includes(says("min fa"))).slice(0, 2);
         // a row's tools show on hover: move to another session, remove, and the grip to drag it
         const grip = rows[0] && [...rows[0].querySelectorAll("span")].find(s => /grab/.test(s.style.cursor));
         const tools = rows[0] ? [...$$("button", rows[0]).slice(1), grip].filter(Boolean) : [];
-        const pass = byText(pop, "button", "Passa 2");
-        const queued = insp ? ["Dopo il retry", "Il test offline", "Il backend"].map(s => byText(insp, "span", s)).filter(Boolean).map(e => e.parentElement) : [];
+        const pass = byText(pop, "button", says("Passa 2"));
+        const queued = insp ? ["Dopo il retry", "Il test offline", "Il backend"].map(s => byText(insp, "span", says(s))).filter(Boolean).map(e => e.parentElement) : [];
         const B = badge ? local(badge, win) : { x: 951, y: 150, w: 32, h: 18, cx: 967, cy: 159 }, PO = local(pop, win);
         const R = rows.map(r => local(r, win)), G = grip && local(grip, win), PS = pass && local(pass, win);
         const ring = make(cam, "q-ring"); utils.set(ring, { x: B.x - 4, y: B.y - 4, width: B.w + 8, height: B.h + 8 });
@@ -756,10 +801,10 @@ function roleIcon(name) {
     $$("button", list).forEach(b => b.addEventListener("click", () => { interacted = true; stop(); show(+b.dataset.i); }));
   };
   const path = (a, b) => { const w = nodesEl.clientWidth / 100, h = nodesEl.clientHeight / 100;
-    const ax = a.x * w, ay = a.y * h, bx = b.x * w, by = b.y * h, dx = (bx - ax) / 2;
-    return `M${ax} ${ay} C ${ax + dx} ${ay}, ${bx - dx} ${by}, ${bx} ${by}`; };
+    return [a.x * w, a.y * h, b.x * w, b.y * h]; };
+  const wire = (a, b) => `<g class="wire"><path pathLength="1" d="${elbow(...path(a, b))}"/>${endDots(...path(a, b))}</g>`;
   const relayout = () => { svg.setAttribute("viewBox", `0 0 ${nodesEl.clientWidth} ${nodesEl.clientHeight}`);
-    const lay = layouts[cur]; $$("path", svg).forEach((p, k) => lay.e[k] && p.setAttribute("d", path(lay.n[lay.e[k][0]], lay.n[lay.e[k][1]]))); };
+    const lay = layouts[cur]; $$(".wire", svg).forEach((g, k) => lay.e[k] && (g.outerHTML = wire(lay.n[lay.e[k][0]], lay.n[lay.e[k][1]]))); };
   new ResizeObserver(relayout).observe(nodesEl);
   function show(i, first) {
     cur = i;
@@ -771,9 +816,11 @@ function roleIcon(name) {
       nodesEl.innerHTML = lay.n.map((n, k) => n.r === "+" ? `<div class="tp" style="left:${n.x}%;top:${n.y}%"><div class="tnode plus">+ ${lang === "it" ? "membro" : "member"}</div></div>` :
         `<div class="tp" style="left:${n.x}%;top:${n.y}%"><div class="tnode ${k === 0 ? "lead" : ""}">${roleIcon(n.r)}<b>${n.r}</b><small>${AG[n.a][1]}</small></div></div>`).join("");
       svg.setAttribute("viewBox", `0 0 ${nodesEl.clientWidth} ${nodesEl.clientHeight}`);
-      svg.innerHTML = lay.e.map(([a, b]) => `<path pathLength="1" d="${path(lay.n[a], lay.n[b])}"/>`).join("");
+      svg.innerHTML = lay.e.map(([a, b]) => wire(lay.n[a], lay.n[b])).join("");
       if (reduce) return;
-      const tn = $$(".tnode", nodesEl), ps = $$("path", svg);
+      const tn = $$(".tnode", nodesEl), ps = $$("path", svg), ends = $$("circle.end", svg);
+      utils.set(ends, { opacity: 0 });
+      animate(ends, { opacity: [0, 1], duration: 300, delay: stagger(40, { start: 700 }) });
       utils.set(ps, { strokeDasharray: "1", strokeDashoffset: 1 });
       animate(tn, { opacity: [0, 1], scale: [0.5, 1], duration: 650, delay: stagger(90), ease: "outBack(1.7)" });
       animate(ps, { strokeDashoffset: [1, 0], duration: 600, delay: stagger(80, { start: 250 }), ease: "inOut(2)" });
@@ -830,20 +877,25 @@ function roleIcon(name) {
   const ride = (tl, el, mover, c, pos, dur = 800) => {
     const o = { k: 0 };
     tl.add(o, { k: [0, 1], duration: dur, ease: "inOut(2)", onUpdate: () => {
+      const p = $(`.vz-svg path[data-c="${c.join(" ")}"]`, el);
+      if (p && p.getTotalLength()) { const pt = p.getPointAtLength(o.k * p.getTotalLength()); utils.set(mover, { x: pt.x, y: pt.y }); return; }
       const w = el.clientWidth, hgt = el.clientHeight;
       utils.set(mover, { x: bez(c[0], c[2], c[4], c[6], o.k) * w / 100, y: bez(c[1], c[3], c[5], c[7], o.k) * hgt / 100 });
     } }, pos)
       .add(mover, { opacity: [0, 1], duration: 120 }, pos)
       .add(mover, { opacity: [1, 0], duration: 160 }, pos + dur - 120);
   };
-  const svgPath = c => `M${c[0]} ${c[1]} C ${c[2]} ${c[3]}, ${c[4]} ${c[5]}, ${c[6]} ${c[7]}`;
+  // only the two ends of each curve count now: the link is drawn as an elbow between them
+  const svgPath = c => elbow(c[0], c[1], c[6], c[7]);
   // Curves are given in % of the picture; drawn in its real pixels so the strokes keep their width.
   const curves = (el, list) => `<svg class="vz-svg">${list.map(c => `<path pathLength="1" data-c="${c.join(" ")}"/>`).join("")}</svg>`;
   const fitCurves = el => {
     const svg = $(".vz-svg", el); if (!svg) return;
     const w = el.clientWidth, h = el.clientHeight;
     svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-    $$("path[data-c]", svg).forEach(p => { const c = p.dataset.c.split(" ").map(Number); p.setAttribute("d", svgPath(c.map((v, i) => v * (i % 2 ? h : w) / 100))); });
+    $$("circle.end", svg).forEach(e => e.parentNode.removeChild(e));
+    $$("path[data-c]", svg).forEach(p => { const c = p.dataset.c.split(" ").map(Number).map((v, i) => v * (i % 2 ? h : w) / 100);
+      p.setAttribute("d", svgPath(c)); p.insertAdjacentHTML("afterend", endDots(c[0], c[1], c[6], c[7])); });
   };
   // A real panel of the app, scaled into the picture, that slowly scrolls while in view.
   const shot = (name, { k, left = null, top = 12, pan = 0 }) => ({

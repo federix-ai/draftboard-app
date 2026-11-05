@@ -113,3 +113,8 @@
 .scr [data-sc-name^="S_Report"] .li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 19px; color: #1C1B22; }
 .scr [data-sc-name^="S_Report"] .tick { flex: none; width: 16px; height: 16px; margin-top: 1px; }
 .scr [data-sc-name^="S_Report"] .frow { display: flex; align-items: center; gap: 10px; font-size: 12px; line-height: 16px; }
+/* 0.5.6 links: a message travels the elbow route (and stops in the queue chip), a ripple where it lands, a handoff marches */
+@keyframes lkGo { 0% { offset-distance: 0%; opacity: 0; } 6% { opacity: 1; } 64% { offset-distance: 100%; opacity: 1; } 70%, 100% { offset-distance: 100%; opacity: 0; } }
+@keyframes lkHold { 0% { offset-distance: 0%; opacity: 0; } 6% { opacity: 1; } 60% { offset-distance: 72%; opacity: 1; } 72%, 100% { offset-distance: 72%; opacity: 0; } }
+@keyframes lkRip { 0%, 62% { transform: scale(0.6); opacity: 0; } 66% { opacity: 0.9; } 86%, 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes lkMarch { to { stroke-dashoffset: -20; } }
