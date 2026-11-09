@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg"><b>⬇ Download for macOS</b></a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/Bashestra-0.5.6.AppImage"><b>⬇ Linux AppImage</b></a>
+  <a href="https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1.AppImage"><b>⬇ Linux AppImage</b></a>
   &nbsp;·&nbsp;
   <a href="https://federix-ai.github.io/draftboard-app/">Project page</a>
   &nbsp;·&nbsp;
@@ -30,12 +30,11 @@
 
 ---
 
-## New in 0.5.6
+## New in 0.6.1
 
-- **Bashestra on Linux.** The desktop port runs on Ubuntu, Debian and other distributions, on x64 and ARM: an AppImage that updates itself, or a `.deb` for apt.
-- **The end-of-work report.** When the plan finishes, or stops after three rejected reviews, the leader writes you a report: how it went, what you need to decide, what was done, checks and files touched.
-- **Links, redrawn.** Elbow lines that route around the nodes, coloured by team; hover a line for its traffic, Open and Unlink.
-- **The message queue, in your hands.** Remove, reorder, move or hand off what a busy session is waiting for. The queue survives a restart.
+- **Linux looks like the Mac now.** The Linux app was redesigned from the Mac's own design: a light and dark theme that follows your system, the Inter font, a sidebar that groups sessions by state, an Inspector with tabs, new sheets for sessions and teams, and every setting in one panel inside the window. AppImage and `.deb`, on x64 and ARM.
+- **Sessions in output view** (Mac). For Claude Code and OpenCode 2.x the node shows what the agent is doing instead of the terminal: what it received, its reply, the actions grouped with files and +/−, and the outcome. The terminal stays on behind it; the switch in the node header brings it back.
+- **Mockups, new roles, faster agents** (since 0.6.0). Designer and Prototyper publish mockups on the canvas, with every version and a side-by-side compare. Four new roles come with their own skills and teams, and long commands now run once in the background, so agents wait less.
 
 ## What it does
 
@@ -60,8 +59,8 @@
 
 | | x64 | ARM |
 |---|---|---|
-| **AppImage** (updates itself) | [Bashestra-0.5.6.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/Bashestra-0.5.6.AppImage) | [Bashestra-0.5.6-arm64.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/Bashestra-0.5.6-arm64.AppImage) |
-| **.deb** (Debian, Ubuntu) | [bashestra-desktop_0.5.6_amd64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/bashestra-desktop_0.5.6_amd64.deb) | [bashestra-desktop_0.5.6_arm64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.5.6/bashestra-desktop_0.5.6_arm64.deb) |
+| **AppImage** (updates itself) | [Bashestra-0.6.1.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1.AppImage) | [Bashestra-0.6.1-arm64.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1-arm64.AppImage) |
+| **.deb** (Debian, Ubuntu) | [bashestra-desktop_0.6.1_amd64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/bashestra-desktop_0.6.1_amd64.deb) | [bashestra-desktop_0.6.1_arm64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/bashestra-desktop_0.6.1_arm64.deb) |
 
 ```sh
 chmod +x Bashestra-*.AppImage && ./Bashestra-*.AppImage   # AppImage

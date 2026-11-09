@@ -362,6 +362,7 @@ footer a { color: var(--text2); }
 .nw-linux { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; gap: 28px; padding: 30px; border-color: var(--accent-ring); background: radial-gradient(600px circle at 0% 0%, rgba(110,79,245,.16), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); }
 .nw-linux .nw-body { display: flex; flex-direction: column; gap: 10px; }
 .nw-linux h3 { font-size: 24px; }
+.nw-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 16px; }
 .nw-actions { display: flex; flex-wrap: wrap; gap: 10px; flex: none; }
 .nw-more { margin: 22px 0 0; font-size: 15px; }
 /* the three features of 0.5.6: text beside a stage that plays the real screens (virtual 960×640) */
@@ -413,6 +414,7 @@ pre.cmd code { background: none; padding: 0; font-size: 13px; color: var(--term-
   .install, .teams-ui { grid-template-columns: 1fr; }
   .install > * { min-width: 0; }   /* a long command scrolls in its box, not the page */
   .nw-linux { flex-direction: column; align-items: flex-start; }
+  .nw-cols { grid-template-columns: 1fr; }
   .nw-row, .nw-row.flip { grid-template-columns: 1fr; gap: 22px; padding: 22px; }
   .nw-row.flip .nw-text { order: 0; }
   .nw-text { padding-left: 0; }
