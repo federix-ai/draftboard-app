@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg"><b>⬇ Download for macOS</b></a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1.AppImage"><b>⬇ Linux AppImage</b></a>
+  <a href="https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/Bashestra-0.7.0.AppImage"><b>⬇ Linux AppImage</b></a>
   &nbsp;·&nbsp;
   <a href="https://federix-ai.github.io/draftboard-app/">Project page</a>
   &nbsp;·&nbsp;
@@ -30,18 +30,20 @@
 
 ---
 
-## New in 0.6.1
+## New in 0.7.0
 
-- **Linux looks like the Mac now.** The Linux app was redesigned from the Mac's own design: a light and dark theme that follows your system, the Inter font, a sidebar that groups sessions by state, an Inspector with tabs, new sheets for sessions and teams, and every setting in one panel inside the window. AppImage and `.deb`, on x64 and ARM.
-- **Sessions in output view** (Mac). For Claude Code and OpenCode 2.x the node shows what the agent is doing instead of the terminal: what it received, its reply, the actions grouped with files and +/−, and the outcome. The terminal stays on behind it; the switch in the node header brings it back.
-- **Mockups, new roles, faster agents** (since 0.6.0). Designer and Prototyper publish mockups on the canvas, with every version and a side-by-side compare. Four new roles come with their own skills and teams, and long commands now run once in the background, so agents wait less.
+- **A new window** (Mac). The canvas is the biggest thing in the window again. The sidebar and the inspector are gone: a bar on top holds the project and workspace path, who is waiting for you (<kbd>⌘J</kbd>), Stop all and **+ New**; a strip on the left opens one section at a time in a panel, <kbd>⌘1</kbd> to <kbd>⌘8</kbd>: Maestro, Sessions, History, Folders, Mockups, Git, Phases, Usage.
+- **Your Claude Code history** (Mac). Every Claude Code conversation, opened from the terminal, the Claude app, your editor or Bashestra. The List groups them by day with a reader beside it, without starting anything; the Diary puts them on a timeline, one lane per branch. Resume one on the canvas or fork a copy. It stays on your Mac: Bashestra doesn't write to Claude's files.
+- **Folders in the strip** (Mac). Add, colour and remove the project's folders by dragging them from the Finder, with <kbd>⇧⌘A</kbd> or from **Add…**. Each workspace uses the folders you tick under *Used in*, and a folder's zone lights up on the canvas when you open its card.
+- **A Maestro that works on its own.** It does the job itself and proposes a team only when it's worth it, in one card you approve with a single OK. Delegation is set per workspace: Never, Ask or Automatic.
+- **Claude Code folders in the launcher.** The folders where you've worked with Claude Code become rows of the launcher; opening one makes it a project, with its conversations in the History. Workspaces can now be deleted from the launcher, the switcher or the File menu.
 
 ## What it does
 
-- **Real terminals on a canvas.** Each node is a full terminal running your agent CLI. A sidebar shows who needs you, who is working and who is idle; <kbd>⌘J</kbd> jumps to the next one waiting.
+- **Real terminals on a canvas.** Each node is a full terminal running your agent CLI. The strip's Sessions badge and the capsule in the bar show who needs you; <kbd>⌘J</kbd> jumps to the next one waiting.
 - **Linked agents talk.** Drag a line between two nodes. Agents use `orch send <name> "…"` to message a colleague; messages queue until the receiver is free.
-- **Teams in one click.** Six ready-made teams (Feature squad, Pair, Bug hunt, Parallel build, Exploration, Full squad), already linked, with the task going to the leader. Or build your own and save it.
-- **A worktree per agent.** In a git repository every agent works on its own `orch/<name>` branch. The Git panel shows the branch graph, diffs, commit, push and branch switching.
+- **Teams in one click.** Ready-made teams (Feature squad, Pair, Bug hunt, Parallel build, Exploration, Full squad, Interface and more), already linked, with the task going to the leader: <kbd>⇧⌘T</kbd> or **+ New › Team**. Or build your own and save it.
+- **A worktree per agent.** In a git repository every agent works on its own `orch/<name>` branch. The Git section shows the branch graph, diffs, commit, push and branch switching.
 - **Floors for experiments.** Copy a workspace and its repositories instantly with APFS clones, try an idea, then bring the branches back or throw it away.
 - **Point at the bug.** Web and iOS Simulator nodes next to the agents: capture the screen, mark what's wrong and send it to the linked agent.
 
@@ -59,8 +61,8 @@
 
 | | x64 | ARM |
 |---|---|---|
-| **AppImage** (updates itself) | [Bashestra-0.6.1.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1.AppImage) | [Bashestra-0.6.1-arm64.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1-arm64.AppImage) |
-| **.deb** (Debian, Ubuntu) | [bashestra-desktop_0.6.1_amd64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/bashestra-desktop_0.6.1_amd64.deb) | [bashestra-desktop_0.6.1_arm64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/bashestra-desktop_0.6.1_arm64.deb) |
+| **AppImage** (updates itself) | [Bashestra-0.7.0.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/Bashestra-0.7.0.AppImage) | [Bashestra-0.7.0-arm64.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/Bashestra-0.7.0-arm64.AppImage) |
+| **.deb** (Debian, Ubuntu) | [bashestra-desktop_0.7.0_amd64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/bashestra-desktop_0.7.0_amd64.deb) | [bashestra-desktop_0.7.0_arm64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/bashestra-desktop_0.7.0_arm64.deb) |
 
 ```sh
 chmod +x Bashestra-*.AppImage && ./Bashestra-*.AppImage   # AppImage

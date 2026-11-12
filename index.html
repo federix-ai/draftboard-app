@@ -16,15 +16,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=0.8.2">
-<link rel="stylesheet" href="assets/screens/screens.css?v=0.8.1">
+<link rel="stylesheet" href="assets/site.css?v=0.9.0">
+<link rel="stylesheet" href="assets/screens/screens.css?v=0.9.0">
 <script>
   // Hide animated elements only when JS runs; if the module never boots, show everything after a moment.
   document.documentElement.classList.add("js");
   try { const l = localStorage.getItem("draftboard.lang"); if (l === "it") document.documentElement.lang = "it"; } catch (e) {}
   setTimeout(() => { if (!window.__siteReady) document.documentElement.classList.remove("js"); }, 2500);
 </script>
-<script type="module" src="assets/js/main.js?v=0.8.2"></script>
+<script type="module" src="assets/js/main.js?v=0.9.0"></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
@@ -54,13 +54,13 @@
 <header class="hero">
   <div class="spot" aria-hidden="true"></div>
   <div class="wrap hero-copy">
-    <a class="news reveal" href="#new"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.6.1 · Linux looks like the Mac, agents that show their work</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+    <a class="news reveal" href="#new"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.7.0 · A new window and your Claude Code history</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
     <h1 class="hero-title" data-i18n="hero.title">Conduct your <em>orchestra</em> of coding agents.</h1>
     <p class="lede reveal" data-i18n="hero.lede">Claude Code, Codex, Gemini CLI and OpenCode, side by side on one canvas. Every node is a real terminal. Draw a line and two agents talk. You step in only when they need you.</p>
     <div class="cta reveal">
       <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
-        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.6.1</small>
+        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.7.0</small>
       </a>
       <a class="btn ghost big" href="#tour">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
@@ -74,7 +74,7 @@
   <div class="showcase" id="showcase">
     <div class="tilt">
       <div class="app-frame">
-        <div class="app-stage" id="hero-stage" role="img" aria-label="The Bashestra window: the sidebar with who needs you, a canvas with a leader, a coder, a tester, a note and a web portal linked together, the composer and the inspector. A message is typed to the coder and the pointer approves the tester's request.">
+        <div class="app-stage" id="hero-stage" role="img" aria-label="The Bashestra window: the bar with the project path and who is waiting for you, the strip of sections, the Sessions panel, and a canvas with a leader, a coder, a tester, a note and a web portal linked together, with the composer. A message is typed to the coder and the pointer approves the tester's request.">
           <div class="hw">
             <svg class="hicon" viewBox="0 0 1728 1080" aria-hidden="true"></svg>
             <div class="htoast"><i></i><span></span></div>
@@ -108,42 +108,76 @@
   </div>
 </section>
 
-<!-- WHAT'S NEW in 0.6.1 -->
+<!-- WHAT'S NEW in 0.7.0 -->
 <section id="new" class="new-sec">
   <div class="wrap">
     <div class="sec-head reveal">
-      <p class="kicker" data-i18n="new.kicker">New in 0.6.1</p>
-      <h2 data-i18n="new.title">Linux looks like the Mac now. And agents show what they're doing.</h2>
-      <p data-i18n="new.sub">The Linux app was redesigned from the Mac's own design. On the Mac, a node can show an agent's work instead of its terminal.</p>
+      <p class="kicker" data-i18n="new.kicker">New in 0.7.0</p>
+      <h2 data-i18n="new.title">A new window. With your Claude Code history inside.</h2>
+      <p data-i18n="new.sub">On the Mac the canvas is the biggest thing in the window again: a strip of eight sections takes the place of the sidebar and the inspector. And the History brings in every Claude Code conversation, wherever you started it.</p>
     </div>
-    <div class="nw-grid">
-      <article class="nw nw-linux reveal">
-        <div class="nw-body">
-          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H4zM8 20h8M12 16v4M7.5 9l2 1.75-2 1.75M11.5 12.5H15"/></svg></span>
-          <h3 data-i18n="new.linux.t">Bashestra on Linux, redesigned</h3>
-          <p data-i18n="new.linux.d">The Linux app now looks and works like the Mac one: a light and dark theme that follows your system, the Inter font, a sidebar that groups sessions by state, an Inspector with tabs, new sheets for sessions and teams, and every setting in one panel inside the window. AppImage and .deb, on x64 and ARM.</p>
+    <div class="nw-rows">
+      <article class="nw-row reveal">
+        <div class="nw-text">
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5h17v15h-17zM3.5 8.5h17M8 8.5v11"/></svg></span>
+          <h3 data-i18n="new.win.t">The canvas comes first</h3>
+          <p data-i18n="new.win.d">The sidebar and the inspector are gone. The bar at the top holds the path of project and workspace, who is waiting for you (<kbd>⌘J</kbd>), Stop all and + New. The strip on the left opens one section at a time, <kbd>⌘1</kbd> to <kbd>⌘8</kbd>: Maestro, Sessions, History, Folders, Mockups, Git, Phases, Usage. Everything else is canvas.</p>
+          <p class="nw-place" data-i18n="new.win.p">Bar and strip · Mac</p>
         </div>
-        <div class="nw-actions">
-          <a class="btn primary" data-asset="appimage-x64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1.AppImage"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="new.linux.get">AppImage for x64</span></a>
-          <a class="btn ghost" href="#linux" data-i18n="new.linux.all">ARM and .deb</a>
+        <div class="nw-stage" data-scene="binario">
+          <div class="nw-shot" role="img" aria-label="The new Bashestra window: the bar with the project path and the “tester is waiting for you” capsule, the strip of eight sections on the left, the Sessions panel and the canvas. The pointer clicks Git, Phases and Usage in the strip and the panel changes each time, while the canvas stays where it is; then it goes back to Sessions."><div class="fstage" aria-hidden="true"></div></div>
+          <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
+            <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+          </button>
+        </div>
+      </article>
+      <article class="nw-row flip reveal">
+        <div class="nw-text">
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 12a8.4 8.4 0 1 0 2.5-6M3.5 4v4.4h4.4M12 7.5V12l3 2"/></svg></span>
+          <h3 data-i18n="new.hist.t">Your Claude Code history</h3>
+          <p data-i18n="new.hist.d">Every Claude Code conversation, opened from the terminal, the Claude app, your editor or Bashestra. The List groups them by day with a reader beside it, without starting anything; the Diary puts them on a timeline, one lane per branch. Resume one on the canvas or fork a copy. It stays on your Mac: Bashestra doesn't write to Claude's files.</p>
+          <p class="nw-place" data-i18n="new.hist.p">Strip › History · ⌘3</p>
+        </div>
+        <div class="nw-stage" data-scene="history">
+          <div class="nw-shot" role="img" aria-label="The History section: on the left the Claude Code conversations grouped by day, with where they were opened, folder, branch and messages. The pointer picks one and the reader shows it beside the list. Then it switches to the Diary: a week on a timeline, with a lane for every folder and branch, and the chosen conversation with Resume on Canvas and Fork."><div class="fstage" aria-hidden="true"></div></div>
+          <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
+            <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+          </button>
+        </div>
+      </article>
+      <article class="nw-row reveal">
+        <div class="nw-text">
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.2c0-1 .8-1.7 1.7-1.7h4.2l2 2h7.4c1 0 1.7.8 1.7 1.7v8.1c0 1-.8 1.7-1.7 1.7H5.2c-1 0-1.7-.8-1.7-1.7z"/></svg></span>
+          <h3 data-i18n="new.fold.t">Folders in the strip</h3>
+          <p data-i18n="new.fold.d">Add, colour and remove the project's folders from the Folders section: drag them in from the Finder, press <kbd>⇧⌘A</kbd> or use Add…. Each workspace uses the folders you tick under Used in, and a folder's zone lights up on the canvas when you open its card.</p>
+          <p class="nw-place" data-i18n="new.fold.p">Strip › Folders · ⌘4</p>
+        </div>
+        <div class="nw-stage" data-scene="folders">
+          <div class="nw-shot" role="img" aria-label="The Folders section of the strip lists the project's folders: iOS and Android in this workspace, web only in the project. The pointer opens the iOS card: Used in, worktrees, its Claude Code conversations and New session here; on the canvas the iOS zone lights up."><div class="fstage" aria-hidden="true"></div></div>
+          <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
+            <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+          </button>
         </div>
       </article>
     </div>
     <div class="nw-grid nw-cols">
       <article class="nw reveal">
-        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h14M5 18h9"/></svg></span>
-        <h3 data-i18n="new.out.t">Sessions in output view</h3>
-        <p data-i18n="new.out.d">For Claude Code and OpenCode 2.x the node shows what the agent is doing instead of the terminal: what it received, its reply, the actions grouped with files and +/−, and the outcome. The terminal stays on behind it: the switch in the node header brings it back, with the same conversation.</p>
-        <p class="nw-place" data-i18n="new.out.p">Node header · Mac only for now</p>
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 14.5 9.5M12.8 7.8l3.4 3.4M18 3v3M16.5 4.5h3M20.5 9v2.4M19.3 10.2h2.4"/></svg></span>
+        <h3 data-i18n="new.solo.t">A Maestro that works on its own</h3>
+        <p data-i18n="new.solo.d">The Maestro does the job itself and proposes a team only when it's worth it: one card with every member's agent, model and folder, approved with a single OK. You choose the delegation per workspace: Never, Ask or Automatic.</p>
+        <p class="nw-place" data-i18n="new.solo.p">Strip › Maestro · ⌘1</p>
       </article>
       <article class="nw reveal">
-        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v6H4zM13 5h7v6h-7zM4 13h7v6H4zM13 13h7v6h-7z"/></svg></span>
-        <h3 data-i18n="new.six.t">Mockups, new roles, faster agents</h3>
-        <p data-i18n="new.six.d">Since 0.6.0: Designer and Prototyper publish mockups on the canvas, with every version and a side-by-side compare. Four new roles (a prototyper, a security check, a release prep and a translator) come with their own skills and teams, and long commands now run once in the background, so agents wait less.</p>
-        <p class="nw-place" data-i18n="new.six.p">Inspector › Mockups</p>
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM4 9h16M8 13h5M8 16h8"/></svg></span>
+        <h3 data-i18n="new.launch.t">Claude Code folders in the launcher</h3>
+        <p data-i18n="new.launch.d">The folders where you've worked with Claude Code become rows of the launcher: open one and it becomes a project, with its conversations in the History. Search finds conversation titles too, and a workspace can now be deleted from the launcher, the switcher or the File menu.</p>
+        <p class="nw-place" data-i18n="new.launch.p">Reopen workspace</p>
       </article>
     </div>
-    <p class="nw-more reveal"><a href="https://github.com/federix-ai/draftboard-app/releases/tag/v0.6.1" data-i18n="new.notes">All the release notes for 0.6.1</a></p>
+    <p class="nw-more reveal"><a href="https://github.com/federix-ai/draftboard-app/releases/tag/v0.7.0" data-i18n="new.notes">All the release notes for 0.7.0</a></p>
   </div>
 </section>
 
@@ -166,10 +200,10 @@
         </div>
       </div>
       <ol class="chapters" aria-label="Demo chapters">
-        <li data-i="0"><span class="n">01</span><h3 data-i18n="f1.t">Launch a team</h3><p data-i18n="f1.d">Press <kbd>⇧⌘T</kbd>, pick a team and write the task. The agents appear on the canvas already linked, each in its own worktree; the leader splits the work.</p><span class="bar"><i></i></span></li>
+        <li data-i="0"><span class="n">01</span><h3 data-i18n="f1.t">Launch a team</h3><p data-i18n="f1.d">Press <kbd>⇧⌘T</kbd> (or + New › Team), pick a team and write the task. The agents appear on the canvas already linked, each in its own worktree; the leader splits the work.</p><span class="bar"><i></i></span></li>
         <li data-i="1"><span class="n">02</span><h3 data-i18n="f2.t">Linked agents talk</h3><p data-i18n="f2.d">Draw a line between two nodes, or hold on a node and pick from the wheel: write, link, loop, hand off. Inside the terminal agents use <code>orch send</code>; if a colleague is busy, the message waits in its queue, and you can reorder or move it.</p><span class="bar"><i></i></span></li>
-        <li data-i="2"><span class="n">03</span><h3 data-i18n="f3.t">Step in only when needed</h3><p data-i18n="f3.d">A permission request turns the node orange and you get a notification. <kbd>⌘J</kbd> takes you to whoever is waiting; one click and it carries on.</p><span class="bar"><i></i></span></li>
-        <li data-i="3"><span class="n">04</span><h3 data-i18n="f4.t">A worktree per agent</h3><p data-i18n="f4.d">In a git repo every agent works on its own <code>orch/&lt;name&gt;</code> branch, so nobody steps on anyone. The Git panel shows the graph, diffs, commit and push.</p><span class="bar"><i></i></span></li>
+        <li data-i="2"><span class="n">03</span><h3 data-i18n="f3.t">Step in only when needed</h3><p data-i18n="f3.d">A permission request turns the node orange and you get a notification. The capsule in the bar says who is waiting: <kbd>⌘J</kbd> takes you there, one click and it carries on.</p><span class="bar"><i></i></span></li>
+        <li data-i="3"><span class="n">04</span><h3 data-i18n="f4.t">A worktree per agent</h3><p data-i18n="f4.d">In a git repo every agent works on its own <code>orch/&lt;name&gt;</code> branch, so nobody steps on anyone. The Git section of the strip shows the graph, diffs, commit and push.</p><span class="bar"><i></i></span></li>
         <li data-i="4"><span class="n">05</span><h3 data-i18n="f5.t">Floors for experiments</h3><p data-i18n="f5.d">Clone the whole workspace and its repos instantly with APFS. Try an idea on a floor, then bring the branches back, or throw it away.</p><span class="bar"><i></i></span></li>
         <li data-i="5"><span class="n">06</span><h3 data-i18n="f6.t">Point at the bug</h3><p data-i18n="f6.d">Web and iOS Simulator nodes sit next to the agents. Capture the screen, circle what's wrong, add a note and send it to the linked agent.</p><span class="bar"><i></i></span></li>
       </ol>
@@ -194,7 +228,7 @@
       <article class="tile" data-viz="roles">
         <div class="viz" aria-hidden="true"></div>
         <h3 data-i18n="b2.t">A model and effort per role</h3>
-        <p data-i18n="b2.d">Opus to lead and review, Sonnet to write and test. Each role brings its skills and rules; change them per session from the inspector.</p>
+        <p data-i18n="b2.d">Opus to lead and review, Sonnet to write and test. Each role brings its skills and rules; change them per session from the Sessions section.</p>
       </article>
       <article class="tile" data-viz="review">
         <div class="viz" aria-hidden="true"></div>
@@ -280,10 +314,10 @@
       <div class="panel reveal" id="linux">
         <h3 data-i18n="lin.t">On Linux</h3>
         <div class="dl-grid" role="group" aria-label="Linux downloads">
-          <a class="dl" data-asset="appimage-x64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1.AppImage"><b>AppImage</b><span>x64</span></a>
-          <a class="dl" data-asset="appimage-arm64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1-arm64.AppImage"><b>AppImage</b><span>ARM</span></a>
-          <a class="dl" data-asset="deb-x64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/bashestra-desktop_0.6.1_amd64.deb"><b>.deb</b><span>x64</span></a>
-          <a class="dl" data-asset="deb-arm64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/bashestra-desktop_0.6.1_arm64.deb"><b>.deb</b><span>ARM</span></a>
+          <a class="dl" data-asset="appimage-x64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/Bashestra-0.7.0.AppImage"><b>AppImage</b><span>x64</span></a>
+          <a class="dl" data-asset="appimage-arm64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/Bashestra-0.7.0-arm64.AppImage"><b>AppImage</b><span>ARM</span></a>
+          <a class="dl" data-asset="deb-x64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/bashestra-desktop_0.7.0_amd64.deb"><b>.deb</b><span>x64</span></a>
+          <a class="dl" data-asset="deb-arm64" href="https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/bashestra-desktop_0.7.0_arm64.deb"><b>.deb</b><span>ARM</span></a>
         </div>
         <ul class="steps">
           <li><span data-i18n="lin.1"><strong>AppImage</strong>: make it executable and start it. It updates itself.</span><pre class="cmd"><code>chmod +x Bashestra-*.AppImage
@@ -313,7 +347,7 @@
     <h2 data-i18n="final.title">The orchestra is seated. Your turn.</h2>
     <p data-i18n="final.sub">Put your agents on one board, link them up and let them work together.</p>
     <div class="cta">
-      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.6.1</small></a>
+      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.7.0</small></a>
       <a class="btn ghost big" href="https://github.com/federix-ai/draftboard-app/releases" data-i18n="final.all">All releases</a>
     </div>
   </div>

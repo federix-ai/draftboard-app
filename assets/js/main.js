@@ -1,5 +1,5 @@
 import { animate, createTimeline, stagger, utils, onScroll, splitText, createDraggable } from "./anime.esm.min.js?v=4.5.0";
-import { IT, UI, LOOKUP } from "./i18n.js?v=0.8.2";
+import { IT, UI, LOOKUP } from "./i18n.js?v=0.9.0";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -94,8 +94,10 @@ const endDots = (ax, ay, bx, by) => `<circle class="end" cx="${ax}" cy="${ay}" r
 /* ================================================================ SCREENS */
 // Real screens of the app, rendered from its UI design canvas ("Orchestrator — UI macOS") and saved as
 // static markup in assets/screens/. They are fetched when needed and scaled into their frames.
+// Since 0.7.0 the window is «Binario»: the bar (44 pt) on top, the strip of sections (68 pt) on the left, one
+// panel (440 pt, the Storico wider) and the canvas, which in the 1728 × 1080 screens starts at (508, 44).
 // The screens are in Italian; <name>.en.html is the English copy (made by the screen translator), used when the page is in English.
-const SCREENS_V = "0.8.1";
+const SCREENS_V = "0.9.0";
 const screenCache = {};
 const fetchScreen = file => fetch(`assets/screens/${file}.html?v=${SCREENS_V}`).then(r => (r.ok ? r.text() : null));
 const loadScreen = name => {
@@ -103,8 +105,9 @@ const loadScreen = name => {
   return (screenCache[name + "|" + l] ??= (l === "en" ? fetchScreen(name + ".en").then(s => s ?? fetchScreen(name)) : fetchScreen(name)).then(s => s ?? ""));
 };
 const SIZES = {
-  main: [1728, 1080], "main-git": [1728, 1080], overview: [1600, 1000], plan: [1728, 1080], output: [1728, 1080],
-  launch: [760, 900], usage: [360, 1028], fasi: [360, 1028], model: [300, 520], cartelle: [1440, 900],
+  main: [1728, 1080], "main-git": [1728, 1080], "main-fasi": [1728, 1080], "main-usage": [1728, 1080], overview: [1600, 1000],
+  plan: [1728, 1080], output: [1728, 1080], storico: [1728, 1080], diario: [1728, 1080],
+  launch: [760, 900], usage: [440, 1036], fasi: [440, 1036], model: [300, 520], cartelle: [1728, 1080],
   "floor-live": [1200, 720], "floor-open": [1200, 720], "floor-hover": [1200, 720], "floor-enter": [1200, 720], "floor-arrived": [1200, 720],
   "cap-live": [480, 360], "cap-hover": [480, 360], "cap-flash": [480, 360], "cap-annotate": [480, 360], "cap-comment": [480, 360], "cap-fixed": [480, 360],
   "radial-open": [480, 320], "radial-pick": [480, 320],
@@ -157,7 +160,7 @@ function clickAt(tl, cursor, from, x, y, pos, onClick) {
 
 /* =================================================================== HERO */
 // The icon's orchestra takes its seats, like the launch splash; then each terminal flies to its place in
-// the real window (sidebar, nodes, toolbar, inspector) and the podium's prompt becomes the composer.
+// the real window (bar, strip, panel, nodes) and the podium's prompt becomes the composer.
 // Then the window lives: a message is typed to the coder, the pointer approves the tester's request.
 const ICON = {
   seats: [[200, 530, -60], [332, 398, -30], [512, 350, 0], [692, 398, 30], [824, 530, 60], [364, 562, -45], [512, 500, 0], [660, 562, 45]],
@@ -176,10 +179,10 @@ const hero = (() => {
 
   // Where each block of the window is (window coordinates), and which seat of the icon becomes it.
   const B = {
-    sidebar: [0, 0, 288, 1080], leader: [312, 140, 280, 230], toolbar: [288, 0, 1440, 52], note: [1088, 140, 256, 252],
-    inspector: [1368, 52, 360, 1028], tester: [312, 472, 400, 260], coder: [640, 140, 420, 300], portal: [740, 472, 520, 330],
+    strip: [0, 44, 68, 1036], leader: [532, 132, 280, 230], bar: [0, 0, 1728, 44], note: [1308, 132, 256, 252],
+    panel: [68, 44, 440, 1036], tester: [532, 464, 400, 260], coder: [860, 132, 420, 300], portal: [960, 464, 520, 330],
   };
-  const ORDER = ["sidebar", "leader", "toolbar", "note", "inspector", "tester", "coder", "portal"];
+  const ORDER = ["strip", "leader", "bar", "note", "panel", "tester", "coder", "portal"];
   const s = 0.74, tx = 828 - 512 * s, ty = 330 - 546 * s;
   icon.innerHTML = `<defs>${[360, 210].map((r, i) => `<mask id="hplan${i}" maskUnits="userSpaceOnUse"><path d="${ICON.arc(r)}" pathLength="1" fill="none" stroke="#fff" stroke-width="16" stroke-dasharray="1 1"/></mask>`).join("")}</defs>
     <g transform="translate(${tx} ${ty}) scale(${s})"><g class="plans">${[360, 210].map((r, i) => `<path class="plan" d="${ICON.arc(r)}" mask="url(#hplan${i})"/>`).join("")}</g>
@@ -193,8 +196,8 @@ const hero = (() => {
   const mount = () => screenEl("main").then(scr => {
     if (W) W.remove();
     W = scr; frame.prepend(scr);
-    const canvas = block(scr, 288, 52);
-    blocks = { sidebar: block(scr, 0, 0), toolbar: block(scr, 288, 0), inspector: block(scr, 1368, 52),
+    const canvas = block(scr, 508, 44);
+    blocks = { bar: block(scr, 0, 0), strip: block(scr, 0, 44), panel: block(scr, 68, 44),
       leader: block(canvas, 24, 88), coder: block(canvas, 352, 88), note: block(canvas, 800, 88), tester: block(canvas, 24, 420), portal: block(canvas, 452, 420) };
     composer = block(canvas, 260, 836);
     canvasRest = [...canvas.children].slice(1).filter(el => !Object.values(blocks).includes(el) && el !== composer);
@@ -203,7 +206,7 @@ const hero = (() => {
     // the @mentions are chips: each one appears with its first letter
     marks = msg ? [...msg.querySelectorAll("span")].filter(sp => sp.style.background && !chars.includes(sp)).map(sp => [sp, chars.indexOf(sp.querySelector("span"))]) : [];
     allow = byText(blocks.tester, "button, span", says("Consenti"));
-    needs = byText(blocks.toolbar, "button", says("tester ti aspetta"));
+    needs = byText(blocks.bar, "button", says("tester ti aspetta"));
     invia = byText(composer, "button", says("Invia"));
     return scr;
   });
@@ -236,7 +239,7 @@ const hero = (() => {
         .add(seats[i], { opacity: [1, 0], duration: 200 }, T0 + d);
     });
     tl.add([plans, prompt, caret], { opacity: 0, duration: 300 }, T0)
-      .add(composer, { opacity: [0, 1], translateX: [tx + 472 * s - (548 + 280), 0], translateY: [ty + 724 * s - (888 + 88), 0], scale: [0.12, 1], duration: 1000, ease: "inOut(4)" }, T0 + 150)
+      .add(composer, { opacity: [0, 1], translateX: [tx + 472 * s - (768 + 280), 0], translateY: [ty + 724 * s - (880 + 88), 0], scale: [0.12, 1], duration: 1000, ease: "inOut(4)" }, T0 + 150)
       .add(canvasRest, { opacity: [0, 1], duration: 600, delay: stagger(60) }, T0 + 1100);
     return tl;
   };
@@ -329,7 +332,7 @@ const player = (() => {
       const cam = camera(), win = await screenEl("main"), sheet = await screenEl("launch"), dim = document.createElement("div");
       dim.className = "dim"; cam.append(win, dim); stage.appendChild(sheet);
       sheet.classList.add("sheet-win"); utils.set(sheet, { x: (VW - 760) / 2, y: 52 });
-      const canvas = block(win, 288, 52), nodes = [24, 352, 800, 24, 452].map((l, i) => block(canvas, l, i < 3 ? 88 : 420)).filter(Boolean);
+      const canvas = block(win, 508, 44), nodes = [24, 352, 800, 24, 452].map((l, i) => block(canvas, l, i < 3 ? 88 : 420)).filter(Boolean);
       const go = byText(sheet, "button", says("Lancia 3"));
       const c = pointer();
       const gr = go ? rectIn(go, stage, S) : null;
@@ -351,7 +354,7 @@ const player = (() => {
       const cam = camera(), win = await screenEl("overview"); cam.appendChild(win);
       utils.set(win, { x: 64, y: 40 });
       utils.set(cam, look([0, 0, 1728, 1080], 1));
-      const A = look([300, 150, 900, 560]);
+      const A = look([190, 142, 900, 560]);
       tl.add(cam, { ...A, duration: 2600, ease: "inOut(3)" }, 400);
       // long press on a node: the charge ring fills on the pointer, then the wheel opens around it
       const who = byText(win, "span", "reviewer");
@@ -377,25 +380,25 @@ const player = (() => {
           .add(c, { opacity: 0, duration: 400 }, 7200);
         toastIn(tl, UI[lang].hero.wheel, 7000);
       }
-      tl.add(cam, { ...look([760, 260, 900, 560]), duration: 2800, ease: "inOut(3)" }, 8600)
+      tl.add(cam, { ...look([650, 252, 900, 560]), duration: 2800, ease: "inOut(3)" }, 8600)
         .add(cam, { ...look([0, 0, 1728, 1080]), duration: 1600, ease: "inOut(3)" }, 11700);
       packets(tl, win, 600, 12900);
       tl.call(() => {}, 13700);
     },
-    // 3 · needs you: the tester asks, the toolbar says so, one click
+    // 3 · needs you: the tester asks, the capsule in the bar says so, one click
     async tl => {
       const cam = camera(), win = await screenEl("main"); cam.appendChild(win);
-      const canvas = block(win, 288, 52), tester = block(canvas, 24, 420), needs = byText(win, "button", says("tester ti aspetta")), allow = byText(tester, "button, span", says("Consenti"));
+      const canvas = block(win, 508, 44), tester = block(canvas, 24, 420), needs = byText(win, "button", says("tester ti aspetta")), allow = byText(tester, "button, span", says("Consenti"));
       const ring = document.createElement("i"); ring.className = "spot-ring"; cam.appendChild(ring);
-      utils.set(ring, { x: 312 - 10, y: 472 - 10, width: 420, height: 280, opacity: 0 });
-      tl.add(cam, { ...look([1300, 0, 428, 120], 0.55), duration: 1400, ease: "inOut(3)" }, 300);
+      utils.set(ring, { x: 532 - 10, y: 464 - 10, width: 420, height: 280, opacity: 0 });
+      tl.add(cam, { ...look([1240, 0, 488, 110], 0.55), duration: 1400, ease: "inOut(3)" }, 300);
       if (needs) tl.add(needs, { scale: [1, 1.1, 1], duration: 600, ease: "out(3)" }, 1500);
       keysHud(tl, ["⌘", "J"], 2000);
-      tl.add(cam, { ...look([250, 430, 560, 360]), duration: 1300, ease: "inOut(3)" }, 2700)
+      tl.add(cam, { ...look([470, 422, 560, 360]), duration: 1300, ease: "inOut(3)" }, 2700)
         .add(ring, { opacity: [0, 1], duration: 500 }, 3600);
       let hit = 5200;
       if (allow) {
-        const A = rectIn(allow, win, S), L = look([250, 430, 560, 360]);
+        const A = rectIn(allow, win, S), L = look([470, 422, 560, 360]);
         hit = clickAt(tl, pointer(), [1600, 1050], L.x + A.cx * L.scale, L.y + A.cy * L.scale, 4100);
       }
       tl.add(ring, { opacity: 0, duration: 400 }, hit + 200);
@@ -403,11 +406,11 @@ const player = (() => {
       tl.add(cam, { ...look([0, 0, 1728, 1080]), duration: 1300, ease: "inOut(3)" }, hit + 2200)
         .call(() => {}, hit + 3800);
     },
-    // 4 · a worktree per agent: the Git tab of the inspector
+    // 4 · a worktree per agent: the Git section of the strip
     async tl => {
       const cam = camera(), win = await screenEl("main-git"); cam.appendChild(win);
-      tl.add(cam, { ...look([1340, 52, 388, 560], 0.95), duration: 1600, ease: "inOut(3)" }, 500)
-        .add(cam, { ...look([1340, 500, 388, 560], 0.95), duration: 2600, ease: "inOut(2)" }, 3000)
+      tl.add(cam, { ...look([0, 40, 520, 560], 0.95), duration: 1600, ease: "inOut(3)" }, 500)
+        .add(cam, { ...look([0, 480, 520, 560], 0.95), duration: 2600, ease: "inOut(2)" }, 3000)
         .add(cam, { ...look([0, 0, 1728, 1080]), duration: 1500, ease: "inOut(3)" }, 6400)
         .call(() => {}, 8200);
     },
@@ -716,6 +719,101 @@ const news = (() => {
         return still;
       },
     },
+    // 0.7.0 · Binario: the strip on the left, one section at a time in the panel; a click on Git, Fasi, Consumi
+    // and the panel changes at once, the canvas stays where it is.
+    binario: {
+      needs: ["main", "main-git", "main-fasi", "main-usage"],
+      async build(st, tl) {
+        const cam = camera(st), wins = await Promise.all(this.needs.map(screenEl));
+        wins.forEach((w, i) => { cam.appendChild(w); utils.set(w, { opacity: i ? 0 : 1 }); });
+        const sec = k => { const e = wins[0].querySelector(`[data-k="sec-${k}"]`); return e && local(e, wins[0]); };
+        const ALL = look([0, 0, 1728, 1080]), Z = look([0, 0, 840, 560]);
+        utils.set(cam, ALL);
+        const show = (i, pos) => wins.forEach((w, j) => tl.set(w, { opacity: j === i ? 1 : 0 }, pos));
+        tl.add(cam, { ...Z, duration: 1400, ease: "inOut(3)" }, 500);
+        const c = pointer(st);
+        let p = 1900, still = 0;
+        [["git", 1], ["phases", 2], ["usage", 3], ["sessions", 0]].forEach(([k, i], n) => {
+          const r = sec(k); if (!r) return;
+          const [x, y] = via(Z, r.cx, r.cy);
+          p = n ? glide(tl, c, x, y, p, 650) : enter(tl, c, x, y, p);
+          p = press(tl, c, x, y, p + 80);
+          show(i, p);
+          if (n === 0) still = p + 600;
+          p += 1700;
+        });
+        tl.add(c, { opacity: 0, duration: 300 }, p - 900)
+          .add(cam, { ...ALL, duration: 1400, ease: "inOut(3)" }, p - 700);
+        toast(tl, st, UI[lang].news.binarioToast, p + 200, 2200);
+        tl.call(() => {}, p + 2800);
+        return still;
+      },
+    },
+    // 0.7.0 · Storico: the list and its reader, then the diary with a lane for every branch.
+    history: {
+      needs: ["storico", "diario"],
+      async build(st, tl) {
+        const cam = camera(st), [list, diary] = await Promise.all(this.needs.map(screenEl));
+        cam.append(list, diary); utils.set(diary, { opacity: 0 });
+        const q = (w, k) => w.querySelector(`[data-k="${k}"]`);
+        const reader = q(list, "reader"), row = q(list, "h-android"), seg = q(list, "seg-1"), bar = q(diary, "bar-android"), card = q(diary, "diary-card");
+        if (!reader || !row || !seg || !bar) return 0;
+        const R = local(row, list), S = local(seg, list), BR = local(bar, diary);
+        const Z = look([68, 44, 1000, 667]), ALL = look([0, 0, 1728, 1080]), D = look([180, 90, 1350, 900]);
+        utils.set(cam, Z); utils.set(reader, { opacity: 0 }); utils.set(row, { backgroundColor: "rgba(123,98,255,0)" });
+        const c = pointer(st);
+        let [x, y] = via(Z, R.cx, R.cy);
+        let p = press(tl, c, x, y, enter(tl, c, x, y, 500) + 80);
+        tl.add(row, { backgroundColor: ["rgba(123,98,255,0)", "rgba(123,98,255,0.2)"], duration: 200 }, p)
+          .add(reader, { opacity: [0, 1], duration: 380, ease: "out(2)" }, p + 80);
+        const still = p + 900;
+        // Diario
+        [x, y] = via(Z, S.cx, S.cy);
+        p = glide(tl, c, x, y, p + 2300, 800);
+        p = press(tl, c, x, y, p + 80);
+        tl.set(diary, { opacity: 1 }, p).set(list, { opacity: 0 }, p)
+          .add(c, { opacity: 0, duration: 250 }, p + 100)
+          .add(cam, { ...D, duration: 1300, ease: "inOut(3)" }, p + 200);
+        [x, y] = via(D, BR.cx, BR.cy);
+        p = enter(tl, c, x, y, p + 1700, [x + 260, y + 220]);
+        p = press(tl, c, x, y, p + 80);
+        if (card) tl.add(card, { scale: [1, 1.012, 1], duration: 420, ease: "inOut(2)" }, p);
+        toast(tl, st, UI[lang].news.historyToast, p + 300, 2400);
+        tl.add(c, { opacity: 0, duration: 300 }, p + 900)
+          .add(cam, { ...ALL, duration: 1400, ease: "inOut(3)" }, p + 1400)
+          .call(() => {}, p + 4000);
+        return still;
+      },
+    },
+    // 0.7.0 · Cartelle: open a folder's card and its zone lights up on the canvas.
+    folders: {
+      needs: ["cartelle"],
+      async build(st, tl) {
+        const cam = camera(st), win = await screenEl("cartelle"); cam.appendChild(win);
+        const q = k => win.querySelector(`[data-k="${k}"]`);
+        const card = q("card-iOS"), details = q("fold-details"), glow = q("zone-glow"), sec = q("sec-folders");
+        if (!card || !details || !glow) return 0;
+        const CR = local(card, win), DH = details.offsetHeight, SR = sec && local(sec, win);
+        const Z = look([0, 30, 1140, 760]), W = look([300, 40, 1428, 952]);
+        utils.set(cam, Z); utils.set(details, { height: 0, opacity: 0, overflow: "hidden" }); utils.set(glow, { opacity: 0 });
+        const c = pointer(st);
+        let p = 500;
+        if (SR) { const [x, y] = via(Z, SR.cx, SR.cy); p = enter(tl, c, x, y, p); tl.add(sec, { scale: [1, 0.94, 1], duration: 260 }, p + 60); p += 500; }
+        const [x, y] = via(Z, CR.x + 120, CR.y + 24);
+        p = SR ? glide(tl, c, x, y, p, 700) : enter(tl, c, x, y, p);
+        p = press(tl, c, x, y, p + 80);
+        tl.add(details, { height: [0, DH], opacity: [0, 1], duration: 420, ease: "out(3)" }, p)
+          .add(glow, { opacity: [0, 1], duration: 500, ease: "out(2)" }, p + 150)
+          .add(glow, { scale: [0.985, 1], duration: 700, ease: "out(3)" }, p + 150);
+        const still = p + 900;
+        tl.add(c, { opacity: 0, duration: 300 }, p + 1200)
+          .add(cam, { ...W, duration: 1600, ease: "inOut(3)" }, p + 1300);
+        toast(tl, st, UI[lang].news.foldersToast, p + 2200, 2400);
+        tl.add(cam, { ...Z, duration: 1400, ease: "inOut(3)" }, p + 5200)
+          .call(() => {}, p + 6800);
+        return still;
+      },
+    },
   };
 
   const stages = {};
@@ -941,7 +1039,7 @@ function roleIcon(name) {
     },
     roles: shot("model", { k: 0.92, pan: 220 }),
     review: shot("fasi", { k: 0.92, pan: 330 }),
-    folders: shot("cartelle", { k: 0.6, left: 250, top: 40, pan: 150 }),
+    folders: shot("cartelle", { k: 0.5, left: 68, top: -10, pan: 150 }),
     usage: shot("usage", { k: 0.92, pan: 300 }),
     stop: {
       build(el) {
