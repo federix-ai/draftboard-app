@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg"><b>⬇ Download for macOS</b></a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1.AppImage"><b>⬇ Linux AppImage</b></a>
+  <a href="https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/Bashestra-0.7.0.AppImage"><b>⬇ Linux AppImage</b></a>
   &nbsp;·&nbsp;
   <a href="https://federix-ai.github.io/draftboard-app/">Project page</a>
   &nbsp;·&nbsp;
@@ -30,15 +30,15 @@
 
 ---
 
-## New in 0.6.1
+## New in 0.7.0
 
-- **Linux looks like the Mac now.** The Linux app was redesigned from the Mac's own design: a light and dark theme that follows your system, the Inter font, a sidebar that groups sessions by state, an Inspector with tabs, new sheets for sessions and teams, and every setting in one panel inside the window. AppImage and `.deb`, on x64 and ARM.
-- **Sessions in output view** (Mac). For Claude Code and OpenCode 2.x the node shows what the agent is doing instead of the terminal: what it received, its reply, the actions grouped with files and +/−, and the outcome. The terminal stays on behind it; the switch in the node header brings it back.
-- **Mockups, new roles, faster agents** (since 0.6.0). Designer and Prototyper publish mockups on the canvas, with every version and a side-by-side compare. Four new roles come with their own skills and teams, and long commands now run once in the background, so agents wait less.
+- **A new window: strip and panel.** The canvas is the biggest thing again. A strip on the left opens one section at a time in the panel, from <kbd>⌘1</kbd> to <kbd>⌘8</kbd>: Maestro, Sessions, History, Folders, Mockups, Git, Phases and Usage. The path at the top opens the switcher, <kbd>⌘J</kbd> takes you to whoever is waiting and “+ New” creates the rest. On Mac and Linux.
+- **The Maestro works alone.** It works by itself, like Claude Code, and proposes a team only when the job splits into independent parts, with members and cost to approve in one ok. When a new team replaces an old one, the same ok closes the old sessions. Delegation (Never, Ask, Automatic) is set per workspace.
+- **Claude Code history.** Every Claude Code conversation, from the terminal, the Claude app, your editor or Bashestra: by day with a reader, or on a timeline with a lane per branch. Resume one on the canvas or fork a copy.
 
 ## What it does
 
-- **Real terminals on a canvas.** Each node is a full terminal running your agent CLI. A sidebar shows who needs you, who is working and who is idle; <kbd>⌘J</kbd> jumps to the next one waiting.
+- **Real terminals on a canvas.** Each node is a full terminal running your agent CLI. The Sessions section shows who needs you, who is working and who is idle; <kbd>⌘J</kbd> jumps to the next one waiting.
 - **Linked agents talk.** Drag a line between two nodes. Agents use `orch send <name> "…"` to message a colleague; messages queue until the receiver is free.
 - **Teams in one click.** Six ready-made teams (Feature squad, Pair, Bug hunt, Parallel build, Exploration, Full squad), already linked, with the task going to the leader. Or build your own and save it.
 - **A worktree per agent.** In a git repository every agent works on its own `orch/<name>` branch. The Git panel shows the branch graph, diffs, commit, push and branch switching.
@@ -59,8 +59,8 @@
 
 | | x64 | ARM |
 |---|---|---|
-| **AppImage** (updates itself) | [Bashestra-0.6.1.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1.AppImage) | [Bashestra-0.6.1-arm64.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/Bashestra-0.6.1-arm64.AppImage) |
-| **.deb** (Debian, Ubuntu) | [bashestra-desktop_0.6.1_amd64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/bashestra-desktop_0.6.1_amd64.deb) | [bashestra-desktop_0.6.1_arm64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.6.1/bashestra-desktop_0.6.1_arm64.deb) |
+| **AppImage** (updates itself) | [Bashestra-0.7.0.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/Bashestra-0.7.0.AppImage) | [Bashestra-0.7.0-arm64.AppImage](https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/Bashestra-0.7.0-arm64.AppImage) |
+| **.deb** (Debian, Ubuntu) | [bashestra-desktop_0.7.0_amd64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/bashestra-desktop_0.7.0_amd64.deb) | [bashestra-desktop_0.7.0_arm64.deb](https://github.com/federix-ai/draftboard-app/releases/download/v0.7.0/bashestra-desktop_0.7.0_arm64.deb) |
 
 ```sh
 chmod +x Bashestra-*.AppImage && ./Bashestra-*.AppImage   # AppImage
