@@ -16,15 +16,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=0.9.0">
-<link rel="stylesheet" href="assets/screens/screens.css?v=0.9.0">
+<link rel="stylesheet" href="assets/site.css?v=0.10.0">
+<link rel="stylesheet" href="assets/screens/screens.css?v=0.10.0">
 <script>
   // Hide animated elements only when JS runs; if the module never boots, show everything after a moment.
   document.documentElement.classList.add("js");
   try { const l = localStorage.getItem("draftboard.lang"); if (l === "it") document.documentElement.lang = "it"; } catch (e) {}
   setTimeout(() => { if (!window.__siteReady) document.documentElement.classList.remove("js"); }, 2500);
 </script>
-<script type="module" src="assets/js/main.js?v=0.9.0"></script>
+<script type="module" src="assets/js/main.js?v=0.10.0"></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
@@ -35,6 +35,7 @@
     <a class="brand" href="#" aria-label="Bashestra"><img src="assets/icon.png" alt=""><span class="wm" aria-hidden="true"><b>bash</b>estra</span></a>
     <div class="links">
       <a href="#new" data-i18n="nav.new">What's new</a>
+      <a href="#phone" data-i18n="nav.phone">On your phone</a>
       <a href="#tour" data-i18n="nav.tour">Tour</a>
       <a href="#more" data-i18n="nav.features">Features</a>
       <a href="#teams" data-i18n="nav.teams">Teams</a>
@@ -54,13 +55,13 @@
 <header class="hero">
   <div class="spot" aria-hidden="true"></div>
   <div class="wrap hero-copy">
-    <a class="news reveal" href="#new"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.7.0 · A new window and your Claude Code history</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+    <a class="news reveal" href="#new"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.8.0 · Bashestra on your phone</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
     <h1 class="hero-title" data-i18n="hero.title">Conduct your <em>orchestra</em> of coding agents.</h1>
     <p class="lede reveal" data-i18n="hero.lede">Claude Code, Codex, Gemini CLI and OpenCode, side by side on one canvas. Every node is a real terminal. Draw a line and two agents talk. You step in only when they need you.</p>
     <div class="cta reveal">
       <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
-        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.7.0</small>
+        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.8.0</small>
       </a>
       <a class="btn ghost big" href="#tour">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
@@ -108,24 +109,25 @@
   </div>
 </section>
 
-<!-- WHAT'S NEW in 0.7.0 -->
+<!-- WHAT'S NEW in 0.8.0 -->
 <section id="new" class="new-sec">
   <div class="wrap">
     <div class="sec-head reveal">
-      <p class="kicker" data-i18n="new.kicker">New in 0.7.0</p>
-      <h2 data-i18n="new.title">A new window. With your Claude Code history inside.</h2>
-      <p data-i18n="new.sub">On Mac and Linux the canvas is the biggest thing in the window again: a strip of eight sections takes the place of the sidebar and the inspector. And the History brings in every Claude Code conversation, wherever you started it.</p>
+      <p class="kicker" data-i18n="new.kicker">New in 0.8.0</p>
+      <h2 data-i18n="new.title">Bashestra in your pocket.</h2>
+      <p data-i18n="new.sub">Away from the Mac you keep working as if you were at your desk. Telegram tells you when a session needs you; the phone page, over your own Tailscale network, is where you read, answer and start new work. And parallel work now comes back verified.</p>
     </div>
     <div class="nw-rows">
       <article class="nw-row reveal">
         <div class="nw-text">
-          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5h17v15h-17zM3.5 8.5h17M8 8.5v11"/></svg></span>
-          <h3 data-i18n="new.win.t">The canvas comes first</h3>
-          <p data-i18n="new.win.d">The sidebar and the inspector are gone. The bar at the top holds the path of project and workspace, who is waiting for you (<kbd>⌘J</kbd>), Stop all and + New. The strip on the left opens one section at a time, <kbd>⌘1</kbd> to <kbd>⌘8</kbd>: Maestro, Sessions, History, Folders, Mockups, Git, Phases, Usage. Everything else is canvas.</p>
-          <p class="nw-place" data-i18n="new.win.p">Bar and strip · Mac and Linux</p>
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></span>
+          <h3 data-i18n="new.web.t">Bashestra in your phone's browser</h3>
+          <p data-i18n="new.web.d">Open Bashestra from your phone as you would at the Mac: the sessions with what waits for you on top, the output, the whole plan to approve, the real terminal with the keys iOS lacks, the Maestro's chat to start new work. It goes on the Home Screen and every browser pairs with a code. Free, through your own Tailscale: nothing goes on the internet.</p>
+          <p class="nw-place" data-i18n="new.web.p">Settings › Notifications › In the phone's browser · Mac</p>
+          <p class="nw-link"><a href="#phone" data-i18n="new.web.how">Set it up in five steps</a></p>
         </div>
-        <div class="nw-stage" data-scene="binario">
-          <div class="nw-shot" role="img" aria-label="The new Bashestra window: the bar with the project path and the “tester is waiting for you” capsule, the strip of eight sections on the left, the Sessions panel and the canvas. The pointer clicks Git, Phases and Usage in the strip and the panel changes each time, while the canvas stays where it is; then it goes back to Sessions."><div class="fstage" aria-hidden="true"></div></div>
+        <div class="nw-stage" data-scene="phone">
+          <div class="nw-shot" role="img" aria-label="A Mac and an iPhone joined by Tailscale: the plan is approved from the phone page, then the terminal and the Maestro's team."><div class="fstage" aria-hidden="true"></div></div>
           <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
             <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
             <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
@@ -134,28 +136,13 @@
       </article>
       <article class="nw-row flip reveal">
         <div class="nw-text">
-          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 12a8.4 8.4 0 1 0 2.5-6M3.5 4v4.4h4.4M12 7.5V12l3 2"/></svg></span>
-          <h3 data-i18n="new.hist.t">Your Claude Code history</h3>
-          <p data-i18n="new.hist.d">Every Claude Code conversation, opened from the terminal, the Claude app, your editor or Bashestra. The List groups them by day with a reader beside it, without starting anything; the Diary puts them on a timeline, one lane per branch. Resume one on the canvas or fork a copy. It stays on your computer: Bashestra doesn't write to Claude's files.</p>
-          <p class="nw-place" data-i18n="new.hist.p">Strip › History · ⌘3</p>
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg></span>
+          <h3 data-i18n="new.tg.t">On your phone with Telegram</h3>
+          <p data-i18n="new.tg.d">When a session waits for you, a Telegram message arrives: approve or deny a permission, read and approve a plan, pick the answer to a question, give the Maestro the go-ahead, confirm a merge or unblock a stopped session. Reply to the message to write to the session. Each button decides only the request it shows, “Always” is never approved from afar, and Open leads to the phone page.</p>
+          <p class="nw-place" data-i18n="new.tg.p">Settings › Notifications › On your phone · Mac</p>
         </div>
-        <div class="nw-stage" data-scene="history">
-          <div class="nw-shot" role="img" aria-label="The History section: on the left the Claude Code conversations grouped by day, with where they were opened, folder, branch and messages. The pointer picks one and the reader shows it beside the list. Then it switches to the Diary: a week on a timeline, with a lane for every folder and branch, and the chosen conversation with Resume on Canvas and Fork."><div class="fstage" aria-hidden="true"></div></div>
-          <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
-            <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
-            <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
-          </button>
-        </div>
-      </article>
-      <article class="nw-row reveal">
-        <div class="nw-text">
-          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.2c0-1 .8-1.7 1.7-1.7h4.2l2 2h7.4c1 0 1.7.8 1.7 1.7v8.1c0 1-.8 1.7-1.7 1.7H5.2c-1 0-1.7-.8-1.7-1.7z"/></svg></span>
-          <h3 data-i18n="new.fold.t">Folders in the strip</h3>
-          <p data-i18n="new.fold.d">Add, colour and remove the project's folders from the Folders section: drag them in from the Finder, press <kbd>⇧⌘A</kbd> or use Add…. Each workspace uses the folders you tick under Used in, and a folder's zone lights up on the canvas when you open its card.</p>
-          <p class="nw-place" data-i18n="new.fold.p">Strip › Folders · ⌘4</p>
-        </div>
-        <div class="nw-stage" data-scene="folders">
-          <div class="nw-shot" role="img" aria-label="The Folders section of the strip lists the project's folders: iOS and Android in this workspace, web only in the project. The pointer opens the iOS card: Used in, worktrees, its Claude Code conversations and New session here; on the canvas the iOS zone lights up."><div class="fstage" aria-hidden="true"></div></div>
+        <div class="nw-stage" data-scene="telegram">
+          <div class="nw-shot" role="img" aria-label="A Telegram message from the Bashestra bot opens the plan on the phone page, where it is approved."><div class="fstage" aria-hidden="true"></div></div>
           <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
             <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
             <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
@@ -165,19 +152,87 @@
     </div>
     <div class="nw-grid nw-cols">
       <article class="nw reveal">
-        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 14.5 9.5M12.8 7.8l3.4 3.4M18 3v3M16.5 4.5h3M20.5 9v2.4M19.3 10.2h2.4"/></svg></span>
-        <h3 data-i18n="new.solo.t">A Maestro that works on its own</h3>
-        <p data-i18n="new.solo.d">The Maestro does the job itself and proposes a team only when it's worth it: one card with every member's agent, model and folder, approved with a single OK. When a new team replaces an old one, the same OK closes the old sessions. You choose the delegation per workspace: Never, Ask or Automatic.</p>
-        <p class="nw-place" data-i18n="new.solo.p">Strip › Maestro · ⌘1</p>
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM6 9c0 4 12 2 12 6"/></svg></span>
+        <h3 data-i18n="new.ver.t">Done, and verified</h3>
+        <p data-i18n="new.ver.d">When an agent ends its turn, Bashestra runs its folder's checks (build, test, lint) in the worktree; if they fail, the error goes back to the agent up to twice, then to you. Sessions touching the same files show on the canvas before merging, and the merge queue rebases and merges them one at a time, with your OK.</p>
+        <p class="nw-place" data-i18n="new.ver.p">Git › Merge queue</p>
       </article>
       <article class="nw reveal">
-        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM4 9h16M8 13h5M8 16h8"/></svg></span>
-        <h3 data-i18n="new.launch.t">Claude Code folders in the launcher</h3>
-        <p data-i18n="new.launch.d">The folders where you've worked with Claude Code become rows of the launcher: open one and it becomes a project, with its conversations in the History. Search finds conversation titles too, and a workspace can now be deleted from the launcher, the switcher or the File menu.</p>
-        <p class="nw-place" data-i18n="new.launch.p">Reopen workspace</p>
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM8 10l3 2.5L8 15M13 15h3"/></svg></span>
+        <h3 data-i18n="new.out.t">Output view for Codex and Gemini too</h3>
+        <p data-i18n="new.out.d">The output-only view now reads Codex and Gemini CLI sessions too. Claude's plan arrives in a card to approve, “Always in this workspace” makes a rule for commands you approve often, and Review permissions in Sessions decides them together.</p>
+        <p class="nw-place" data-i18n="new.out.p">Sessions</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9M12 12l6-6M15 3h6v6"/></svg></span>
+        <h3 data-i18n="new.cap.t">Budgets and a loop guard</h3>
+        <p data-i18n="new.cap.d">A token cap per session and per team, and a guard for loops: the same error or the same command over and over, no file changed for too long. The session stops, says why and waits for you. Restore points take a node back to before a turn, with a diff preview.</p>
+        <p class="nw-place" data-i18n="new.cap.p">⋯ › Budget and rules</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
+        <h3 data-i18n="new.cmp.t">Comparisons</h3>
+        <p data-i18n="new.cmp.d">The same task, from the same commit, three ways: Claude Code alone, the Maestro alone, the Maestro with a team. Side by side: time, tokens, checks, lines changed and how often you had to step in.</p>
+        <p class="nw-place" data-i18n="new.cmp.p">Usage › Comparisons</p>
       </article>
     </div>
-    <p class="nw-more reveal"><a href="https://github.com/federix-ai/draftboard-app/releases/tag/v0.7.0" data-i18n="new.notes">All the release notes for 0.7.0</a></p>
+    <p class="nw-more reveal"><a href="https://github.com/federix-ai/draftboard-app/releases/tag/v0.8.0" data-i18n="new.notes">All the release notes for 0.8.0</a> <span class="nw-fine" data-i18n="new.mac">· Telegram and the phone page are on the Mac; Linux stays on 0.7.0 for now.</span></p>
+  </div>
+</section>
+
+<!-- ON YOUR PHONE: the setup, step by step -->
+<section id="phone" class="setup-sec">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="kicker" data-i18n="ph.kicker">On your phone · with Tailscale</p>
+      <h2 data-i18n="ph.title">Your phone, set up in five steps.</h2>
+      <p data-i18n="ph.sub">Your Mac serves the page and only your own devices reach it, through a free Tailscale account. Nothing goes on the internet and nothing passes through us. About five minutes, once.</p>
+    </div>
+    <div class="setup-grid">
+      <ol class="setup-steps reveal" aria-label="Setup steps">
+        <li><span class="n">1</span><div><h3 data-i18n="ph.1.t">Install Tailscale on both</h3><p data-i18n="ph.1.d">On the Mac and on the iPhone, from <a href="https://tailscale.com/download">tailscale.com/download</a> or the App Store. Sign in with the same account on both: the personal plan is free.</p></div><span class="bar"><i></i></span></li>
+        <li><span class="n">2</span><div><h3 data-i18n="ph.2.t">Turn it on in Bashestra</h3><p data-i18n="ph.2.d">In <strong>Settings › Notifications › In the phone's browser</strong>, switch on <strong>Open Bashestra from the phone</strong>. Bashestra finds Tailscale and tells you what's missing, if anything.</p></div><span class="bar"><i></i></span></li>
+        <li><span class="n">3</span><div><h3 data-i18n="ph.3.t">Turn on HTTPS certificates</h3><p data-i18n="ph.3.d">If it says HTTPS is off, click <strong>Open the console</strong>: on the DNS page turn on <strong>HTTPS Certificates</strong> (MagicDNS stays on), then <strong>Retry</strong>. Ready shows the address, <code>your-mac.….ts.net</code>, and a QR code.</p></div><span class="bar"><i></i></span></li>
+        <li><span class="n">4</span><div><h3 data-i18n="ph.4.t">Pair the phone</h3><p data-i18n="ph.4.d">Scan the QR with the iPhone's camera and open the page in Safari. On the Mac click <strong>Pair a phone</strong> and type the 6-digit code into the page within 10 minutes.</p></div><span class="bar"><i></i></span></li>
+        <li><span class="n">5</span><div><h3 data-i18n="ph.5.t">Put it on the Home Screen</h3><p data-i18n="ph.5.d">In Safari: <strong>Share › Add to Home Screen</strong>. Open it from the icon and pair once more: the icon and Safari keep separate cookies, so each one pairs once.</p></div><span class="bar"><i></i></span></li>
+      </ol>
+      <div class="setup-stick reveal">
+        <div class="setup-stage" id="setup-stage">
+          <div class="nw-shot" role="img" aria-label="Setting up the phone page in five steps, on the Mac's settings and on the iPhone."><div class="fstage" aria-hidden="true"></div></div>
+          <button class="play" type="button" aria-label="Pause the animation" data-playing="true">
+            <svg class="i pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="i playic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+          </button>
+        </div>
+        <p class="setup-cap" aria-hidden="true"></p>
+      </div>
+    </div>
+    <div class="setup-more">
+      <div class="panel reveal">
+        <h3 data-i18n="ph.tr.t">If Bashestra says…</h3>
+        <table class="trouble">
+          <tr><td data-i18n="ph.tr.1a">Tailscale is not installed</td><td data-i18n="ph.tr.1b">Install it on the Mac and the phone: Download Tailscale opens the page. It's free for personal use.</td></tr>
+          <tr><td data-i18n="ph.tr.2a">Tailscale is not connected</td><td data-i18n="ph.tr.2b">Open Tailscale on the Mac and sign in with your account, then Retry.</td></tr>
+          <tr><td data-i18n="ph.tr.3a">HTTPS is off in your Tailscale network</td><td data-i18n="ph.tr.3b">Open the console, DNS page: turn on HTTPS Certificates, then Retry. The very first visit can take a few seconds while the certificate is made.</td></tr>
+          <tr><td data-i18n="ph.tr.4a">Funnel is on for this Mac</td><td data-i18n="ph.tr.4b">Funnel would put the page on the internet, so Bashestra won't start it. Turn Funnel off and Retry.</td></tr>
+          <tr><td data-i18n="ph.tr.5a">Port 443 of serve is already in use</td><td data-i18n="ph.tr.5b">Another program uses <code>tailscale serve</code> on this Mac and Bashestra won't take it over. Free it, then Retry.</td></tr>
+          <tr><td data-i18n="ph.tr.6a">The page asks for a code again</td><td data-i18n="ph.tr.6b">It's a browser that isn't paired yet: the Home Screen icon, Safari and Telegram's own browser each pair once.</td></tr>
+        </table>
+      </div>
+      <div class="panel reveal">
+        <h3 data-i18n="ph.safe.t">Only yours</h3>
+        <ul class="ticks">
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="ph.safe.1">Bashestra listens only inside the Mac (127.0.0.1). The phone gets there through <code>tailscale serve</code>, encrypted, and only from your own devices.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="ph.safe.2">Every browser pairs with a code and the Mac keeps only a hash of its secret. Revoke one, or all, from the same settings.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="ph.safe.3">From the phone you never approve “Always”, and each button decides only the request it shows.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="ph.safe.4">Bashestra must be open and the Mac awake: with the lid closed, the Mac sleeps.</span></li>
+        </ul>
+      </div>
+      <div class="panel reveal setup-tip">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg></span>
+        <p data-i18n="ph.tip"><strong>Using Telegram too?</strong> Its messages get an Open button that leads to the page: have Telegram open links in Safari, so you're already paired. Telegram is set up in Settings › Notifications › On your phone, with a bot you create with @BotFather.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -324,6 +379,7 @@
 ./Bashestra-*.AppImage</code></pre></li>
           <li><span data-i18n="lin.2"><strong>.deb</strong> (Debian, Ubuntu): apt brings in what it needs.</span><pre class="cmd"><code>sudo apt install ./bashestra-desktop_*.deb</code></pre></li>
         </ul>
+        <p class="notice" data-i18n="lin.v">Linux is on 0.7.0: Telegram and the phone page are on the Mac for now.</p>
         <p class="notice" data-i18n="lin.note">On Ubuntu 22.04 and later the AppImage needs FUSE 2: <code>sudo apt install libfuse2t64</code> (<code>libfuse2</code> on 22.04). The iOS Simulator node exists only on the Mac.</p>
       </div>
       <div class="panel reveal req-panel">
@@ -347,7 +403,7 @@
     <h2 data-i18n="final.title">The orchestra is seated. Your turn.</h2>
     <p data-i18n="final.sub">Put your agents on one board, link them up and let them work together.</p>
     <div class="cta">
-      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.7.0</small></a>
+      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.8.0</small></a>
       <a class="btn ghost big" href="https://github.com/federix-ai/draftboard-app/releases" data-i18n="final.all">All releases</a>
     </div>
   </div>
@@ -372,6 +428,7 @@
     const href = document.querySelector('[data-asset="' + key + '"]').getAttribute("href");
     document.querySelectorAll('[data-dl="primary"]').forEach(a => {
       a.setAttribute("href", href); a.dataset.asset = key;
+      const v = (href.match(/\/download\/(v[\d.]+)\//) || [])[1], ver = a.querySelector("[data-version]"); if (v && ver) ver.textContent = v;
       const label = a.matches("[data-i18n]") ? a : a.querySelector("[data-i18n]");
       if (label === a) { label.dataset.i18n = "nav.downloadLinux"; }
       else if (label) { label.dataset.i18n = "cta.linux"; label.textContent = "Download for Linux"; }
@@ -384,7 +441,7 @@
     .then(r => r.ok ? r.json() : null)
     .then(r => {
       if (!r || !r.tag_name) return;
-      document.querySelectorAll("[data-version]").forEach(el => el.textContent = r.tag_name);
+      document.querySelectorAll("[data-version]").forEach(el => { if (!el.closest("[data-asset]")) el.textContent = r.tag_name; });
       const want = {
         "appimage-x64": /^Bashestra-[\d.]+\.AppImage$/,
         "appimage-arm64": /^Bashestra-[\d.]+-arm64\.AppImage$/,
@@ -394,6 +451,8 @@
       document.querySelectorAll("[data-asset]").forEach(el => {
         const a = (r.assets || []).find(x => want[el.dataset.asset] && want[el.dataset.asset].test(x.name));
         if (a) el.setAttribute("href", a.browser_download_url);
+        const v = (el.getAttribute("href").match(/\/download\/(v[\d.]+)\//) || [])[1], label = el.querySelector("[data-version]");
+        if (v && label) label.textContent = v;
       });
     })
     .catch(() => {});

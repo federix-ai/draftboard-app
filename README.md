@@ -30,13 +30,16 @@
 
 ---
 
-## New in 0.7.0
+## New in 0.8.0
 
-- **A new window** (Mac and Linux). The canvas is the biggest thing in the window again. The sidebar and the inspector are gone: a bar on top holds the project and workspace path, who is waiting for you (<kbd>⌘J</kbd>), Stop all and **+ New**; a strip on the left opens one section at a time in a panel, <kbd>⌘1</kbd> to <kbd>⌘8</kbd>: Maestro, Sessions, History, Folders, Mockups, Git, Phases, Usage.
-- **Your Claude Code history**. Every Claude Code conversation, opened from the terminal, the Claude app, your editor or Bashestra. The List groups them by day with a reader beside it, without starting anything; the Diary puts them on a timeline, one lane per branch. Resume one on the canvas or fork a copy. It stays on your computer: Bashestra doesn't write to Claude's files.
-- **Folders in the strip**. Add, colour and remove the project's folders by dragging them from the Finder, with <kbd>⇧⌘A</kbd> or from **Add…**. Each workspace uses the folders you tick under *Used in*, and a folder's zone lights up on the canvas when you open its card.
-- **A Maestro that works on its own.** It does the job itself and proposes a team only when it's worth it, in one card you approve with a single OK. Delegation is set per workspace: Never, Ask or Automatic.
-- **Claude Code folders in the launcher.** The folders where you've worked with Claude Code become rows of the launcher; opening one makes it a project, with its conversations in the History. Workspaces can now be deleted from the launcher, the switcher or the File menu.
+- **Bashestra in your phone's browser** (Mac). Open Bashestra from your phone as you would at the Mac: the sessions with what waits for you on top, the output, the whole plan to approve, the real terminal with the keys iOS lacks, the Maestro's chat to start new work. It goes on the Home Screen and every browser pairs with a code. Free, through your own Tailscale: nothing goes on the internet. [Set it up in five steps ↓](#bashestra-on-your-phone)
+- **On your phone with Telegram** (Mac). When a session waits for you, a Telegram message arrives: approve or deny a permission, read and approve a plan, pick the answer to a question, give the Maestro the go-ahead, confirm a merge or unblock a stopped session. Reply to the message to write to the session; **Open** leads to the phone page.
+- **Done, and verified.** When an agent ends its turn, Bashestra runs its folder's checks (build, test, lint) in the worktree and sends a failure back to the agent up to twice, then to you. Sessions touching the same files show on the canvas before merging, and the merge queue in Git rebases and merges them one at a time, with your OK.
+- **Output view for Codex and Gemini too.** Claude's plan arrives in a card to approve, and “Always in this workspace” makes a rule for commands you approve often.
+- **Budgets and a loop guard.** A token cap per session and per team; the same error or command over and over stops the session, which says why and waits for you. Restore points take a node back to before a turn.
+- **Comparisons.** The same task from the same commit three ways (Claude Code alone, the Maestro alone, the Maestro with a team), side by side in Usage › Comparisons.
+
+> Telegram and the phone page are on the Mac. Linux stays on 0.7.0 for now.
 
 ## What it does
 
@@ -46,6 +49,31 @@
 - **A worktree per agent.** In a git repository every agent works on its own `orch/<name>` branch. The Git section shows the branch graph, diffs, commit, push and branch switching.
 - **Floors for experiments.** Copy a workspace and its repositories instantly with APFS clones, try an idea, then bring the branches back or throw it away.
 - **Point at the bug.** Web and iOS Simulator nodes next to the agents: capture the screen, mark what's wrong and send it to the linked agent.
+- **Away from the Mac.** Telegram tells you when a session needs you; the phone page lets you read, answer and start new work, over your own Tailscale.
+
+## Bashestra on your phone
+
+Your Mac serves the page and only your own devices reach it, through a free [Tailscale](https://tailscale.com) account. Nothing goes on the internet and nothing passes through us. About five minutes, once.
+
+1. **Install Tailscale on both.** On the Mac and on the iPhone, from [tailscale.com/download](https://tailscale.com/download) or the App Store. Sign in with the same account on both: the personal plan is free.
+2. **Turn it on in Bashestra.** In **Settings › Notifications › In the phone's browser**, switch on **Open Bashestra from the phone**. Bashestra finds Tailscale and tells you what's missing, if anything.
+3. **Turn on HTTPS certificates.** If it says HTTPS is off, click **Open the console**: on the DNS page turn on **HTTPS Certificates** (MagicDNS stays on), then **Retry**. *Ready* shows the address, `your-mac.<tailnet>.ts.net`, and a QR code.
+4. **Pair the phone.** Scan the QR with the iPhone's camera and open the page in Safari. On the Mac click **Pair a phone** and type the 6-digit code into the page within 10 minutes.
+5. **Put it on the Home Screen.** In Safari: **Share › Add to Home Screen**. Open it from the icon and pair once more: the icon and Safari keep separate cookies, so each one pairs once.
+
+| If Bashestra says… | Do this |
+|---|---|
+| Tailscale is not installed | Install it on the Mac and the phone (**Download Tailscale** opens the page). It's free for personal use. |
+| Tailscale is not connected | Open Tailscale on the Mac and sign in with your account, then **Retry**. |
+| HTTPS is off in your Tailscale network | Console › DNS: turn on **HTTPS Certificates**, then **Retry**. The very first visit can take a few seconds while the certificate is made. |
+| Funnel is on for this Mac | Funnel would put the page on the internet, so Bashestra won't start it. Turn Funnel off and **Retry**. |
+| Port 443 of serve is already in use | Another program uses `tailscale serve` on this Mac and Bashestra won't take it over. Free it, then **Retry**. |
+| The page asks for a code again | That browser isn't paired yet: the Home Screen icon, Safari and Telegram's own browser each pair once. |
+
+- Bashestra listens only inside the Mac (127.0.0.1); the phone reaches it through `tailscale serve`, encrypted, and only from your own devices. Every browser pairs with a code and the Mac keeps only a hash of its secret: revoke one, or all, from the same settings.
+- From the phone you never approve “Always”, and each button decides only the request it shows.
+- Bashestra must be open and the Mac awake: with the lid closed, the Mac sleeps.
+- **Using Telegram too?** Set it up in **Settings › Notifications › On your phone** with a bot you create with [@BotFather](https://t.me/BotFather). Its messages get an **Open** button that leads to the page: have Telegram open links in Safari, so you're already paired.
 
 ## Install
 
@@ -69,13 +97,14 @@ chmod +x Bashestra-*.AppImage && ./Bashestra-*.AppImage   # AppImage
 sudo apt install ./bashestra-desktop_*.deb                # or the .deb
 ```
 
-> On Ubuntu 22.04 and later the AppImage needs FUSE 2: `sudo apt install libfuse2t64` (`libfuse2` on 22.04). The iOS Simulator node exists only on the Mac.
+> Linux is on 0.7.0: Telegram and the phone page are on the Mac for now. On Ubuntu 22.04 and later the AppImage needs FUSE 2: `sudo apt install libfuse2t64` (`libfuse2` on 22.04). The iOS Simulator node exists only on the Mac.
 
 ### Requirements
 
 | | |
 |---|---|
 | **System** | macOS 14 or later on Apple Silicon, or Linux with a desktop on x64 or ARM. English and Italian. |
+| **On the phone** | Tailscale on the Mac and the phone (free) for the phone page; a Telegram bot for the messages. Mac only. |
 | **Agents** | At least one CLI installed, signed in and on your `PATH`: `claude`, `codex`, `gemini` or `opencode`. |
 | **Git** | For worktrees and the Git panel (on the Mac it comes with the Command Line Tools). |
 

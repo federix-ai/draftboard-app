@@ -1,5 +1,5 @@
 import { animate, createTimeline, stagger, utils, onScroll, splitText, createDraggable } from "./anime.esm.min.js?v=4.5.0";
-import { IT, UI, LOOKUP } from "./i18n.js?v=0.9.0";
+import { IT, UI, LOOKUP } from "./i18n.js?v=0.10.0";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -97,7 +97,7 @@ const endDots = (ax, ay, bx, by) => `<circle class="end" cx="${ax}" cy="${ay}" r
 // Since 0.7.0 the window is «Binario»: the bar (44 pt) on top, the strip of sections (68 pt) on the left, one
 // panel (440 pt, the Storico wider) and the canvas, which in the 1728 × 1080 screens starts at (508, 44).
 // The screens are in Italian; <name>.en.html is the English copy (made by the screen translator), used when the page is in English.
-const SCREENS_V = "0.9.0";
+const SCREENS_V = "0.10.0";
 const screenCache = {};
 const fetchScreen = file => fetch(`assets/screens/${file}.html?v=${SCREENS_V}`).then(r => (r.ok ? r.text() : null));
 const loadScreen = name => {
@@ -156,6 +156,45 @@ function clickAt(tl, cursor, from, x, y, pos, onClick) {
     .call(() => { ripple(cursor.parentElement, x, y); onClick && onClick(); }, pos + 1050)
     .add(cursor, { opacity: 0, duration: 400 }, pos + 1700);
   return pos + 1050;
+}
+
+/* ================================================================= PHONE */
+// 0.8.0: the phone page, as the phone shows it. assets/phone/ holds its stylesheet (dark, scoped for a shadow root)
+// and screens captured from the real page with demo data; <name>.en.html is the English capture.
+let phoneSheet = null;
+const phoneCSS = () => (phoneSheet ??= fetch(`assets/phone/phone.css?v=${SCREENS_V}`).then(r => (r.ok ? r.text() : "")));
+const phoneCache = {};
+const loadPhone = name => { const l = lang;
+  return (phoneCache[name + "|" + l] ??= fetch(`assets/phone/${name}${l === "en" ? ".en" : ""}.html?v=${SCREENS_V}`).then(r => (r.ok ? r.text() : ""))); };
+const STATUS = `<div class="ph-status"><b>9:41</b><i class="ph-island"></i><span class="ph-sys"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3.5" fill="none" stroke="#fff" opacity=".5"/><rect x="2.5" y="2.5" width="16" height="7" rx="2"/><rect x="24" y="4" width="1.6" height="4" rx=".8" opacity=".5"/></svg></span></div>`;
+// A phone with the given layers stacked in its glass, the first on top. A layer is the name of a captured screen
+// (in a shadow root, `.sr` to reach inside) or a function that returns an element (a chat, a Home Screen).
+async function phoneEl(layers) {
+  const css = await phoneCSS(), htmls = await Promise.all(layers.map(l => (typeof l === "string" ? loadPhone(l) : null)));
+  const el = document.createElement("div"); el.className = "phone";
+  el.innerHTML = `<div class="ph-glass">${STATUS}<i class="ph-dim"></i></div><i class="ph-home"></i>`;
+  const glass = el.firstElementChild, scr = {};
+  layers.forEach((l, i) => {
+    let host;
+    if (typeof l === "string") {
+      host = document.createElement("div"); host.className = "ph-scr"; host.dataset.ph = l;
+      const root = host.attachShadow({ mode: "open" });
+      root.innerHTML = `<style>${css}</style><div class="pg" style="--sat:50px;--sab:22px">${htmls[i]}</div>`;
+      host.sr = root;
+    } else { host = l(); host.classList.add("ph-scr"); }
+    scr[typeof l === "string" ? l : host.dataset.ph] = host;
+    glass.insertBefore(host, glass.firstChild);
+  });
+  // first layer on top: insertBefore above put them in reverse
+  return { el, glass, scr, dim: $(".ph-dim", glass) };
+}
+// the first element inside a phone screen whose text starts with `text`
+const phFind = (host, sel, text) => (host && host.sr ? [...host.sr.querySelectorAll(sel)].find(e => e.textContent.trim().startsWith(text)) : null);
+// the page's own toast, in a screen
+function phToast(host, text) {
+  const t = document.createElement("div"); t.id = "toast"; t.style.opacity = 0;
+  t.innerHTML = `<span class="prompt">❯</span><span class="msg">${esc(text)}</span>`;
+  host.sr.querySelector(".pg").appendChild(t); return t;
 }
 
 /* =================================================================== HERO */
@@ -516,6 +555,8 @@ window.__draftboard = { player };
 // Each feature of 0.5.6 has a stage beside its text that films the real screens, like the tour: the camera
 // moves, the pointer clicks. A stage loops while in view and pauses when it leaves; with reduced motion it
 // holds one still frame of its scene.
+// true while a scene is run through at once (after building it): no ripples then
+let silent = false;
 const news = (() => {
   const VW = 960, VH = 640;
   const look = (box, pad = 1) => { const k = Math.min(VW / box[2], VH / box[3]) * pad; return { scale: k, x: VW / 2 - (box[0] + box[2] / 2) * k, y: VH / 2 - (box[1] + box[3] / 2) * k }; };
@@ -535,7 +576,7 @@ const news = (() => {
   };
   const glide = (tl, c, x, y, pos, dur = 700) => { tl.add(c, { x, y, duration: dur, ease: "inOut(3)" }, pos); return pos + dur; };
   const press = (tl, c, x, y, pos, fn) => {
-    tl.add(c, { scale: [1, 0.8, 1], duration: 240, ease: "out(2)" }, pos).call(() => { if (!reduce) ripple(c.parentElement, x, y); fn && fn(); }, pos + 100);
+    tl.add(c, { scale: [1, 0.8, 1], duration: 240, ease: "out(2)" }, pos).call(() => { if (!reduce && !silent) ripple(c.parentElement, x, y); fn && fn(); }, pos + 100);
     return pos + 100;
   };
   // on a light screen the toast is dark
@@ -559,6 +600,39 @@ const news = (() => {
     tl.add(o, { k: [0, 1], duration: dur, ease: "inOut(2)", onUpdate: () => {
       const pt = p.getPointAtLength(o.k * len); c.setAttribute("cx", pt.x); c.setAttribute("cy", pt.y); c.style.opacity = o.k > 0.01 && o.k < 0.99 ? 1 : 0;
     } }, pos);
+  };
+
+  // 0.8.0: the Mac in a laptop, its window scaled into the lid
+  const laptop = (cam, win, x, y) => {
+    const l = make(cam, "laptop"); l.innerHTML = `<div class="lid"><div class="ls"></div></div><div class="base"></div>`;
+    const ls = $(".ls", l); ls.appendChild(win); utils.set(win, { scale: 470 / 1728 }); utils.set(l, { x, y });
+    l.glow = make(ls, "lap-glow");
+    return l;
+  };
+  // the tailnet between the Mac and the phone: a dashed line with its pill; messages ride it with pulse()
+  const tnet = (cam, d, px, py, label) => {
+    const svg = document.createElementNS(NS, "svg"); svg.setAttribute("class", "tnet wire");
+    svg.setAttribute("width", VW); svg.setAttribute("height", VH); svg.setAttribute("viewBox", `0 0 ${VW} ${VH}`);
+    const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("class", "track"); svg.appendChild(p); cam.appendChild(svg);
+    const pill = make(cam, "tnet-pill"); pill.style.left = px + "px"; pill.style.top = py + "px";
+    pill.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>${esc(label)}`;
+    return svg;
+  };
+  // on the phone a finger, not the pointer: it lands, presses, lifts
+  const finger = st => make(st, "touch");
+  const touch = (tl, f, x, y, pos) => {
+    tl.set(f, { x, y }, pos)
+      .add(f, { opacity: [0, 1], scale: [1.6, 1], duration: 300, ease: "out(3)" }, pos)
+      .add(f, { scale: 0.78, duration: 130, ease: "out(2)" }, pos + 420)
+      .call(() => { if (!reduce && !silent) ripple(f.parentElement, x, y); }, pos + 480)
+      .add(f, { scale: 1.15, opacity: 0, duration: 320, ease: "out(2)" }, pos + 560);
+    return pos + 480;
+  };
+  // one screen of the phone page gives way to the next: pushed from the side (dir ±1) or in place (0)
+  const swap = (tl, from, to, pos, dir = 1) => {
+    if (dir) tl.add(to, { opacity: [0, 1], x: [70 * dir, 0], duration: 420, ease: "out(3)" }, pos).add(from, { opacity: [1, 0], x: [0, -50 * dir], duration: 420, ease: "out(3)" }, pos);
+    else tl.add(to, { opacity: [0, 1], duration: 260 }, pos).add(from, { opacity: [1, 0], duration: 260 }, pos);
+    return pos + 420;
   };
 
   // Each scene builds itself on the stage and its timeline, and returns the time of its still frame.
@@ -814,6 +888,139 @@ const news = (() => {
         return still;
       },
     },
+    // 0.8.0 · the phone page: the Mac and the phone in the same tailnet. Open the plan that waits, approve it, a
+    // look at the real terminal and its keys, then the Maestro's team approved from the phone.
+    phone: {
+      needs: ["main"], phones: ["home", "plan", "plan-done", "term", "maestro", "maestro-done"],
+      async build(st, tl) {
+        const cam = camera(st), U = UI[lang].ph;
+        const lap = laptop(cam, await screenEl("main"), 36, 156);
+        const P = { x: 644, y: 14, s: 0.7 }, ph = await phoneEl(this.phones); cam.appendChild(ph.el);
+        utils.set(ph.el, { x: P.x, y: P.y, scale: P.s });
+        const D = "M530 314 C 560 314 600 318 642 318", R = "M642 318 C 600 318 560 314 530 314";
+        const wire = tnet(cam, D, 587, 262, U.tnet);
+        const [home, plan, done, term, mae, maeDone] = this.phones.map(n => ph.scr[n]);
+        const at = el => { const r = local(el, ph.el); return [P.x + P.s * r.cx, P.y + P.s * r.cy]; };
+        const open = phFind(home, "button", U.open), ok = phFind(plan, "button", U.approve), tab = phFind(done, "button", U.terminal);
+        const keys = term.sr ? [...term.sr.querySelectorAll(".keys button")] : [], back = term.sr && term.sr.querySelector(".round.back");
+        const podium = home.sr && home.sr.querySelector(".podium"), okTeam = phFind(mae, "button", U.approve);
+        if (!open || !ok || !tab || !back || !podium || !okTeam) return 0;
+        const pts = [open, ok, tab, back, podium, okTeam].map(at), KY = keys.length ? at(keys[0])[1] : P.y + 560;
+        const t1 = phToast(done, U.planToast), t2 = phToast(maeDone, U.teamToast);
+        [plan, done, term, mae, maeDone].forEach(s => utils.set(s, { opacity: 0 }));
+        const ALL = { x: 0, y: 0, scale: 1 };
+        // a camera on the phone, centred on y (in the stage), never past its edges
+        const Z = y => look([P.x + 145 - 200, Math.min(Math.max(y - 170, P.y - 6), P.y + 614 - 340), 400, 340]);
+        utils.set(cam, ALL);
+        // the Mac keeps the page up to date
+        [200, 1100].forEach(t => pulse(tl, wire, D, t, 1000));
+        const f = finger(st);
+        let L = Z(pts[0][1]);
+        tl.add(cam, { ...L, duration: 1300, ease: "inOut(3)" }, 900);
+        let p = touch(tl, f, ...via(L, ...pts[0]), 2500);
+        p = swap(tl, home, plan, p + 120);
+        L = Z(pts[1][1]); tl.add(cam, { ...L, duration: 1000, ease: "inOut(3)" }, p + 300);
+        p = touch(tl, f, ...via(L, ...pts[1]), p + 1700);
+        p = swap(tl, plan, done, p + 120, 0);
+        tl.add(t1, { opacity: [0, 1], y: [12, 0], duration: 360, ease: "out(3)" }, p).add(t1, { opacity: 0, duration: 300 }, p + 2300);
+        tl.add(cam, { ...ALL, duration: 1100, ease: "inOut(3)" }, p + 300);
+        pulse(tl, wire, R, p + 500, 1000);
+        const still = p + 1500;
+        // the terminal, with the keys iOS doesn't have
+        L = Z(pts[2][1]); tl.add(cam, { ...L, duration: 1000, ease: "inOut(3)" }, p + 2600);
+        p = touch(tl, f, ...via(L, ...pts[2]), p + 3800);
+        p = swap(tl, done, term, p + 120);
+        L = Z(KY); tl.add(cam, { ...L, duration: 1000, ease: "inOut(3)" }, p + 300);
+        tl.add(keys, { scale: [1, 1.12, 1], duration: 420, delay: stagger(110), ease: "inOut(2)" }, p + 1400);
+        // back home, and the Maestro's request
+        L = Z(pts[3][1]); tl.add(cam, { ...L, duration: 1000, ease: "inOut(3)" }, p + 2500);
+        p = touch(tl, f, ...via(L, ...pts[3]), p + 3600);
+        p = swap(tl, term, home, p + 120, -1);
+        L = Z(pts[4][1]); tl.add(cam, { ...L, duration: 1000, ease: "inOut(3)" }, p + 200);
+        p = touch(tl, f, ...via(L, ...pts[4]), p + 1400);
+        p = swap(tl, home, mae, p + 120);
+        L = Z(pts[5][1]); tl.add(cam, { ...L, duration: 1000, ease: "inOut(3)" }, p + 300);
+        p = touch(tl, f, ...via(L, ...pts[5]), p + 1700);
+        p = swap(tl, mae, maeDone, p + 120, 0);
+        tl.add(t2, { opacity: [0, 1], y: [12, 0], duration: 360, ease: "out(3)" }, p).add(t2, { opacity: 0, duration: 300 }, p + 2300);
+        tl.add(cam, { ...ALL, duration: 1200, ease: "inOut(3)" }, p + 400);
+        pulse(tl, wire, R, p + 600, 1000); pulse(tl, wire, R, p + 900, 1000);
+        if (lap.glow) tl.add(lap.glow, { opacity: [0, 1, 0], duration: 1400, ease: "inOut(2)" }, p + 1500);
+        tl.call(() => {}, p + 3600);
+        return still;
+      },
+    },
+    // 0.8.0 · Telegram rings, the page is where you work: the plan's message, Open, approve on the page and the
+    // message closes; then a permission approved right in the chat.
+    telegram: {
+      needs: [], phones: ["plan", "plan-done"],
+      async build(st, tl) {
+        const cam = camera(st), U = UI[lang].ph, T = UI[lang].tg;
+        const kb = rows => `<div class="tg-kb">${rows.map(r => `<div class="row">${r.map(([t, url]) => `<button${url ? ' class="url"' : ""}>${t}</button>`).join("")}</div>`).join("")}</div>`;
+        const msg = (k, html, rows) => `<div class="tg-msg" data-k="${k}"><div class="tg-bub">${html}<span class="closed">${T.closed}</span><span class="tm">9:41</span></div>${rows ? kb(rows) : ""}</div>`;
+        const chat = () => { const d = document.createElement("div"); d.className = "tg"; d.dataset.ph = "chat";
+          d.innerHTML = `<div class="tg-head"><span class="back">‹</span><img src="assets/icon.png" alt=""><div><b>Bashestra</b><span>bot</span></div></div>
+            <div class="tg-body">${msg("m0", T.paired)}${msg("m1", T.plan, [[[T.approve], [T.keep]], [[T.snooze]], [[T.open, 1]]])}${msg("m2", T.perm, [[[T.approve], [T.deny]], [[T.snooze]], [[T.open, 1]]])}</div>
+            <div class="tg-in"><span>${T.input}</span></div>`;
+          return d; };
+        const A = await phoneEl([chat]), B = await phoneEl(this.phones);
+        const PA = { x: 168, y: 14, s: 0.7 }, PB = { x: 502, y: 14, s: 0.7 };
+        cam.append(A.el, B.el); utils.set(A.el, { x: PA.x, y: PA.y, scale: PA.s }); utils.set(B.el, { x: PB.x, y: PB.y, scale: PB.s });
+        const box = A.scr.chat, q = k => $(`[data-k="${k}"]`, box);
+        const m1 = q("m1"), m2 = q("m2"), m0 = q("m0");
+        const [plan, done] = this.phones.map(n => B.scr[n]);
+        const ok = phFind(plan, "button", U.approve);
+        if (!m1 || !m2 || !ok) return 0;
+        const toastB = phToast(done, U.planToast);
+        // where the buttons will be once a message is in: measure with everything shown, then hide
+        const atA = el => { const r = local(el, A.el); return [PA.x + PA.s * r.cx, PA.y + PA.s * r.cy]; };
+        const atB = el => { const r = local(el, B.el); return [PB.x + PB.s * r.cx, PB.y + PB.s * r.cy]; };
+        $$(".closed", box).forEach(e => { e.style.display = "none"; });
+        const H1 = m1.offsetHeight, H2 = m2.offsetHeight, K1 = $(".tg-kb", m1).offsetHeight, K2 = $(".tg-kb", m2).offsetHeight;
+        const openB = $$(".tg-kb button", m1)[3], okA = $$(".tg-kb button", m2)[0];
+        // m2 not in yet (no height, but still a gap in the column): m1's buttons sit where they will be tapped
+        m2.style.height = "0px";
+        const pOpen = atA(openB), pOk = atB(ok);
+        m2.style.height = "";
+        const pOkA = atA(okA);
+        const c1 = $(".closed", m1), c2 = $(".closed", m2);
+        [c1, c2].forEach(e => { e.style.display = "block"; e.style.overflow = "hidden"; });
+        utils.set([c1, c2], { height: 0, opacity: 0, marginTop: 0 });
+        utils.set([m1, m2], { height: 0, opacity: 0, overflow: "hidden" });
+        utils.set(done, { opacity: 0 }); utils.set(B.dim, { opacity: 0.82 });
+        const ALL = { x: 0, y: 0, scale: 1 }, ZA = look([PA.x - 40, PA.y + 250, 370, 360]), ZB = look([PB.x - 40, PB.y + 250, 370, 360]);
+        utils.set(cam, ALL);
+        const f = finger(st);
+        // the message arrives, the phone buzzes
+        tl.add(m1, { height: [0, H1], opacity: [0, 1], duration: 520, ease: "out(3)" }, 500)
+          .add(A.el, { x: [PA.x, PA.x - 4, PA.x + 4, PA.x - 2, PA.x], duration: 420, ease: "linear" }, 600)
+          .add(cam, { ...ZA, duration: 1200, ease: "inOut(3)" }, 1300);
+        let p = touch(tl, f, ...via(ZA, ...pOpen), 3000);
+        // Open: the page lights up on the plan
+        tl.add(B.dim, { opacity: 0, duration: 500, ease: "out(2)" }, p + 200)
+          .add(plan, { y: [40, 0], duration: 600, ease: "out(3)" }, p + 200)
+          .add(cam, { ...ZB, duration: 1200, ease: "inOut(3)" }, p + 400);
+        p = touch(tl, f, ...via(ZB, ...pOk), p + 2400);
+        p = swap(tl, plan, done, p + 120, 0);
+        tl.add(toastB, { opacity: [0, 1], y: [12, 0], duration: 360, ease: "out(3)" }, p).add(toastB, { opacity: 0, duration: 300 }, p + 2400)
+          .add(cam, { ...ALL, duration: 1200, ease: "inOut(3)" }, p + 300)
+          // the message on Telegram closes itself
+          .add($(".tg-kb", m1), { height: [K1, 0], opacity: [1, 0], duration: 420, ease: "inOut(3)" }, p + 900)
+          .add(c1, { height: [0, 22], opacity: [0, 1], marginTop: [0, 8], duration: 420, ease: "out(3)" }, p + 1000);
+        const still = p + 1700;
+        // a permission, approved in the chat
+        p += 3000;
+        tl.add(m2, { height: [0, H2], opacity: [0, 1], duration: 520, ease: "out(3)" }, p)
+          .add(A.el, { x: [PA.x, PA.x - 4, PA.x + 4, PA.x - 2, PA.x], duration: 420, ease: "linear" }, p + 100)
+          .add(cam, { ...ZA, duration: 1200, ease: "inOut(3)" }, p + 700);
+        p = touch(tl, f, ...via(ZA, ...pOkA), p + 2300);
+        tl.add($(".tg-kb", m2), { height: [K2, 0], opacity: [1, 0], duration: 420, ease: "inOut(3)" }, p + 200)
+          .add(c2, { height: [0, 22], opacity: [0, 1], marginTop: [0, 8], duration: 420, ease: "out(3)" }, p + 300)
+          .add(cam, { ...ALL, duration: 1300, ease: "inOut(3)" }, p + 1300)
+          .call(() => {}, p + 4200);
+        return still;
+      },
+    },
   };
 
   const stages = {};
@@ -832,19 +1039,22 @@ const news = (() => {
       // it loops by hand: a seek back to 0 puts every element where the scene starts, a loop wrap does not
       const next = createTimeline({ autoplay: false, onComplete: self => { again = setTimeout(() => {
         if (tl !== self || !self.completed) return; self.seek(0); if (visible && !paused) self.play(); }, 1400); } });
-      await Promise.all(scene.needs.map(loadScreen));       // once cached, the build below runs without yielding to events
+      // once cached, the build below runs without yielding to events
+      await Promise.all([...scene.needs.map(loadScreen), ...(scene.phones || []).map(loadPhone), scene.phones && phoneCSS()]);
       if (my !== gen) return;
       st.innerHTML = "";
       const still = await scene.build(st, next);
       if (my !== gen) { next.pause(); return; }
       tl = next;
+      // tweens with a from value render it when added: run the scene through once so time 0 is its first frame
+      silent = true; tl.seek(tl.duration); tl.seek(0); silent = false;
       if (reduce) { tl.seek(still); return; }
       animate(st, { opacity: [0, 1], duration: 350 });
       if (visible && !paused) tl.play();
     }
     btn.addEventListener("click", () => { paused = !paused; setBtn(!paused); if (!tl) return; if (paused) tl.pause(); else if (visible) tl.play(); });
     // fetch the screens a little before the stage arrives; build and play it once it is in view
-    new IntersectionObserver(([e], ob) => { if (e.isIntersecting) { ob.disconnect(); scene.needs.forEach(loadScreen); } }, { rootMargin: "600px 0px" }).observe(wrap);
+    new IntersectionObserver(([e], ob) => { if (e.isIntersecting) { ob.disconnect(); scene.needs.forEach(loadScreen); (scene.phones || []).forEach(loadPhone); } }, { rootMargin: "600px 0px" }).observe(wrap);
     new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
       if (visible && !built) { build(); return; }
@@ -857,9 +1067,259 @@ const news = (() => {
     if (reduce) btn.hidden = true;
     stages[name] = { get tl() { return tl; } };
   });
-  return { stages };
+  return { stages, kit: { VW, VH, make, look, via, local, pointer, enter, glide, press, pulse, tnet, finger, touch, swap } };
 })();
 window.__draftboard.news = news;
+
+/* ================================================================= SETUP */
+// 0.8.0: setting up the phone page in five steps. One timeline plays them on the Mac's settings and on the phone;
+// the list follows it and a click on a step jumps there. With reduced motion each step shows its last frame.
+const setup = (() => {
+  const wrap = $("#setup-stage");
+  if (!wrap) return null;
+  const st = $(".fstage", wrap), btn = $(".play", wrap), shot = $(".nw-shot", wrap);
+  const items = $$(".setup-steps li"), cap = $(".setup-cap");
+  const { VW, VH, make, look, via, local, pointer, enter, glide, press, pulse, tnet, finger, touch, swap } = news.kit;
+  let K = 1, tl = null, marks = [], visible = false, paused = reduce, built = false, gen = 0, cur = -1, again = 0;
+  const fit = () => { K = wrap.clientWidth / VW; st.style.transform = `scale(${K})`; };
+  new ResizeObserver(fit).observe(wrap); fit();
+
+  // a QR-like pattern: three finder squares and fixed noise (it is a picture, not a code)
+  const QR = (() => {
+    const n = 25, cells = []; let seed = 11;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const finder = (x, y) => `M${x} ${y}h7v7h-7z M${x + 1} ${y + 1}v5h5v-5z M${x + 2} ${y + 2}h3v3h-3z`;
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const f = (x < 8 && y < 8) || (x >= n - 8 && y < 8) || (x < 8 && y >= n - 8);
+      if (!f && rnd() < 0.47) cells.push(`M${x} ${y}h1v1h-1z`);
+    }
+    return `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges" aria-hidden="true"><path fill-rule="evenodd" d="${finder(0, 0)} ${finder(n - 7, 0)} ${finder(0, n - 7)}"/><path d="${cells.join("")}"/></svg>`;
+  })();
+  const IC = {
+    lock: '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></svg>',
+    wait: '<svg viewBox="0 0 24 24"><path d="M7 3h10M7 21h10M8 3v4l4 5-4 5v4M16 3v4l-4 5 4 5v4"/></svg>',
+    ok: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>',
+    add: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>',
+    copy: '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>',
+    book: '<svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/></svg>',
+  };
+
+  async function build(tlNext) {
+    const S = UI[lang].set, cam = make(st, "cam");
+    // the Mac: Settings › Notifications › In the phone's browser
+    const win = make(cam, "mset");
+    const dev = (k, name, seen) => `<div data-k="${k}" style="overflow:hidden"><div class="hair"></div><div class="rowt dev"><div class="tx"><b>${name}</b><em>${seen}</em></div><button class="mb ghost">${S.revoke}</button></div></div>`;
+    win.innerHTML = `<div class="tb"><i></i><i></i><i></i><b>${S.win}</b></div>
+      <div class="body"><h4>${S.block}</h4><p class="cap">${S.blockCap}</p>
+        <div class="card">
+          <div class="rowt"><div class="tx"><b>${S.toggle}</b><span>${S.toggleCap}</span></div><span class="tog" data-k="tog"><i></i></span></div>
+          <div data-k="more" style="overflow:hidden"><div class="hair"></div>
+            <div class="rowt addr"><div class="tx"><b>${S.address}</b><div class="states">
+              <div data-k="s-https"><span class="st warn">${IC.lock}${S.httpsOff}</span><span>${S.httpsHelp}</span><div class="btns"><button class="mb" data-k="console">${S.console}</button><button class="mb ghost" data-k="retry">${S.retry}</button></div></div>
+              <div data-k="s-wait"><span class="st mute">${IC.wait}${S.turning}</span></div>
+              <div data-k="s-ready"><span class="st ok">${IC.ok}${S.ready}</span><span class="url">https://${S.host}</span><span>${S.scan}</span></div>
+            </div></div><div class="qr" data-k="qr">${QR}<i class="scan"></i></div></div>
+            <div data-k="devs" style="overflow:hidden"><div class="hair"></div>
+              <div class="rowt"><div class="tx"><b>${S.paired}</b><span>${S.pairedCap}</span></div><button class="mb" data-k="pairbtn">${S.pairBtn}</button></div>
+              ${dev("d1", S.dev1, S.seen1)}${dev("d2", S.dev2, S.seen2)}
+            </div>
+          </div>
+        </div>
+        <div data-k="codewrap" style="overflow:hidden"><div class="code"><small>${S.codeFor}</small><b class="cd"><span data-k="c1">482 913</span><span data-k="c2">730 615</span></b><span class="codehelp">${S.codeHelp}</span></div></div>
+      </div>`;
+    const q = (k, root = win) => $(`[data-k="${k}"]`, root);
+    // the console page, reduced to the switch that matters
+    const web = make(cam, "webcard");
+    web.innerHTML = `<div class="bar"><span>login.tailscale.com/admin/dns</span></div><div class="in"><h5>DNS</h5>
+      <div class="opt"><div class="tx"><b>MagicDNS</b><span>${S.magic}</span></div><span class="tog on"><i style="transform:translateX(16px)"></i></span></div>
+      <div class="opt"><div class="tx"><b>HTTPS Certificates</b><span>${S.certs}</span></div><span class="tog" data-k="wtog"><i></i></span></div></div>`;
+    // the phone: its Home Screen, the phone page (pairing, then the stage) and Safari's share sheet
+    const homeScreen = () => {
+      const d = document.createElement("div"); d.className = "ios-home"; d.dataset.ph = "ios";
+      const plain = n => Array.from({ length: n }, (_, i) => `<span class="app"><i style="background:linear-gradient(160deg, hsl(${250 + i * 23} 30% 34%), hsl(${250 + i * 23} 25% 20%))"></i>&nbsp;</span>`).join("");
+      d.innerHTML = `<div class="grid">${plain(6)}<span class="app" data-k="ts"><i class="ts"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M8 11l8-4M8 13l8 4"/></svg></i>Tailscale</span>${plain(1)}<span class="app" data-k="bs"><img src="assets/icon.png" alt="">Bashestra</span></div>`;
+      return d;
+    };
+    const share = () => {
+      const d = document.createElement("div"); d.className = "ios-share"; d.dataset.ph = "share";
+      d.innerHTML = `<i class="scrim"></i><div class="ios-sheet"><div class="grab"></div><div class="site"><img src="assets/icon.png" alt=""><div><b>Bashestra</b><span>${S.host}</span></div></div>
+        <div class="row dim">${S.copy}${IC.copy}</div><div class="row" data-k="addhome">${S.addHome}${IC.add}</div><div class="row dim">${S.bookmark}${IC.book}</div></div>`;
+      return d;
+    };
+    const ph = await phoneEl([share, "pair", "home", homeScreen]);
+    cam.appendChild(ph.el);
+    const P = { x: 646, y: 14, s: 0.7 };
+    utils.set(ph.el, { x: P.x, y: P.y, scale: P.s });
+    const { ios, share: sh, pair, home } = ph.scr;
+    // the pairing page starts empty: its digits are typed in by the timeline
+    const boxes = pair.sr ? [...pair.sr.querySelectorAll(".digits span")] : [];
+    const digits = boxes.map(b => { const t = b.textContent; b.textContent = ""; const i = document.createElement("b"); i.textContent = t; i.style.display = "inline-block"; b.appendChild(i); return i; });
+    const pairBtn = pair.sr && [...pair.sr.querySelectorAll("button")].find(b => b.textContent.trim().startsWith(UI[lang].ph.pair));
+    if (!pairBtn || digits.length !== 6) return 0;
+
+    // the window's size with everything open decides its scale
+    const H = win.offsetHeight, sc = Math.min(1, (VH - 40) / H), M = { x: 30, y: 20 };
+    utils.set(win, { x: M.x, y: M.y, scale: sc });
+    const atW = el => { const r = local(el, win); return [M.x + sc * r.cx, M.y + sc * r.cy]; };
+    const atP = el => { const r = local(el, ph.el); return [P.x + P.s * r.cx, P.y + P.s * r.cy]; };
+    const more = q("more"), devs = q("devs"), d1 = q("d1"), d2 = q("d2"), codewrap = q("codewrap");
+    const HM = more.offsetHeight, HD = devs.offsetHeight, H1 = d1.offsetHeight, H2 = d2.offsetHeight, HC = codewrap.offsetHeight;
+    // what `more` and `devs` measure at each step: the address row, then the devices' header, then one row, then two
+    const HA = HM - HD, HD0 = HD - H1 - H2;
+    const tog = q("tog"), knob = $("i", tog), qr = q("qr"), scan = $(".scan", qr);
+    const pT = atW(tog), pConsole = atW(q("console")), pRetry = atW(q("retry")), pPair = atW(q("pairbtn"));
+    const W = { x: 120, y: 170 }; utils.set(web, { x: W.x, y: W.y });
+    const wtog = q("wtog", web), wknob = $("i", wtog), pW = (() => { const r = local(wtog, web); return [W.x + r.cx, W.y + r.cy]; })();
+    const pTs = atP(q("ts", ios)), pBs = atP(q("bs", ios)), pAdd = atP(q("addhome", sh)), pPairBtn = atP(pairBtn);
+    // where the link runs: from the window's right edge to the phone
+    const wx = M.x + sc * win.offsetWidth + 6, D = `M${wx} 300 C ${wx + 30} 300 ${P.x - 40} 320 ${P.x - 4} 320`, R = `M${P.x - 4} 320 C ${P.x - 40} 320 ${wx + 30} 300 ${wx} 300`;
+    const wire = tnet(cam, D, (wx + P.x) / 2, 262, S.tnet), pill = cam.querySelector(".tnet-pill"), track = $("path.track", wire);
+
+    // the starting frame
+    utils.set([more, devs, d1, d2, codewrap], { height: 0 });
+    utils.set([q("s-wait"), q("s-ready"), qr, web, track, pill], { opacity: 0 });
+    utils.set(qr, { scale: 0.6 }); utils.set(scan, { y: 0, opacity: 0 }); utils.set(q("c2"), { opacity: 0 });
+    utils.set([q("ts", ios), q("bs", ios)], { scale: 0, opacity: 0 });
+    utils.set([sh, pair, home], { opacity: 0 }); utils.set($(".ios-sheet", sh), { y: 380 }); utils.set($(".scrim", sh), { opacity: 0 });
+    utils.set(digits, { opacity: 0, scale: 0.4 });
+    const c = pointer(st), f = finger(st), m = [0];
+    const tlx = tlNext;
+    // the camera: everything, the settings up close, the phone up close
+    const ALL = { x: 0, y: 0, scale: 1 }, MAC = look([16, 8, 620, 400]), PHZ = look([P.x - 70, P.y + 70, 430, 420]);
+    utils.set(cam, ALL);
+    const on = (L, pt) => via(L, pt[0], pt[1]);
+
+    // 1 · Tailscale on both, the same account: the tailnet joins them
+    let p = 400;
+    tlx.add(q("ts", ios), { scale: [0, 1], opacity: [0, 1], duration: 600, ease: "outBack(1.8)" }, p);
+    p = touch(tlx, f, ...pTs, p + 1100);
+    tlx.add(q("ts", ios), { scale: [1, 0.9, 1], duration: 300 }, p)
+      .add(track, { opacity: [0, 1], duration: 600 }, p + 500)
+      .add(pill, { opacity: [0, 1], scale: [0.8, 1], duration: 500, ease: "outBack(1.6)" }, p + 700);
+    pulse(tlx, wire, D, p + 1300, 1000); pulse(tlx, wire, R, p + 2100, 1000);
+    p += 3600; m.push(p);
+    // 2 · On in Bashestra: it says what is missing
+    tlx.add(cam, { ...MAC, duration: 1100, ease: "inOut(3)" }, p);
+    p = enter(tlx, c, ...on(MAC, pT), p + 700);
+    p = press(tlx, c, ...on(MAC, pT), p + 80);
+    tlx.add(tog, { backgroundColor: ["#D9D8E0", "#6E4FF5"], duration: 250 }, p).add(knob, { x: [0, 16], duration: 250, ease: "out(3)" }, p)
+      .add(more, { height: [0, HA], duration: 520, ease: "out(3)" }, p + 300)
+      .add(c, { opacity: 0, duration: 300 }, p + 2200);
+    p += 3200; m.push(p);
+    // 3 · HTTPS certificates in the Tailscale console, then Retry: ready, with the address and its QR
+    p = enter(tlx, c, ...on(MAC, pConsole), p + 200);
+    p = press(tlx, c, ...on(MAC, pConsole), p + 80);
+    tlx.add(web, { opacity: [0, 1], scale: [0.96, 1], duration: 380, ease: "out(3)" }, p + 200);
+    p = glide(tlx, c, ...on(MAC, pW), p + 1100, 800);
+    p = press(tlx, c, ...on(MAC, pW), p + 80);
+    tlx.add(wtog, { backgroundColor: ["#D9D8E0", "#6E4FF5"], duration: 250 }, p).add(wknob, { x: [0, 16], duration: 250, ease: "out(3)" }, p)
+      .add(web, { opacity: 0, scale: 0.97, duration: 320, ease: "in(2)" }, p + 1100);
+    p = glide(tlx, c, ...on(MAC, pRetry), p + 1500, 800);
+    p = press(tlx, c, ...on(MAC, pRetry), p + 80);
+    tlx.add(q("s-https"), { opacity: 0, duration: 200 }, p).add(q("s-wait"), { opacity: [0, 1], duration: 200 }, p + 150)
+      .add(q("s-wait"), { opacity: 0, duration: 200 }, p + 1500).add(q("s-ready"), { opacity: [0, 1], duration: 300 }, p + 1600)
+      .add(qr, { opacity: [0, 1], scale: [0.6, 1], duration: 520, ease: "outBack(1.6)" }, p + 1650)
+      .add(devs, { height: [0, HD0], duration: 480, ease: "out(3)" }, p + 1900)
+      .add(more, { height: [HA, HA + HD0], duration: 480, ease: "out(3)" }, p + 1900)
+      .add(c, { opacity: 0, duration: 300 }, p + 2400);
+    p += 4000; m.push(p);
+    // 4 · The phone opens the address and pairs with the code from the Mac
+    tlx.add(cam, { ...ALL, duration: 1000, ease: "inOut(3)" }, p);
+    tlx.add(scan, { opacity: [0, 1, 1, 0], y: [0, 92], duration: 1100, ease: "inOut(2)" }, p + 900);
+    p = swap(tlx, ios, pair, p + 2000, 0);
+    p = enter(tlx, c, ...pPair, p + 500);
+    p = press(tlx, c, ...pPair, p + 80);
+    tlx.add(codewrap, { height: [0, HC], duration: 420, ease: "out(3)" }, p + 100).add(c, { opacity: 0, duration: 300 }, p + 900)
+      .add(cam, { ...PHZ, duration: 1100, ease: "inOut(3)" }, p + 900);
+    digits.forEach((d, i) => tlx.add(d, { opacity: [0, 1], scale: [0.4, 1], duration: 220, ease: "outBack(2)" }, p + 2100 + i * 260));
+    p = touch(tlx, f, ...on(PHZ, pPairBtn), p + 4000);
+    p = swap(tlx, pair, home, p + 200, 0);
+    tlx.add(cam, { ...ALL, duration: 1100, ease: "inOut(3)" }, p + 300);
+    tlx.add(codewrap, { height: 0, duration: 380, ease: "inOut(3)" }, p + 300).add(d1, { height: [0, H1], duration: 420, ease: "out(3)" }, p + 500)
+      .add(devs, { height: [HD0, HD0 + H1], duration: 420, ease: "out(3)" }, p + 500).add(more, { height: [HA + HD0, HA + HD0 + H1], duration: 420, ease: "out(3)" }, p + 500);
+    pulse(tlx, wire, D, p + 400, 1000);
+    p += 2800; m.push(p);
+    // 5 · Add to Home Screen; the icon is another browser, so it pairs once more
+    tlx.add($(".scrim", sh), { opacity: [0, 1], duration: 300 }, p).set(sh, { opacity: 1 }, p)
+      .add($(".ios-sheet", sh), { y: [380, 0], duration: 520, ease: "out(4)" }, p + 50);
+    p = touch(tlx, f, ...pAdd, p + 1300);
+    tlx.add(sh, { opacity: 0, duration: 260 }, p + 200);
+    p = swap(tlx, home, ios, p + 350, 0);
+    tlx.add(digits, { opacity: 0, duration: 10 }, p);
+    tlx.add(q("bs", ios), { scale: [0, 1], opacity: [0, 1], duration: 600, ease: "outBack(1.8)" }, p + 300);
+    p = touch(tlx, f, ...pBs, p + 1500);
+    p = swap(tlx, ios, pair, p + 200, 0);
+    p = enter(tlx, c, ...pPair, p + 300);
+    p = press(tlx, c, ...pPair, p + 80);
+    tlx.set(q("c1"), { opacity: 0 }, p).set(q("c2"), { opacity: 1 }, p)
+      .add(codewrap, { height: [0, HC], duration: 420, ease: "out(3)" }, p + 100).add(c, { opacity: 0, duration: 300 }, p + 900);
+    digits.forEach((d, i) => tlx.add(d, { opacity: [0, 1], scale: [0.4, 1], duration: 200, ease: "outBack(2)" }, p + 1100 + i * 200));
+    p = touch(tlx, f, ...pPairBtn, p + 2700);
+    p = swap(tlx, pair, home, p + 200, 0);
+    tlx.add(codewrap, { height: 0, duration: 380, ease: "inOut(3)" }, p + 300).add(d2, { height: [0, H2], duration: 420, ease: "out(3)" }, p + 500)
+      .add(devs, { height: [HD0 + H1, HD], duration: 420, ease: "out(3)" }, p + 500).add(more, { height: [HA + HD0 + H1, HM], duration: 420, ease: "out(3)" }, p + 500);
+    pulse(tlx, wire, D, p + 400, 1000);
+    p += 3000; m.push(p);
+    tlx.call(() => {}, p);
+    return m;
+  }
+
+  function show(i) {
+    if (i === cur) return;
+    cur = i;
+    items.forEach((li, j) => { li.classList.toggle("on", j === i); li.classList.toggle("done", j < i); li.setAttribute("aria-current", j === i ? "step" : "false"); });
+    if (cap) cap.textContent = UI[lang].set.place[i] || "";
+  }
+  function onUpdate(self) {
+    const t = self.currentTime;
+    let i = marks.findIndex((m, j) => j < marks.length - 1 && t >= m && t < marks[j + 1]);
+    if (i < 0) i = marks.length - 2;
+    show(i);
+    items.forEach((li, j) => { const b = $(".bar i", li); if (b) b.style.transform = `scaleX(${j === i ? Math.min(1, (t - marks[i]) / (marks[i + 1] - marks[i])) : 0})`; });
+  }
+  const setBtn = on => { btn.dataset.playing = String(on); btn.setAttribute("aria-label", UI[lang].news[on ? "pause" : "play"]); };
+  async function rebuild() {
+    const my = ++gen;
+    built = true;
+    if (tl) { tl.pause(); tl = null; }
+    clearTimeout(again);
+    const next = createTimeline({ autoplay: false, onUpdate, onComplete: self => { again = setTimeout(() => {
+      if (tl !== self || !self.completed) return; self.seek(0); if (visible && !paused) self.play(); }, 1400); } });
+    await Promise.all([loadPhone("pair"), loadPhone("home"), phoneCSS()]);
+    if (my !== gen) return;
+    st.innerHTML = "";
+    const m = await build(next);
+    if (my !== gen) { next.pause(); return; }
+    if (!m) return;
+    marks = m; tl = next;
+    silent = true; tl.seek(tl.duration); tl.seek(0); silent = false;
+    const at = Math.max(cur, 0); cur = -1;
+    if (reduce) { tl.seek(marks[at + 1] - 1); onUpdate(tl); return; }
+    tl.seek(marks[at]); onUpdate(tl);
+    animate(st, { opacity: [0, 1], duration: 350 });
+    if (visible && !paused) tl.play();
+  }
+  items.forEach((li, i) => {
+    const go = () => { if (!tl) return; clearTimeout(again); tl.seek(reduce ? marks[i + 1] - 1 : marks[i]); onUpdate(tl); if (!reduce && visible && !paused) tl.play(); };
+    li.addEventListener("click", e => { if (e.target.closest("a")) return; go(); });
+    li.tabIndex = 0;
+    li.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+  });
+  btn.addEventListener("click", () => { paused = !paused; setBtn(!paused); if (!tl) return; if (paused) tl.pause(); else if (visible) tl.play(); });
+  new IntersectionObserver(([e], ob) => { if (e.isIntersecting) { ob.disconnect(); loadPhone("pair"); loadPhone("home"); phoneCSS(); } }, { rootMargin: "600px 0px" }).observe(wrap);
+  new IntersectionObserver(([e]) => {
+    visible = e.isIntersecting;
+    if (visible && !built) { rebuild(); return; }
+    if (!tl) return;
+    if (visible && !paused) tl.play(); else tl.pause();
+  }, { threshold: 0.3 }).observe(wrap);
+  langHooks.push(() => { shot.setAttribute("aria-label", UI[lang].news.setup); setBtn(!paused); if (built) rebuild(); });
+  shot.setAttribute("aria-label", UI[lang].news.setup);
+  setBtn(!paused);
+  if (reduce) btn.hidden = true;
+  return { get tl() { return tl; } };
+})();
+window.__draftboard.setup = setup;
 /* ================================================================= TEAMS */
 // Each role's icon and colour, as the app gives them (DS.role: SF Symbols drawn here on a 16 grid).
 const ROLES = [
