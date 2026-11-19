@@ -55,13 +55,13 @@
 <header class="hero">
   <div class="spot" aria-hidden="true"></div>
   <div class="wrap hero-copy">
-    <a class="news reveal" href="#new"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.8.0 · Bashestra on your phone</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+    <a class="news reveal" href="#new"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.9.0 · Mockups and every session's chat</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
     <h1 class="hero-title" data-i18n="hero.title">Conduct your <em>orchestra</em> of coding agents.</h1>
     <p class="lede reveal" data-i18n="hero.lede">Claude Code, Codex, Gemini CLI and OpenCode, side by side on one canvas. Every node is a real terminal. Draw a line and two agents talk. You step in only when they need you.</p>
     <div class="cta reveal">
       <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
-        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.8.0</small>
+        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.9.0</small>
       </a>
       <a class="btn ghost big" href="#tour">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
@@ -109,8 +109,80 @@
   </div>
 </section>
 
-<!-- WHAT'S NEW in 0.8.0 -->
+<!-- WHAT'S NEW in 0.9.0 -->
 <section id="new" class="new-sec">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="kicker" data-i18n="n9.kicker">New in 0.9.0</p>
+      <h2 data-i18n="n9.title">Every screen, in order.</h2>
+      <p data-i18n="n9.sub">The screens your agents design now have a place of their own, laid out as a flow you can present and comment on. Every session gets its chat in the panel, and an agent's questions are answered in one click.</p>
+    </div>
+    <div class="nw-rows">
+      <article class="nw-row reveal">
+        <div class="nw-text">
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="6" height="11" rx="1.5"/><rect x="15" y="5" width="6" height="11" rx="1.5"/><path d="M9.5 10.5h4.5m-1.8-1.8 1.8 1.8-1.8 1.8M3 20h18"/></svg></span>
+          <h3 data-i18n="n9.pt.t">Mockups</h3>
+          <p data-i18n="n9.pt.d">The mockups your agents publish, full screen and in order as in Figma: rows per flow with arrows from the zones, sites at several widths, apps on every device, graphics and PDFs. Double-click for the focus with versions and arrows, Space to present them as a prototype, C to comment: the comments go back to the agent that made them.</p>
+          <p class="nw-place" data-i18n="n9.pt.p">⌃⌘T or Mockups in the strip · Mac</p>
+        </div>
+        <div class="pt-mock" role="img" aria-label="Mockups: on the left the panel with every mockup by row and the selected one; on the right an Onboarding flow of four phone screens joined by arrows, and a Settings group below.">
+          <div class="pt-bar"><i></i><i></i><i></i><b>Notebook › Mockups</b><span class="pt-btn">▶ Present</span></div>
+          <div class="pt-body">
+            <div class="pt-panel">
+              <div class="pt-search">⌕ <span data-i18n="n9.pt.search">Title, author, outcome…</span></div>
+              <div class="pt-sel"><b data-i18n="n9.pt.sel">Selected mockup</b><span>Sign in · v3</span><em>designer</em></div>
+              <p class="pt-h">Onboarding · <span data-i18n="n9.pt.flow">flow</span> · 4</p>
+              <div class="pt-cards"><span></span><span class="on"></span><span></span><span></span></div>
+              <p class="pt-h">Settings · <span data-i18n="n9.pt.group">group</span> · 2</p>
+              <div class="pt-cards"><span></span><span></span></div>
+            </div>
+            <div class="pt-plan">
+              <p class="pt-row">Onboarding <small>4 screens · iPhone</small></p>
+              <div class="pt-flow">
+                <span class="pt-ph"><i></i></span><span class="pt-ar"></span>
+                <span class="pt-ph on"><i></i><em>2</em></span><span class="pt-ar"></span>
+                <span class="pt-ph"><i></i></span><span class="pt-ar"></span>
+                <span class="pt-ph"><i></i></span>
+              </div>
+              <p class="pt-row">Settings <small>group</small></p>
+              <div class="pt-flow"><span class="pt-ph"><i></i></span><span class="pt-ph"><i></i></span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+    <div class="nw-grid nw-cols">
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M5.5 8h1.5M5.5 11h1.5M12.5 9h5M12.5 13h3.5"/></svg></span>
+        <h3 data-i18n="n9.pan.t">The mockups panel</h3>
+        <p data-i18n="n9.pan.d">On the left of Mockups, every mockup by row: a click brings it into view, dragging moves it between rows, ⌘F finds it. The selected one can be renamed, switched to another version, commented with ⌃⌘C, and shows its captures.</p>
+        <p class="nw-place" data-i18n="n9.pan.p">Mockups › panel · ⌃⌘S</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4zM8 9.5h8M8 12.5h5"/></svg></span>
+        <h3 data-i18n="n9.chat.t">Every session's chat</h3>
+        <p data-i18n="n9.chat.d">At the top of the Maestro's chat there's a picker with your sessions: choose one to read its conversation in full, and the ❯ field writes to it. Focus on a session and the panel opens on its tab.</p>
+        <p class="nw-place" data-i18n="n9.chat.p">Maestro · ⌘1</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg></span>
+        <h3 data-i18n="n9.q.t">Questions in one click</h3>
+        <p data-i18n="n9.q.d">When an agent ends its turn with questions, a card collects them: pick the answers, also with keys 1 to 9, and they go together. The session moves to Needs you, and the chat shows tables, lists and headings instead of raw text.</p>
+        <p class="nw-place" data-i18n="n9.q.p">Sessions and Maestro</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6"/></svg></span>
+        <h3 data-i18n="n9.git.t">Mockups that stay</h3>
+        <p data-i18n="n9.git.d">“Save the mockups in the project” writes the latest version of each to design/tavole, with a README, so they go in git. A deleted floor hands its mockups to P0, and any agent of the floors can be pointed at one.</p>
+        <p class="nw-place" data-i18n="n9.git.p">Mockups › ⋯</p>
+      </article>
+    </div>
+    <p class="nw-more reveal"><a href="https://github.com/federix-ai/draftboard-app/releases/tag/v0.9.0" data-i18n="n9.notes">All the release notes for 0.9.0</a> <span class="nw-fine" data-i18n="n9.mac">· On the Mac; Linux stays on 0.7.0 for now.</span></p>
+  </div>
+</section>
+
+<!-- WHAT'S NEW in 0.8.0 -->
+<section id="new-080" class="new-sec">
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="kicker" data-i18n="new.kicker">New in 0.8.0</p>
@@ -403,7 +475,7 @@
     <h2 data-i18n="final.title">The orchestra is seated. Your turn.</h2>
     <p data-i18n="final.sub">Put your agents on one board, link them up and let them work together.</p>
     <div class="cta">
-      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.8.0</small></a>
+      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.9.0</small></a>
       <a class="btn ghost big" href="https://github.com/federix-ai/draftboard-app/releases" data-i18n="final.all">All releases</a>
     </div>
   </div>

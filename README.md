@@ -30,6 +30,16 @@
 
 ---
 
+## New in 0.9.0
+
+- **Mockups** (<kbd>⌃⌘T</kbd>). The screens your agents publish with `orch tavola`, full screen and in order as in Figma: rows per flow with arrows from the zones, sites at several widths, apps on every device, graphics and PDFs. Double-click for the focus with versions and arrows, <kbd>Space</kbd> to present them as a prototype, <kbd>C</kbd> to comment: the comments go back to the agent that made them.
+- **The mockups panel.** On the left of Mockups, every mockup by row: a click brings it into view, dragging moves it between rows, <kbd>⌘F</kbd> finds it. The selected one can be renamed, switched to another version, commented with <kbd>⌃⌘C</kbd>, and shows its captures.
+- **Every session's chat.** At the top of the Maestro's chat there's a picker with your sessions: choose one to read its conversation in full, and the ❯ field writes to it. Focus on a session and the panel opens on its tab.
+- **Questions in one click.** When an agent ends its turn with questions, a card collects them: pick the answers (keys 1–9 work too) and they go together. The session moves to *Needs you*, and the chat shows tables, lists and headings instead of raw text.
+- **Mockups that stay.** “Save the mockups in the project” writes the latest version of each to `design/tavole`, with a README, so they go in git. A deleted floor hands its mockups to P0.
+
+> 0.9.0 is on the Mac. Linux stays on 0.7.0 for now.
+
 ## New in 0.8.0
 
 - **Bashestra in your phone's browser** (Mac). Open Bashestra from your phone as you would at the Mac: the sessions with what waits for you on top, the output, the whole plan to approve, the real terminal with the keys iOS lacks, the Maestro's chat to start new work. It goes on the Home Screen and every browser pairs with a code. Free, through your own Tailscale: nothing goes on the internet. [Set it up in five steps ↓](#bashestra-on-your-phone)
@@ -48,6 +58,7 @@
 - **Teams in one click.** Ready-made teams (Feature squad, Pair, Bug hunt, Parallel build, Exploration, Full squad, Interface and more), already linked, with the task going to the leader: <kbd>⇧⌘T</kbd> or **+ New › Team**. Or build your own and save it.
 - **A worktree per agent.** In a git repository every agent works on its own `orch/<name>` branch. The Git section shows the branch graph, diffs, commit, push and branch switching.
 - **Floors for experiments.** Copy a workspace and its repositories instantly with APFS clones, try an idea, then bring the branches back or throw it away.
+- **Mockups in order.** The screens agents design line up as flows you can present like a prototype and comment on; the comments go back to their author.
 - **Point at the bug.** Web and iOS Simulator nodes next to the agents: capture the screen, mark what's wrong and send it to the linked agent.
 - **Away from the Mac.** Telegram tells you when a session needs you; the phone page lets you read, answer and start new work, over your own Tailscale.
 
