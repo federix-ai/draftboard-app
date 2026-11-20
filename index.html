@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bashestra · conduct your orchestra of coding agents</title>
-<meta name="description" content="Run Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas. Every node is a real terminal; draw a line and two agents can talk. Free for macOS and Linux.">
+<meta name="description" content="Run Claude Code, Codex and OpenCode side by side on an infinite canvas. Every node is a real terminal; draw a line and two agents can talk. Free for macOS and Linux.">
 <meta name="theme-color" content="#0B0B0E">
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="Bashestra: conduct your orchestra of coding agents">
-<meta property="og:description" content="Every node is a real terminal. Draw a line and two agents can message each other. Free for macOS and Linux, with Claude Code, Codex, Gemini CLI and OpenCode.">
+<meta property="og:description" content="Every node is a real terminal. Draw a line and two agents can message each other. Free for macOS and Linux, with Claude Code, Codex and OpenCode.">
 <meta property="og:image" content="https://federix-ai.github.io/draftboard-app/assets/icon.png">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -16,15 +16,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=0.10.0">
-<link rel="stylesheet" href="assets/screens/screens.css?v=0.10.0">
+<link rel="stylesheet" href="assets/site.css?v=0.11.0">
+<link rel="stylesheet" href="assets/screens/screens.css?v=0.11.0">
 <script>
   // Hide animated elements only when JS runs; if the module never boots, show everything after a moment.
   document.documentElement.classList.add("js");
   try { const l = localStorage.getItem("draftboard.lang"); if (l === "it") document.documentElement.lang = "it"; } catch (e) {}
   setTimeout(() => { if (!window.__siteReady) document.documentElement.classList.remove("js"); }, 2500);
 </script>
-<script type="module" src="assets/js/main.js?v=0.10.0"></script>
+<script type="module" src="assets/js/main.js?v=0.11.0"></script>
 </head>
 <body>
 <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
@@ -55,13 +55,13 @@
 <header class="hero">
   <div class="spot" aria-hidden="true"></div>
   <div class="wrap hero-copy">
-    <a class="news reveal" href="#new"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.9.0 · Mockups and every session's chat</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
+    <a class="news reveal" href="#new"><span class="tag" data-i18n="hero.new">New</span><span data-i18n="hero.news">0.9.1 · Jira tickets on the board</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a>
     <h1 class="hero-title" data-i18n="hero.title">Conduct your <em>orchestra</em> of coding agents.</h1>
-    <p class="lede reveal" data-i18n="hero.lede">Claude Code, Codex, Gemini CLI and OpenCode, side by side on one canvas. Every node is a real terminal. Draw a line and two agents talk. You step in only when they need you.</p>
+    <p class="lede reveal" data-i18n="hero.lede">Claude Code, Codex and OpenCode, side by side on one canvas. Every node is a real terminal. Draw a line and two agents talk. You step in only when they need you.</p>
     <div class="cta reveal">
       <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
-        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.9.0</small>
+        <span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.9.1</small>
       </a>
       <a class="btn ghost big" href="#tour">
         <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
@@ -92,12 +92,12 @@
 </header>
 
 <!-- AGENTS -->
-<div class="marquee" aria-label="Works with Claude Code, Codex, Gemini CLI and OpenCode">
+<div class="marquee" aria-label="Works with Claude Code, Codex and OpenCode">
   <div class="marquee-label" data-i18n="works">Works with</div>
   <div class="marquee-track" aria-hidden="true">
     <div class="marquee-row">
-      <span><i class="ag cc">CC</i>Claude Code</span><span><i class="ag cx">CX</i>Codex</span><span><i class="ag gm">GM</i>Gemini CLI</span><span><i class="ag oc">OC</i>OpenCode</span>
-      <span><i class="ag cc">CC</i>Claude Code</span><span><i class="ag cx">CX</i>Codex</span><span><i class="ag gm">GM</i>Gemini CLI</span><span><i class="ag oc">OC</i>OpenCode</span>
+      <span><i class="ag cc">CC</i>Claude Code</span><span><i class="ag cx">CX</i>Codex</span><span><i class="ag oc">OC</i>OpenCode</span><span><i class="ag cc">CC</i>Claude Code</span><span><i class="ag cx">CX</i>Codex</span><span><i class="ag oc">OC</i>OpenCode</span>
+      <span><i class="ag cc">CC</i>Claude Code</span><span><i class="ag cx">CX</i>Codex</span><span><i class="ag oc">OC</i>OpenCode</span><span><i class="ag cc">CC</i>Claude Code</span><span><i class="ag cx">CX</i>Codex</span><span><i class="ag oc">OC</i>OpenCode</span>
     </div>
   </div>
 </div>
@@ -109,8 +109,94 @@
   </div>
 </section>
 
-<!-- WHAT'S NEW in 0.9.0 -->
+<!-- WHAT'S NEW in 0.9.1 -->
 <section id="new" class="new-sec">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="kicker" data-i18n="n91.kicker">New in 0.9.1</p>
+      <h2 data-i18n="n91.title">Your Jira tickets, on the board.</h2>
+      <p data-i18n="n91.sub">An agent reads the tickets assigned to you and lines up the day; a ticket becomes a session in one click, and nothing goes back to Jira without your OK. The strip is yours to arrange, the phone catches up, and every conversation wears its own mark.</p>
+    </div>
+    <div class="nw-rows">
+      <article class="nw-row reveal">
+        <div class="nw-text">
+          <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 5v2m0 3v2m0 3v2"/></svg></span>
+          <h3 data-i18n="n91.tk.t">Jira tickets</h3>
+          <p data-i18n="n91.tk.d">A “jira” session reads the tickets assigned to you through the Atlassian MCP you already have in Claude Code: summary, priority, project, open questions and a plan of work. One place for all of them: views on the left, List or Board in the middle, the ticket on the right, with each project's tile, each status's colour and what the linked session is doing right now. ⌘R checks everything again. No credentials in Bashestra.</p>
+          <p class="nw-place" data-i18n="n91.tk.p">Tickets in the strip · ⌥⌘1 list · ⌥⌘2 board · Mac</p>
+        </div>
+        <div class="tk-mock" role="img" aria-label="Tickets: on the left the views Today, News since yesterday, To clarify and All, and the projects; in the middle the day's progress and three ticket cards, one with a session at work; on the right the open ticket with its live session.">
+          <div class="pt-bar"><i></i><i></i><i></i><b data-i18n="n91.m.path">Notebook › Tickets › Today</b><span class="pt-btn">⌘R</span></div>
+          <div class="tk-body">
+            <div class="tk-views">
+              <span class="on"><b data-i18n="n91.m.today">Today</b><em>3</em></span>
+              <span><b data-i18n="n91.m.news">News since yesterday</b><em>2</em></span>
+              <span><b data-i18n="n91.m.clar">To clarify</b><em>1</em></span>
+              <span><b data-i18n="n91.m.all">All</b><em>9</em></span>
+              <p data-i18n="n91.m.proj">Projects</p>
+              <span><i class="tk-tile api">API</i><b>Sync API</b></span>
+              <span><i class="tk-tile ios">iOS</i><b>Notes iOS</b></span>
+            </div>
+            <div class="tk-list">
+              <div class="tk-day"><p><b data-i18n="n91.m.day">The day</b><span data-i18n="n91.m.dayn">0 of 3 closed · ~7 h</span></p><span class="tk-bar"><i></i></span></div>
+              <div class="tk-card on"><p><i class="tk-tile api">API</i><b>TAPI-88</b><span class="st prog" data-i18n="n91.m.prog">In progress</span></p><h4 data-i18n="n91.m.c1">Sync conflicts: the last edit overwrites the others</h4><small><span class="tk-spin"></span><span data-i18n="n91.m.c1s">coder-api writes FieldMerge.swift · 18 min</span></small></div>
+              <div class="tk-card"><p><i class="tk-tile ios">iOS</i><b>TIOS-412</b><span class="st todo" data-i18n="n91.m.todo">To do</span><span class="st urg" data-i18n="n91.m.urg">Urgent</span></p><h4 data-i18n="n91.m.c2">Crash opening a note downloaded offline</h4><small data-i18n="n91.m.c2s">Ready to start</small></div>
+              <div class="tk-card need"><p><i class="tk-tile ios">iOS</i><b>TIOS-405</b><span class="st rev" data-i18n="n91.m.rev">In review</span></p><h4 data-i18n="n91.m.c3">Pinned notes lose their order after a sync</h4><small data-i18n="n91.m.c3s">reviewer is waiting for you</small></div>
+            </div>
+            <div class="tk-detail">
+              <p class="tk-key"><i class="tk-tile api">API</i><b>TAPI-88</b></p>
+              <h4 data-i18n="n91.m.c1">Sync conflicts: the last edit overwrites the others</h4>
+              <div class="tk-live"><p><b>coder-api</b><span class="tk-diff">+142 −37</span></p><code>› FieldMerge.swift</code><code class="ok">+ let merged = FieldMerge(a, b)</code></div>
+              <span class="tk-cta" data-i18n="n91.m.cta">Confirm on Jira</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+    <div class="nw-grid nw-cols">
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h11m0 0-4-4m4 4-4 4M20 5v14"/></svg></span>
+        <h3 data-i18n="n91.go.t">From ticket to session, and back</h3>
+        <p data-i18n="n91.go.d">“Start from the ticket” opens a session or a team, or asks the Maestro, with the ticket already in context; drop a ticket on the canvas and the node is born there. When the work is done the chat proposes the comment and the status for Jira: it goes only with your OK, and for 30 seconds you can undo it.</p>
+        <p class="nw-place" data-i18n="n91.go.p">Tickets › Start from the ticket</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="4"/><path d="M12 3v3M4.2 6.2l2 2M19.8 6.2l-2 2M3 17h18M7 21h10"/></svg></span>
+        <h3 data-i18n="n91.gm.t">Good morning</h3>
+        <p data-i18n="n91.gm.d">Every morning at 08:10, even with the app closed, the Today view waits with the day's summary: the gist, the plan in order (drag to reorder), what changed since yesterday and what to clarify. It also arrives as a notification and on Telegram.</p>
+        <p class="nw-place" data-i18n="n91.gm.p">Tickets › Today</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M6 17h12M9.5 19.3h5"/></svg></span>
+        <h3 data-i18n="n91.ph.t">The phone catches up</h3>
+        <p data-i18n="n91.ph.d">The phone page gets a bar at the bottom: Stage, Maestro, Tickets, Mockups and More. See the day's tickets and what each session is doing, start one and confirm what goes to Jira. The Maestro has its conversation tabs, a queue you can reorder and the context in the status bar; mockups can be viewed and commented, History read and resumed on the Mac.</p>
+        <p class="nw-place" data-i18n="n91.ph.p">Settings › Notifications › In the phone's browser</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1.5"/><path d="M12 7h9M12 12h9M12 17h6"/></svg></span>
+        <h3 data-i18n="n91.st.t">The strip, your way</h3>
+        <p data-i18n="n91.st.d">Choose what sits in the strip, what goes to More and what hides, and in which order: ⌘1…⌘9 follow it and your own shortcuts always win. The 48-pt compact strip leaves room for the canvas and widens over it when you hover, without moving it.</p>
+        <p class="nw-place" data-i18n="n91.st.p">Right-click the strip · Settings › General</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4zM8 9.5h3"/><circle cx="15" cy="9.5" r="1.5"/></svg></span>
+        <h3 data-i18n="n91.mk.t">Every conversation with its own mark</h3>
+        <p data-i18n="n91.mk.d">In the chat each conversation has its own mark and colour, with tabs on two lines and the state; the field says who you are writing to, and the same mark is on the canvas node and in Sessions. ⌃⇥ and ⌃⇧⇥ move between them.</p>
+        <p class="nw-place" data-i18n="n91.mk.p">Maestro · ⌘1</p>
+      </article>
+      <article class="nw reveal">
+        <span class="nw-ic"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg></span>
+        <h3 data-i18n="n91.qf.t">Quick filters, one signal</h3>
+        <p data-i18n="n91.qf.d">Filter by priority, with or without a session, without an estimate. Each ticket shows a single signal (New, comments, Needs you, Stalled, Blocked, Unclear or Duplicate?), and with Reduce Motion rings and dots stay still.</p>
+        <p class="nw-place" data-i18n="n91.qf.p">Tickets › In short</p>
+      </article>
+    </div>
+    <p class="nw-more reveal"><a href="https://github.com/federix-ai/draftboard-app/releases/tag/v0.9.1" data-i18n="n91.notes">All the release notes for 0.9.1</a> <span class="nw-fine" data-i18n="n91.mac">· On the Mac; Linux stays on 0.7.0 for now. Gemini CLI is no longer one of the agents on the Mac.</span></p>
+  </div>
+</section>
+
+<!-- WHAT'S NEW in 0.9.0 -->
+<section id="new-090" class="new-sec">
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="kicker" data-i18n="n9.kicker">New in 0.9.0</p>
@@ -458,7 +544,7 @@
         <h3 data-i18n="req.t">Requirements</h3>
         <ul class="req">
           <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.1"><strong>macOS 14</strong> or later on Apple Silicon, or <strong>Linux</strong> with a desktop, on x64 or ARM.</span></li>
-          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.2">At least one agent CLI installed, signed in and on your <code>PATH</code>: <code>claude</code>, <code>codex</code>, <code>gemini</code> or <code>opencode</code>.</span></li>
+          <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.2">At least one agent CLI installed, signed in and on your <code>PATH</code>: <code>claude</code>, <code>codex</code> or <code>opencode</code>.</span></li>
           <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.3"><code>git</code> for worktrees and the Git panel (on the Mac it comes with the Command Line Tools).</span></li>
           <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="req.4">English and Italian, chosen from your system.</span></li>
         </ul>
@@ -475,7 +561,7 @@
     <h2 data-i18n="final.title">The orchestra is seated. Your turn.</h2>
     <p data-i18n="final.sub">Put your agents on one board, link them up and let them work together.</p>
     <div class="cta">
-      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.9.0</small></a>
+      <a class="btn primary big" href="https://github.com/federix-ai/draftboard-app/releases/latest/download/Bashestra.dmg" data-dl="primary"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg><span data-i18n="cta.download">Download for macOS</span> <small data-version>v0.9.1</small></a>
       <a class="btn ghost big" href="https://github.com/federix-ai/draftboard-app/releases" data-i18n="final.all">All releases</a>
     </div>
   </div>

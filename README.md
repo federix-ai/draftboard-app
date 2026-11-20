@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Conduct your orchestra of coding agents.</b><br>
-  An app for macOS and Linux that runs Claude Code, Codex, Gemini CLI and OpenCode side by side on an infinite canvas.<br>
+  An app for macOS and Linux that runs Claude Code, Codex and OpenCode side by side on an infinite canvas.<br>
   Every node is a real terminal. Draw a line between two agents and they can message each other.
 </p>
 
@@ -29,6 +29,18 @@
 </p>
 
 ---
+
+## New in 0.9.1
+
+- **Jira tickets** (Mac). A “jira” session reads the tickets assigned to you through the Atlassian MCP you already have in Claude Code: summary, priority, project, open questions and a plan of work. <kbd>⌘R</kbd> checks everything again. No credentials in Bashestra.
+- **One place for tickets.** Views on the left (Today, News since yesterday, To clarify, All, the projects), List or Board in the middle (<kbd>⌥⌘1</kbd> / <kbd>⌥⌘2</kbd>), the ticket on the right. Each ticket carries its project's tile, its Jira status in its own colour, one signal (New, comments, Needs you, Stalled, Blocked, Unclear, Duplicate?) and what the linked session is doing right now.
+- **From ticket to session, and back.** *Start from the ticket* opens a session or a team, or asks the Maestro, with the ticket already in context; drop a ticket on the canvas and the node is born there. When the work is done the chat proposes the comment and the status for Jira: it goes only with your OK, and for 30 seconds you can undo it.
+- **Good morning.** Every morning at 08:10, even with the app closed, the Today view waits with the day's summary and the plan in order. It also arrives as a notification and on Telegram.
+- **The phone catches up.** The phone page gets a bottom bar (Stage, Maestro, Tickets, Mockups, More): the day's tickets with their live sessions and the Jira confirmation, the Maestro's conversation tabs, a queue you can reorder, the context in the status bar, mockups to view and comment, History to read and resume on the Mac.
+- **The strip, your way.** Choose what sits in the strip, what goes to More and what hides, and in which order: <kbd>⌘1</kbd>…<kbd>⌘9</kbd> follow it. The 48-pt compact strip widens over the canvas when you hover.
+- **Every conversation with its own mark.** In the chat each conversation has its own mark and colour, also on its canvas node and in Sessions; <kbd>⌃⇥</kbd> and <kbd>⌃⇧⇥</kbd> move between them.
+
+> 0.9.1 is on the Mac. Linux stays on 0.7.0 for now. Gemini CLI is no longer one of the agents on the Mac: saved Gemini sessions reopen as a shell.
 
 ## New in 0.9.0
 
@@ -58,6 +70,7 @@
 - **Teams in one click.** Ready-made teams (Feature squad, Pair, Bug hunt, Parallel build, Exploration, Full squad, Interface and more), already linked, with the task going to the leader: <kbd>⇧⌘T</kbd> or **+ New › Team**. Or build your own and save it.
 - **A worktree per agent.** In a git repository every agent works on its own `orch/<name>` branch. The Git section shows the branch graph, diffs, commit, push and branch switching.
 - **Floors for experiments.** Copy a workspace and its repositories instantly with APFS clones, try an idea, then bring the branches back or throw it away.
+- **Your Jira tickets.** An agent reads the tickets assigned to you and lines up the day; a ticket becomes a session in one click, and nothing goes back to Jira without your OK.
 - **Mockups in order.** The screens agents design line up as flows you can present like a prototype and comment on; the comments go back to their author.
 - **Point at the bug.** Web and iOS Simulator nodes next to the agents: capture the screen, mark what's wrong and send it to the linked agent.
 - **Away from the Mac.** Telegram tells you when a session needs you; the phone page lets you read, answer and start new work, over your own Tailscale.
@@ -116,7 +129,7 @@ sudo apt install ./bashestra-desktop_*.deb                # or the .deb
 |---|---|
 | **System** | macOS 14 or later on Apple Silicon, or Linux with a desktop on x64 or ARM. English and Italian. |
 | **On the phone** | Tailscale on the Mac and the phone (free) for the phone page; a Telegram bot for the messages. Mac only. |
-| **Agents** | At least one CLI installed, signed in and on your `PATH`: `claude`, `codex`, `gemini` or `opencode`. |
+| **Agents** | At least one CLI installed, signed in and on your `PATH`: `claude`, `codex` or `opencode`. |
 | **Git** | For worktrees and the Git panel (on the Mac it comes with the Command Line Tools). |
 
 Bashestra runs your CLIs with your own logins: no Bashestra account needed.
